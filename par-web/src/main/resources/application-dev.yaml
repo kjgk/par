@@ -1,0 +1,74 @@
+debug: true
+
+server:
+  port: 8088
+  tomcat:
+    accesslog:
+      enabled: true
+  servlet:
+    context-path: /par
+    session:
+      timeout: 6h
+
+spring:
+  jmx:
+    enabled: false
+  session:
+    store-type: redis
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  datasource:
+    url: jdbc:postgresql://192.168.171.102:5432/par
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    show-sql: false
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  resources:
+    cache:
+      period: 7d
+      cachecontrol:
+        cache-public: true
+  cache:
+    redis:
+      time-to-live: 1h
+  redis:
+    host: 192.168.171.102
+    password: 123456
+    database: 8
+
+environment:
+  path:
+    upload: D:/upload/par
+    temp: D:/temp
+  password:
+    # 密码传输加密方式，为空表示不加密
+    transport:
+
+project:
+  # 是否需要https访问
+  requires_secure: false
+
+  # 项目网址
+  public_url:
+
+
+# 秒滴短信服务 http://www.miaodiyun.com
+sms:
+  miaodi:
+    account_sid: 824daecfe8fa49cf946186afac76650b
+    auth_token: 78f66c22f6894481a6b1a54fe5d52f71
+    template_id: 702612127

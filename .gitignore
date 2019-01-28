@@ -1,0 +1,6 @@
+.idea/
+*.iml
+par-core/target/
+par-web/target/
+par-web/src/main/resources/public/
+par-web/src/main/resources/static/
