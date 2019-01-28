@@ -42,7 +42,6 @@ INSERT INTO sys_authority (
   last_updated_by
 )
 VALUES
-  (537638442280943616, now(), now(), 0, null, 'ROOT', 'ROLE_ROOT', 1000, 1000),
   (537638442280943617, now(), now(), 0, null, 'ADMIN', 'ROLE_ADMIN', 1000, 1000),
   (537638442280943618, now(), now(), 0, null, 'USER', 'ROLE_USER', 1000, 1000)
    ;
@@ -59,7 +58,6 @@ INSERT INTO sys_role (
   last_updated_by
 )
 VALUES
-  (537638442285137920, now(), now(), 0, null, 'ROOT', 'Root', 1000, 1000),
   (537638442285137921, now(), now(), 0, null, '管理员', 'Admin', 1000, 1000),
   (537638442285137922, now(), now(), 0, null, '普通用户', 'Normal', 1000, 1000)
    ;

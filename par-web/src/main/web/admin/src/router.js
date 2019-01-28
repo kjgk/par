@@ -50,14 +50,19 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/system/user/'),
     },
     {
-      path: '/project/company',
-      models: () => [import('./models/project/company')],
-      component: () => import('./routes/project/company/'),
+      path: '/project/region',
+      models: () => [import('./models/project/region')],
+      component: () => import('./routes/project/region/'),
     },
     {
       path: '/project/company',
       models: () => [import('./models/project/company')],
       component: () => import('./routes/project/company/'),
+    },
+    {
+      path: '/project/accendant',
+      models: () => [import('./models/project/accendant')],
+      component: () => import('./routes/project/accendant/'),
     },
   ]
 
@@ -66,7 +71,7 @@ const Routers = function ({ history, app }) {
       <LocaleProvider locale={zh_CN}>
         <App>
           <Switch>
-            <Route exact path="/project" render={() => <Redirect to="/project/company"/>}/>
+            <Route exact path="/project" render={() => <Redirect to="/project/accendant"/>}/>
             <Route exact path="/system" render={() => <Redirect to="/system/role"/>}/>
             {
               routes.map(({ path, ...dynamics }, key) => (

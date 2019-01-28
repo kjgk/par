@@ -2,30 +2,25 @@ package com.unicorn.par.domain.po;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.unicorn.core.domain.DefaultPersistent;
-import com.unicorn.system.domain.po.User;
+import com.unicorn.core.domain.DefaultNomenclator;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Table;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "sed_user")
+@Table(name = "sed_system")
 @EntityListeners({AuditingEntityListener.class})
 @JsonIdentityInfo(generator = JSOGGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SignUser extends DefaultPersistent {
+public class System extends DefaultNomenclator {
 
-    private String phoneNo;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
 }

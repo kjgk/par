@@ -3,10 +3,6 @@ package com.unicorn.par.config;
 
 import com.unicorn.core.PasswordEncoder;
 import com.unicorn.par.security.DefaultLoginProcessingFilter;
-import com.unicorn.par.security.keep.KeepAuthenticationProvider;
-import com.unicorn.par.security.keep.KeepLoginProcessingFilter;
-import com.unicorn.par.security.sms.SmsAuthenticationProvider;
-import com.unicorn.par.security.sms.SmsLoginProcessingFilter;
 import com.unicorn.par.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -49,12 +45,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
-    @Autowired
-    private SmsAuthenticationProvider smsAuthenticationProvider;
-
-    @Autowired
-    private KeepAuthenticationProvider keepAuthenticationProvider;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -64,8 +54,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterBefore(defaultLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(smsLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(keepLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/admin/**").permitAll()
@@ -73,7 +61,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/dist/**").permitAll()
                 .antMatchers("/public/**").permitAll()
                 .antMatchers("/api/v1/current").permitAll()
-                .antMatchers("/api/v1/sign/dict").permitAll()
                 .antMatchers("/api/v1/system/file/**").permitAll()
                 .antMatchers("/content/image/**").permitAll()
                 .antMatchers("/**").hasAnyRole("USER", "ADMIN")
@@ -97,34 +84,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-        auth.authenticationProvider(smsAuthenticationProvider);
-        auth.authenticationProvider(keepAuthenticationProvider);
     }
 
     @Bean
     DefaultLoginProcessingFilter defaultLoginProcessingFilter() throws Exception {
 
         DefaultLoginProcessingFilter processingFilter = new DefaultLoginProcessingFilter("/login/account");
-        processingFilter.setAuthenticationManager(authenticationManager());
-        processingFilter.setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
-        processingFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-        processingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        return processingFilter;
-    }
-
-    @Bean
-    SmsLoginProcessingFilter smsLoginProcessingFilter() throws Exception {
-        SmsLoginProcessingFilter processingFilter = new SmsLoginProcessingFilter("/login/sms");
-        processingFilter.setAuthenticationManager(authenticationManager());
-        processingFilter.setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
-        processingFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-        processingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        return processingFilter;
-    }
-
-    @Bean
-    KeepLoginProcessingFilter keepLoginProcessingFilter() throws Exception {
-        KeepLoginProcessingFilter processingFilter = new KeepLoginProcessingFilter("/login/keep");
         processingFilter.setAuthenticationManager(authenticationManager());
         processingFilter.setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
         processingFilter.setAuthenticationFailureHandler(authenticationFailureHandler);

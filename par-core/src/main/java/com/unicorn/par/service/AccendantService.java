@@ -2,10 +2,11 @@ package com.unicorn.par.service;
 
 import com.alibaba.fastjson.JSON;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.enumeration.RedisKeys;
-import com.unicorn.par.domain.po.QSignUser;
-import com.unicorn.par.domain.po.SignUser;
-import com.unicorn.par.repository.SignUserRepository;
+import com.unicorn.par.domain.po.Accendant;
+import com.unicorn.par.domain.po.QAccendant;
+import com.unicorn.par.repository.AccendantRepository;
 import com.unicorn.system.domain.po.Account;
 import com.unicorn.system.domain.po.Role;
 import com.unicorn.system.domain.po.User;
@@ -16,9 +17,11 @@ import com.unicorn.system.service.UserService;
 import com.unicorn.utils.Identities;
 import com.unicorn.utils.Md5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
@@ -29,10 +32,10 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
-public class SignUserService {
+public class AccendantService {
 
     @Autowired
-    private SignUserRepository signUserRepository;
+    private AccendantRepository accendantRepository;
 
     @Autowired
     private UserService userService;
@@ -46,7 +49,7 @@ public class SignUserService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    public SignUser getCurrentSignUser() {
+    public Accendant getCurrentAccendant() {
 
         User currentUser = userService.getCurrentUser();
         if (currentUser == null) {
@@ -55,21 +58,26 @@ public class SignUserService {
         return getByUser(currentUser);
     }
 
-    public SignUser getByUser(User user) {
+    public Accendant getByUser(User user) {
 
-        return signUserRepository.findByUserObjectId(user.getObjectId());
+        return accendantRepository.findByUserObjectId(user.getObjectId());
     }
 
-    public SignUser getSignUser(Long objectId) {
+    public Page<Accendant> getAccendant(QueryInfo queryInfo) {
 
-        return signUserRepository.get(objectId);
+        return accendantRepository.findAll(queryInfo);
     }
 
-    public SignUser getByPhoneNo(String phoneNo) {
+    public Accendant getAccendant(Long objectId) {
 
-        QSignUser qSignUser = QSignUser.signUser;
-        BooleanExpression expression = qSignUser.phoneNo.eq(phoneNo);
-        List<SignUser> userList = signUserRepository.findAll(expression);
+        return accendantRepository.get(objectId);
+    }
+
+    public Accendant getByPhoneNo(String phoneNo) {
+
+        QAccendant qAccendant = QAccendant.accendant;
+        BooleanExpression expression = qAccendant.phoneNo.eq(phoneNo);
+        List<Accendant> userList = accendantRepository.findAll(expression);
         if (CollectionUtils.isEmpty(userList)) {
             return null;
         }
@@ -95,11 +103,11 @@ public class SignUserService {
         account.setName(phoneNo);
         accountService.saveAccount(account);
 
-        // 保存到SignUser表
-        SignUser signUser = new SignUser();
-        signUser.setPhoneNo(phoneNo);
-        signUser.setUser(user);
-        signUserRepository.save(signUser);
+        // 保存到Accendant表
+        Accendant accendant = new Accendant();
+        accendant.setPhoneNo(phoneNo);
+        accendant.setUser(user);
+        accendantRepository.save(accendant);
     }
 
 
@@ -124,18 +132,49 @@ public class SignUserService {
         return Md5Utils.encrypt(accountName + "|" + password);
     }
 
-    public boolean isSignManager() {
-        SignUser signUser = getCurrentSignUser();
-        if (signUser == null || signUser.getUser() == null) {
-            return false;
+
+    public void saveAccendant(Accendant accendant) {
+
+        Accendant current;
+        if (StringUtils.isEmpty(accendant.getObjectId())) {
+
+            String phoneNo = accendant.getPhoneNo();
+
+            Role role = roleRepository.findByTag("Accendant");
+            UserRole userRole = new UserRole();
+            userRole.setRole(role);
+
+            // 保存到User表
+            User user = new User();
+            user.setName(accendant.getUsername());
+            user.setUserRoleList(Arrays.asList(userRole));
+            user = userService.saveUser(user);
+
+            // 保存到帐号表
+            Account account = new Account();
+            account.setPassword(phoneNo.substring(5));
+            account.setUser(user);
+            account.setName(phoneNo);
+            accountService.saveAccount(account);
+
+            // 保存到Accendant表
+            accendant.setUser(user);
+            current = accendantRepository.save(accendant);
+        } else {
+            current = accendantRepository.getOne(accendant.getObjectId());
+            current.getUser().setName(accendant.getUsername());
+            current.setCompany(accendant.getCompany());
+            current.setPhoneNo(accendant.getPhoneNo());
         }
-        boolean isManager = false;
-        for (UserRole userRole : signUser.getUser().getUserRoleList()) {
-            if (userRole.getRole().getTag().equalsIgnoreCase("Manager")) {
-                isManager = true;
-                break;
-            }
-        }
-        return isManager;
+    }
+
+    public void deleteAccendant(Long objectId) {
+
+        accendantRepository.deleteById(objectId);
+    }
+
+    public void deleteAccendant(List<Long> objectIds) {
+
+        objectIds.forEach(this::deleteAccendant);
     }
 }
