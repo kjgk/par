@@ -27,12 +27,12 @@ const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
       dataIndex: 'company.name',
     },
     {
-      title: '姓名',
-      dataIndex: 'username',
+      title: '系统名称',
+      dataIndex: 'name',
     },
     {
-      title: '手机号',
-      dataIndex: 'phoneNo',
+      title: '系统网址',
+      dataIndex: 'url',
     },
     {
       title: '操作',

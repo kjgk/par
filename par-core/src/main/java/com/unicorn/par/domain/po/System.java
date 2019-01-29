@@ -9,9 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -22,5 +20,9 @@ import javax.persistence.Table;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class System extends DefaultNomenclator {
 
+    @OneToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
+    private String url;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Form, Input, Modal } from 'antd'
-import CompanySelect from '../../../sections/company/CompanySelect'
+import CompanySelect from "../../../sections/company/CompanySelect"
 
 const formItemLayout = {
   labelCol: {
@@ -51,24 +51,24 @@ const modal = ({
             }],
           })(<CompanySelect placeholder="请选择所属单位"/>)}
         </Form.Item>
-        <Form.Item label="姓名" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('username', {
-            initialValue: item.username,
+        <Form.Item label="名称" hasFeedback {...formItemLayout}>
+          {getFieldDecorator('name', {
+            initialValue: item.name,
             rules: [{
               required: true,
-              message: '请输入姓名',
+              message: '请输入名称',
             }],
-          })(<Input placeholder="请输入姓名"/>)}
+          })(<Input placeholder="请输入名称"/>)}
         </Form.Item>
-        <Form.Item label="手机号" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('phoneNo', {
-            initialValue: item.phoneNo,
-            rules: [{
-              required: true,
-              pattern: /^1[34578][0-9]{9}$/,
-              message: '请输入手机号',
-            }],
-          })(<Input placeholder="请输入手机号"/>)}
+        <Form.Item label="系统网址" hasFeedback {...formItemLayout}>
+          {getFieldDecorator('url', {
+            initialValue: item.url,
+          })(<Input.TextArea rows={3} placeholder="请输入系统网址"/>)}
+        </Form.Item>
+        <Form.Item label="描述" hasFeedback {...formItemLayout}>
+          {getFieldDecorator('description', {
+            initialValue: item.description,
+          })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}
         </Form.Item>
       </Form>
     </Modal>

@@ -3,7 +3,7 @@ const api = '/api/v1'
 module.exports = {
   name: '巡检平台',
   prefix: 'par',
-  footerText: '巡检平台-后台管理  © 2018',
+  footerText: '巡检平台-后台管理  © 2019',
   openPages: ['/login'],
   apiPrefix: api,
   api: {
