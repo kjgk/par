@@ -36,7 +36,10 @@ public class SystemController {
                 if (StringUtils.isEmpty(s)) {
                     continue;
                 }
-                expression = expression.and(system.name.containsIgnoreCase(s));
+                expression = expression.and(system.name.containsIgnoreCase(s)
+                        .or(system.url.containsIgnoreCase(s))
+                        .or(system.company.name.containsIgnoreCase(s))
+                );
             }
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,

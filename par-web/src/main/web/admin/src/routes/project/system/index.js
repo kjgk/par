@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { routerRedux } from 'dva/router'
-import { connect } from 'dva'
-import { Button, Col, Popconfirm, Row } from 'antd'
-import { Formatter, Page } from '../../../components'
+import {routerRedux} from 'dva/router'
+import {connect} from 'dva'
+import {Button, Col, Popconfirm, Row} from 'antd'
+import {Formatter, Page} from '../../../components'
 import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 import Modal from './Modal'
+import FunctionModal from './FunctionModal'
 
 const namespace = 'system'
 const name = '运维系统'
@@ -16,9 +17,9 @@ const Component = ({
                      location, dispatch, model, loading,
                    }) => {
   location.query = queryString.parse(location.search)
-  const { query, pathname } = location
+  const {query, pathname} = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
+    list, pagination, currentItem, modalVisible, functionModalVisible, modalType, selectedRowKeys,
   } = model
 
   const handleRefresh = (newQuery) => {
@@ -49,14 +50,14 @@ const Component = ({
     maskClosable: false,
     confirmLoading: loading.effects[`${namespace}/${modalType}`],
     title: modalType === 'create' ? `添加${name}` : `编辑${name}`,
-    onOk (data) {
+    onOk(data) {
       dispatch({
         type: `${namespace}/${modalType}`,
         payload: data,
       })
         .then(() => handleRefresh())
     },
-    onCancel () {
+    onCancel() {
       dispatch({
         type: `${namespace}/hideModal`,
       })
@@ -68,13 +69,13 @@ const Component = ({
     loading: loading.effects[`${namespace}/query`],
     pagination,
     location,
-    onChange (page) {
+    onChange(page) {
       handleRefresh({
         page: page.current,
         pageSize: page.pageSize,
       })
     },
-    onDeleteItem (id) {
+    onDeleteItem(id) {
       dispatch({
         type: `${namespace}/delete`,
         payload: id,
@@ -83,11 +84,19 @@ const Component = ({
           page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
         }))
     },
-    onEditItem (item) {
+    onEditItem(item) {
       dispatch({
         type: `${namespace}/showModal`,
         payload: {
           modalType: 'update',
+          currentItem: item,
+        },
+      })
+    },
+    onEditFunction(item) {
+      dispatch({
+        type: `${namespace}/showFunctionModal`,
+        payload: {
           currentItem: item,
         },
       })
@@ -109,18 +118,38 @@ const Component = ({
     filter: {
       ...query,
     },
-    onFilterChange (value) {
+    onFilterChange(value) {
       handleRefresh({
         ...value,
         page: 1,
       })
     },
-    onAdd () {
+    onAdd() {
       dispatch({
         type: `${namespace}/showModal`,
         payload: {
           modalType: 'create',
         },
+      })
+    },
+  }
+
+  const functionModalProps = {
+    item: currentItem,
+    visible: functionModalVisible,
+    maskClosable: false,
+    confirmLoading: loading.effects[`${namespace}/saveFunction`],
+    title: `设置功能点`,
+    onOk(data) {
+      dispatch({
+        type: `${namespace}/${modalType}`,
+        payload: data,
+      })
+        .then(() => handleRefresh())
+    },
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideFunctionModal`,
       })
     },
   }
@@ -137,13 +166,14 @@ const Component = ({
           <Col>
             {`已选择 ${selectedRowKeys.length} 条数据 `}
             <Popconfirm title="确定删除?" placement="left" onConfirm={handleDeleteItems}>
-              <Button type="primary" style={{ marginLeft: 8 }} size="small">删除</Button>
+              <Button type="primary" style={{marginLeft: 8}} size="small">删除</Button>
             </Popconfirm>
           </Col>
         </Row>
       }
       <List {...listProps} />
       {modalVisible && <Modal {...modalProps} />}
+      {functionModalVisible && <FunctionModal {...functionModalProps}/>}
     </Page>
   )
 }

@@ -4,11 +4,15 @@ import { Divider, Modal, Table } from 'antd'
 import { Formatter } from '../../../components'
 import queryString from 'query-string'
 
-const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
+const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProps }) => {
   location.query = queryString.parse(location.search)
 
   const handleEdit = (record) => {
     onEditItem(record)
+  }
+
+  const handleEditFunction = (record) => {
+    onEditFunction(record)
   }
 
   const handleDelete = (record) => {
@@ -36,12 +40,16 @@ const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
     },
     {
       title: '操作',
-      width: 120,
+      width: 200,
       render: (text, record) => {
         return <div>
           <a onClick={() => {
             handleEdit(record)
           }}>编辑</a>
+          <Divider type="vertical"/>
+          <a onClick={() => {
+            handleEditFunction(record)
+          }}>设置功能点</a>
           <Divider type="vertical"/>
           <a onClick={() => {
             handleDelete(record)
