@@ -3,7 +3,7 @@ package com.unicorn.par.domain.po;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.unicorn.core.domain.DefaultPersistent;
+import com.unicorn.core.domain.DefaultNomenclator;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,10 +18,12 @@ import javax.persistence.*;
 @EntityListeners({AuditingEntityListener.class})
 @JsonIdentityInfo(generator = JSOGGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Function extends DefaultPersistent {
+public class Function extends DefaultNomenclator {
 
     @OneToOne
     @JoinColumn(name = "system_id")
     private System system;
+
+    private Integer orderNo;
 
 }

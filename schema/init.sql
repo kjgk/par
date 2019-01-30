@@ -9,7 +9,7 @@
   last_updated_by
 )
 VALUES
-  (1000, NOW(), NOW(), 0, NULL, '系统', 1000, 1000),
+  (1000, NOW(), NOW(), 1, NULL, '系统', 1000, 1000),
   (2000, NOW(), NOW(), 0, NULL, '管理员', 1000, 1000)
   ;
 
@@ -59,7 +59,8 @@ INSERT INTO sys_role (
 )
 VALUES
   (537638442285137921, now(), now(), 0, null, '管理员', 'Admin', 1000, 1000),
-  (537638442285137922, now(), now(), 0, null, '普通用户', 'Normal', 1000, 1000)
+  (537638442285137922, now(), now(), 0, null, '普通用户', 'Normal', 1000, 1000),
+  (537638442285137923, now(), now(), 0, null, '运维人员', 'Accendant', 1000, 1000),
    ;
 
 INSERT INTO sys_menu (

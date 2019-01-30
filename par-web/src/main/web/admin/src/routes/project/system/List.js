@@ -39,6 +39,12 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
       dataIndex: 'url',
     },
     {
+      title: '创建时间',
+      dataIndex: 'createdDate',
+      width: 180,
+      render: (value) => <Formatter.Date value={value}/>,
+    },
+    {
       title: '操作',
       width: 200,
       render: (text, record) => {
@@ -46,10 +52,10 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
           <a onClick={() => {
             handleEdit(record)
           }}>编辑</a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            handleEditFunction(record)
-          }}>设置功能点</a>
+          {/*<Divider type="vertical"/>*/}
+          {/*<a onClick={() => {*/}
+            {/*handleEditFunction(record)*/}
+          {/*}}>设置功能点</a>*/}
           <Divider type="vertical"/>
           <a onClick={() => {
             handleDelete(record)

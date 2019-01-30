@@ -35,6 +35,12 @@ const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
       dataIndex: 'phoneNo',
     },
     {
+      title: '创建时间',
+      dataIndex: 'createdDate',
+      width: 180,
+      render: (value) => <Formatter.Date value={value}/>,
+    },
+    {
       title: '操作',
       width: 120,
       render: (text, record) => {

@@ -4,15 +4,11 @@ import { Divider, Modal, Table } from 'antd'
 import { Formatter } from '../../../components'
 import queryString from 'query-string'
 
-const List = ({ onDeleteItem, onEditItem, onEditAccount, location, ...tableProps }) => {
+const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
   location.query = queryString.parse(location.search)
 
   const handleEdit = (record) => {
     onEditItem(record)
-  }
-
-  const handleAccount = (record) => {
-    onEditAccount(record)
   }
 
   const handleDelete = (record) => {
@@ -27,22 +23,12 @@ const List = ({ onDeleteItem, onEditItem, onEditAccount, location, ...tableProps
 
   const columns = [
     {
-      title: '昵称',
+      title: '所属系统',
+      dataIndex: 'system.name',
+    },
+    {
+      title: '功能点名称',
       dataIndex: 'name',
-    },
-    {
-      title: '帐号',
-      dataIndex: 'account.name',
-    },
-    {
-      title: '角色',
-      dataIndex: 'userRoleList',
-      render: (value) => value.map((userRole) => userRole.role && userRole.role.name)
-        .join(),
-    },
-    {
-      title: '简介',
-      dataIndex: 'description',
     },
     {
       title: '创建时间',
@@ -52,13 +38,9 @@ const List = ({ onDeleteItem, onEditItem, onEditAccount, location, ...tableProps
     },
     {
       title: '操作',
-      width: 180,
+      width: 120,
       render: (text, record) => {
         return <div>
-          <a onClick={() => {
-            handleAccount(record)
-          }}>帐号</a>
-          <Divider type="vertical"/>
           <a onClick={() => {
             handleEdit(record)
           }}>编辑</a>
