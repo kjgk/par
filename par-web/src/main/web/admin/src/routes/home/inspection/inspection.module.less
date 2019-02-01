@@ -1,0 +1,50 @@
+@import "../../../themes/vars";
+
+.inspection-form {
+  background: #ECECEC;
+  margin: 10px 0 0 0;
+  padding: 20px;
+
+  .step-button {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .step-1 {
+    background: #FFFFFF;
+
+    :global {
+      .ant-list-bordered {
+        border-radius: 0;
+      }
+
+      .ant-list-item {
+        cursor: pointer;
+
+        &:hover {
+          background: #E6F7FF;
+        }
+      }
+    }
+  }
+
+  .step-2 {
+    background: #FFFFFF;
+    padding: 10px;
+
+    .detail-form {
+      min-height: 240px;
+    }
+  }
+
+  .step-3 {
+    background: #FFFFFF;
+    padding: 10px;
+
+    .inspection-result {
+      font-size: 18px;
+      width: 80%;
+      margin: 10px auto;
+    }
+  }
+}

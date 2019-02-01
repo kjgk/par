@@ -31,25 +31,25 @@
             <dependency>
                 <groupId>com.unicorn</groupId>
                 <artifactId>unc-core</artifactId>
-                <version>2.1.2-RELEASE</version>
+                <version>2.1.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.unicorn</groupId>
                 <artifactId>unc-std</artifactId>
-                <version>2.1.2-RELEASE</version>
+                <version>2.1.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.unicorn</groupId>
                 <artifactId>unc-sms</artifactId>
-                <version>2.1.2-RELEASE</version>
+                <version>2.1.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.unicorn</groupId>
                 <artifactId>unc-web</artifactId>
-                <version>2.1.2-RELEASE</version>
+                <version>2.1.2</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>

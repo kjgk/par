@@ -51,8 +51,8 @@ spring:
 
 environment:
   path:
-    upload: D:/upload/par
-    temp: D:/temp
+    upload: /kjgk/upload/par
+    temp: /kjgk/temp
   password:
     # 密码传输加密方式，为空表示不加密
     transport:
