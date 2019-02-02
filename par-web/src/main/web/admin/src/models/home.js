@@ -1,32 +1,21 @@
 import modelExtend from 'dva-model-extend'
 import {model} from './common'
+import {routerRedux} from "dva/router"
 
 export default modelExtend(model, {
 
   namespace: 'home',
-  state: {
-    statistics: {},
-  },
+  state: {},
   subscriptions: {
 
     setupHistory({dispatch, history}) {
       history.listen((location) => {
-        if (location.pathname === '/') {
+        if (location.pathname === '/home') {
           dispatch({
-            type: 'updateState',
-            payload: {
-              statistics: {
-                count: 99
-              },
-            },
+            type: 'home',
+            payload: {},
           })
         } else {
-          dispatch({
-            type: 'updateState',
-            payload: {
-              statistics: {},
-            },
-          })
         }
       })
     },
@@ -35,7 +24,23 @@ export default modelExtend(model, {
   },
   effects: {
 
-    * fetch({payload,}, {call, put}) {
+    * home({payload,}, {call, put, select}) {
+
+      // 根据角色跳转
+      const {user} = yield select(_ => _.app)
+      if (user.role === 'Admin') {
+        yield put(routerRedux.push({
+          pathname: '/system',
+        }))
+      } else if (user.role === 'Manager') {
+        yield put(routerRedux.push({
+          pathname: '/ticket',
+        }))
+      } else if (user.role === 'Accendant') {
+        yield put(routerRedux.push({
+          pathname: '/inspection',
+        }))
+      }
     },
 
   },

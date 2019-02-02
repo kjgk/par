@@ -76,7 +76,7 @@ export default {
         })
         if (location.pathname === '/login') {
           yield put(routerRedux.push({
-            pathname: '/project',
+            pathname: '/',
           }))
         }
       } else if (config.openPages && config.openPages.indexOf(locationPathname) < 0) {

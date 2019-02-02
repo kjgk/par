@@ -33,6 +33,7 @@ public class MainController {
         if (currentUser != null) {
             user.put("id", currentUser.getObjectId());
             user.put("username", currentUser.getName());
+            user.put("role", currentUser.getUserRoleList().get(0).getRole().getTag());
             result.put("user", user);
         }
         result.put("success", true);

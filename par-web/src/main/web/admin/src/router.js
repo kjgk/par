@@ -20,7 +20,7 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/login/'),
     },
     {
-      path: '/',
+      path: '/home',
       models: () => [import('./models/home')],
       component: () => import('./routes/home/'),
     },
@@ -79,6 +79,11 @@ const Routers = function ({ history, app }) {
       models: () => [import('./models/project/inspection')],
       component: () => import('./routes/project/inspection/'),
     },
+    {
+      path: '/ticket',
+      models: () => [import('./models/project/ticket')],
+      component: () => import('./routes/project/ticket/'),
+    },
   ]
 
   return (
@@ -86,8 +91,10 @@ const Routers = function ({ history, app }) {
       <LocaleProvider locale={zh_CN}>
         <App>
           <Switch>
+            <Route exact path="/" render={() => <Redirect to="/home"/>}/>
+            <Route exact path="/ticket" render={() => <Redirect to="/ticket/list"/>}/>
             <Route exact path="/project" render={() => <Redirect to="/project/accendant"/>}/>
-            <Route exact path="/system" render={() => <Redirect to="/system/role"/>}/>
+            <Route exact path="/system" render={() => <Redirect to="/system/user"/>}/>
             {
               routes.map(({ path, ...dynamics }, key) => (
                 <Route key={key}

@@ -8,10 +8,8 @@ const Home = ({
                 dispatch,
               }) => {
 
-  const {statistics} = home
-
   return (
-    <div>Home {statistics.count}</div>
+    <div>Home</div>
   )
 }
 
