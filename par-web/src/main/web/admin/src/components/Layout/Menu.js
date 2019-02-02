@@ -15,6 +15,9 @@ const Menus = ({
   // 递归生成菜单
   const getMenus = (menuTreeN, siderFoldN) => {
     return menuTreeN.map((item) => {
+      if (item.hidden === 1) {
+        return
+      }
       if (item.children) {
         if (item.mpid) {
           levelMap[item.id] = item.mpid

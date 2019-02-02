@@ -56,6 +56,7 @@ public class MainController {
             item.put("name", menu.getName());
             item.put("route", menu.getUrl());
             item.put("icon", menu.getIcon());
+            item.put("hidden", menu.getHidden());
             if (menu.getParent() != null && menu.getParent().getParent() != null) {
                 item.put("bpid", menu.getParent().getObjectId());
                 item.put("mpid", menu.getHidden() == 0 ? menu.getParent().getObjectId() : "-1");
