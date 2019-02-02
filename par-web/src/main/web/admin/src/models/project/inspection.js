@@ -1,4 +1,4 @@
-import service from '../../services/home/inspection'
+import service from '../../services/project/inspection'
 import systemService from '../../services/project/system'
 import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"

@@ -75,9 +75,9 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/project/function/'),
     },
     {
-      path: '/home/inspection',
-      models: () => [import('./models/home/inspection')],
-      component: () => import('./routes/home/inspection/'),
+      path: '/inspection',
+      models: () => [import('./models/project/inspection')],
+      component: () => import('./routes/project/inspection/'),
     },
   ]
 
