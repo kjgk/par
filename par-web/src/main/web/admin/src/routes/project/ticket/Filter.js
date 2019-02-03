@@ -67,7 +67,7 @@ const Filter = ({
             <Button onClick={handleReset}>重置</Button>
           </div>
           <div className="flex-vertical-center">
-            <Button icon="plus" onClick={onAdd}>创建工单</Button>
+            {onAdd && <Button icon="plus" onClick={onAdd}>创建工单</Button>}
           </div>
         </div>
       </Col>

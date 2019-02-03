@@ -89,6 +89,11 @@ const Routers = function ({ history, app }) {
       models: () => [import('./models/project/ticket.create')],
       component: () => import('./routes/project/ticket/create'),
     },
+    {
+      path: '/ticket/handle',
+      models: () => [import('./models/project/ticket.handle')],
+      component: () => import('./routes/project/ticket/handle'),
+    },
   ]
 
   return (

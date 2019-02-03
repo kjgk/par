@@ -4,6 +4,8 @@ import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.enumeration.TicketStatus;
 import com.unicorn.par.domain.po.Ticket;
+import com.unicorn.par.domain.po.TicketHandle;
+import com.unicorn.par.repository.TicketHandleRepository;
 import com.unicorn.par.repository.TicketRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
 import com.unicorn.std.domain.vo.FileUploadInfo;
@@ -28,7 +30,13 @@ public class TicketService {
     private TicketRepository ticketRepository;
 
     @Autowired
+    private TicketHandleRepository ticketHandleRepository;
+
+    @Autowired
     private ContentAttachmentService contentAttachmentService;
+
+    @Autowired
+    private AccendantService accendantService;
 
     @Autowired
     private UserService userService;
@@ -69,6 +77,18 @@ public class TicketService {
             }
         } else {
         }
+    }
+
+    public void acceptTicket(Long objectId) {
+
+        Ticket ticket = getTicket(objectId);
+        ticket.setStatus(TicketStatus.processing);
+
+        TicketHandle ticketHandle = new TicketHandle();
+        ticketHandle.setAccendant(accendantService.getCurrentAccendant());
+        ticketHandle.setAcceptTime(new Date());
+        ticketHandle.setTicket(ticket);
+        ticketHandleRepository.save(ticketHandle);
     }
 
     public void deleteTicket(Long objectId) {

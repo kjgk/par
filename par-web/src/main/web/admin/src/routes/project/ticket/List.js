@@ -5,11 +5,11 @@ import {Formatter} from '../../../components'
 import queryString from 'query-string'
 import TicketStatus from '../../../sections/ticket/TicketStatus'
 
-const List = ({onDeleteItem, onEditItem, location, ...tableProps}) => {
+const List = ({onDeleteItem, onViewItem, onAcceptItem, location, ...tableProps}) => {
   location.query = queryString.parse(location.search)
 
-  const handleEdit = (record) => {
-    onEditItem(record)
+  const handleView = (record) => {
+    onViewItem(record)
   }
 
   const handleDelete = (record) => {
@@ -20,6 +20,10 @@ const List = ({onDeleteItem, onEditItem, location, ...tableProps}) => {
         onDeleteItem(record.objectId)
       },
     })
+  }
+
+  const handleAccept = (record) => {
+    onAcceptItem(record.objectId)
   }
 
   const columns = [
@@ -60,12 +64,16 @@ const List = ({onDeleteItem, onEditItem, location, ...tableProps}) => {
       render: (text, record) => {
         return <div>
           <a onClick={() => {
-            handleEdit(record)
+            handleView(record)
           }}>查看详情</a>
-          <Divider type="vertical"/>
-          <a onClick={() => {
-            handleDelete(record)
-          }}>删除</a>
+          {onAcceptItem && record.status === 0 && <React.Fragment><Divider type="vertical"/>
+            <a style={{color: '#F50'}} onClick={() => {
+              handleAccept(record)
+            }}>接单</a></React.Fragment>}
+          {onDeleteItem && <React.Fragment><Divider type="vertical"/>
+            <a onClick={() => {
+              handleDelete(record)
+            }}>删除</a></React.Fragment>}
         </div>
       },
     },
