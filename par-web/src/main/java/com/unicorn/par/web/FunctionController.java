@@ -24,7 +24,6 @@ public class FunctionController {
     @Autowired
     private FunctionService functionService;
 
-
     @RequestMapping(method = RequestMethod.GET)
     public Page<Function> list(PageInfo pageInfo, String keyword, Long systemId) {
 

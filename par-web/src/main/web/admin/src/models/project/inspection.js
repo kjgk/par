@@ -4,7 +4,7 @@ import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"
 
 const namespace = 'inspection'
-const pathname = '/home/inspection'
+const pathname = '/inspection'
 
 export default modelExtend(createCrudModel(namespace, pathname, service), {
   namespace,

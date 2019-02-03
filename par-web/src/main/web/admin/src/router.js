@@ -84,6 +84,11 @@ const Routers = function ({ history, app }) {
       models: () => [import('./models/project/ticket')],
       component: () => import('./routes/project/ticket/'),
     },
+    {
+      path: '/ticket/create',
+      models: () => [import('./models/project/ticket.create')],
+      component: () => import('./routes/project/ticket/create'),
+    },
   ]
 
   return (
@@ -92,7 +97,6 @@ const Routers = function ({ history, app }) {
         <App>
           <Switch>
             <Route exact path="/" render={() => <Redirect to="/home"/>}/>
-            <Route exact path="/ticket" render={() => <Redirect to="/ticket/list"/>}/>
             <Route exact path="/project" render={() => <Redirect to="/project/accendant"/>}/>
             <Route exact path="/system" render={() => <Redirect to="/system/user"/>}/>
             {
