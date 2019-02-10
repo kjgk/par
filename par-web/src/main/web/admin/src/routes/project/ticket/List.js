@@ -5,7 +5,7 @@ import {Formatter} from '../../../components'
 import queryString from 'query-string'
 import TicketStatus from '../../../sections/ticket/TicketStatus'
 
-const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, ...tableProps}) => {
+const List = ({onDeleteItem, onViewItem, onAcceptItem, onProcessItem, location, ...tableProps}) => {
   location.query = queryString.parse(location.search)
 
   const handleView = (record) => {
@@ -31,8 +31,8 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, .
     })
   }
 
-  const handleFinish = (record) => {
-    onFinishItem(record.objectId)
+  const handleProcess = (record) => {
+    onProcessItem(record)
   }
 
   const columns = [
@@ -79,9 +79,9 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, .
             <a style={{color: '#F50'}} onClick={() => {
               handleAccept(record)
             }}>接单</a></React.Fragment>}
-          {onFinishItem && record.status === 1 && <React.Fragment><Divider type="vertical"/>
+          {onProcessItem && record.status === 1 && <React.Fragment><Divider type="vertical"/>
             <a style={{color: '#6dbb91'}} onClick={() => {
-              handleFinish(record)
+              handleProcess(record)
             }}>结单</a></React.Fragment>}
           {onDeleteItem && <React.Fragment><Divider type="vertical"/>
             <a onClick={() => {

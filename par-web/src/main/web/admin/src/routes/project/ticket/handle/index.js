@@ -8,6 +8,7 @@ import queryString from 'query-string'
 import List from '../List'
 import Filter from '../Filter'
 import ViewModal from '../ViewModal'
+import ProcessModal from './Modal'
 
 const namespace = 'ticketHandle'
 
@@ -59,8 +60,14 @@ const Component = ({
           page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
         }))
     },
-    onFinishItem(value) {
-
+    onProcessItem(item) {
+      dispatch({
+        type: `${namespace}/showModal`,
+        payload: {
+          modalType: 'process',
+          currentItem: item,
+        },
+      })
     },
   }
 
@@ -88,11 +95,31 @@ const Component = ({
     },
   }
 
+  const processModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    title: `工单结单`,
+    onOk(data) {
+      dispatch({
+        type: `${namespace}/process`,
+        payload: data,
+      })
+        .then(() => handleRefresh())
+    },
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   return (
     <Page inner>
       <Filter {...filterProps} />
       <List {...listProps} />
-      {modalVisible && <ViewModal  {...viewModalProps}/>}
+      {modalVisible && modalType === 'view' && <ViewModal  {...viewModalProps}/>}
+      {modalVisible && modalType === 'process' && <ProcessModal  {...processModalProps}/>}
     </Page>
   )
 }

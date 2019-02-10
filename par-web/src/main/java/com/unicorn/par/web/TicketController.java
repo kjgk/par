@@ -101,8 +101,8 @@ public class TicketController {
     }
 
     @RequestMapping(value = "/{objectId}/process", method = RequestMethod.POST)
-    public void processTicket(@RequestBody TicketHandle ticketHandle) {
+    public void processTicket(@PathVariable("objectId") Long objectId, @RequestBody TicketHandle ticketHandle) {
 
-        ticketService.processTicket(ticketHandle);
+        ticketService.processTicket(objectId, ticketHandle);
     }
 }

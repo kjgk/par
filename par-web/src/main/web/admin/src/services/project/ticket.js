@@ -12,7 +12,10 @@ export default {
       body: {},
     })
   },
-  processTicket(ticketId) {
-
+  processTicket({objectId, ...data}) {
+    return request(`${api}/${objectId}/process`, {
+      method: 'POST',
+      body: data,
+    })
   },
 }

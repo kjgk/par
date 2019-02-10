@@ -16,6 +16,7 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
     },
     * process({payload = {}}, {call, put, select}) {
       yield call(service.processTicket, payload)
+      yield put({type: 'hideModal'})
       message.success('处理成功！')
     },
   },

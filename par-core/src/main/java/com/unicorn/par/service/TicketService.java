@@ -97,9 +97,14 @@ public class TicketService {
         ticketHandleRepository.save(ticketHandle);
     }
 
-    public void processTicket(TicketHandle ticketHandle) {
+    public void processTicket(Long ticketId, TicketHandle ticketHandle) {
 
-        TicketHandle current = ticketHandleRepository.findByTicketId(ticketHandle.getObjectId());
+        TicketHandle current = ticketHandleRepository.findByTicketId(ticketId);
+
+        if (current == null) {
+            return;
+        }
+
         current.setRemark(ticketHandle.getRemark());
         current.setResult(ticketHandle.getResult());
         current.setFinishTime(new Date());
