@@ -5,7 +5,7 @@ import {Formatter} from '../../../components'
 import queryString from 'query-string'
 import TicketStatus from '../../../sections/ticket/TicketStatus'
 
-const List = ({onDeleteItem, onViewItem, onAcceptItem, location, ...tableProps}) => {
+const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, ...tableProps}) => {
   location.query = queryString.parse(location.search)
 
   const handleView = (record) => {
@@ -26,10 +26,14 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, location, ...tableProps})
     onAcceptItem(record.objectId)
   }
 
+  const handleFinish = (record) => {
+    onFinishItem(record.objectId)
+  }
+
   const columns = [
     {
       title: '所属系统',
-      dataIndex: 'system.name',
+      dataIndex: 'systemName',
     },
     {
       title: '工单描述',
@@ -53,8 +57,8 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, location, ...tableProps})
       render: (value) => <TicketStatus value={value}/>
     },
     {
-      title: '创建时间',
-      dataIndex: 'submitTIme',
+      title: '提交时间',
+      dataIndex: 'submitTime',
       width: 180,
       render: (value) => <Formatter.Date value={value}/>,
     },
@@ -70,6 +74,10 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, location, ...tableProps})
             <a style={{color: '#F50'}} onClick={() => {
               handleAccept(record)
             }}>接单</a></React.Fragment>}
+          {onFinishItem && record.status === 1 && <React.Fragment><Divider type="vertical"/>
+            <a style={{color: '#50F'}} onClick={() => {
+              handleFinish(record)
+            }}>结单</a></React.Fragment>}
           {onDeleteItem && <React.Fragment><Divider type="vertical"/>
             <a onClick={() => {
               handleDelete(record)

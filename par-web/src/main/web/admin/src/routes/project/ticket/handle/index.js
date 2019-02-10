@@ -49,6 +49,9 @@ const Component = ({
           page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
         }))
     },
+    onFinishItem (value) {
+
+    },
   }
 
   const filterProps = {

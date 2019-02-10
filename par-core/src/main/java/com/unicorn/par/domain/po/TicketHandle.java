@@ -4,6 +4,7 @@ package com.unicorn.par.domain.po;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.unicorn.core.domain.DefaultPersistent;
+import com.unicorn.std.domain.vo.FileUploadInfo;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,4 +35,10 @@ public class TicketHandle extends DefaultPersistent {
 
     private Date finishTime;
 
+    private Integer result;
+
+    private String remark;
+
+    @Transient
+    List<FileUploadInfo> attachments;
 }

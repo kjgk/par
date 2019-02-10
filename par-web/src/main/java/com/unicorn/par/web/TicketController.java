@@ -7,6 +7,8 @@ import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.Accendant;
 import com.unicorn.par.domain.po.QTicket;
 import com.unicorn.par.domain.po.Ticket;
+import com.unicorn.par.domain.po.TicketHandle;
+import com.unicorn.par.domain.vo.TicketInfo;
 import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.TicketService;
 import com.unicorn.system.domain.po.User;
@@ -35,7 +37,7 @@ public class TicketController {
     private AccendantService accendantService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Ticket> list(PageInfo pageInfo, String keyword) {
+    public Page<TicketInfo> list(PageInfo pageInfo, String keyword) {
 
         QTicket ticket = QTicket.ticket;
 
@@ -65,7 +67,7 @@ public class TicketController {
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.DESC, "createdDate")
         );
-        return ticketService.getTicket(queryInfo);
+        return ticketService.getTicketInfo(queryInfo);
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -96,5 +98,11 @@ public class TicketController {
     public void acceptTicket(@PathVariable("objectId") Long objectId) {
 
         ticketService.acceptTicket(objectId);
+    }
+
+    @RequestMapping(value = "/{objectId}/process", method = RequestMethod.POST)
+    public void processTicket(@RequestBody TicketHandle ticketHandle) {
+
+        ticketService.processTicket(ticketHandle);
     }
 }

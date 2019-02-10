@@ -1,10 +1,12 @@
 package com.unicorn.par.service;
 
 import com.unicorn.core.domain.vo.BasicInfo;
+import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.enumeration.TicketStatus;
 import com.unicorn.par.domain.po.Ticket;
 import com.unicorn.par.domain.po.TicketHandle;
+import com.unicorn.par.domain.vo.TicketInfo;
 import com.unicorn.par.repository.TicketHandleRepository;
 import com.unicorn.par.repository.TicketRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
@@ -41,9 +43,9 @@ public class TicketService {
     @Autowired
     private UserService userService;
 
-    public Page<Ticket> getTicket(QueryInfo queryInfo) {
+    public Page<TicketInfo> getTicketInfo(QueryInfo queryInfo) {
 
-        return ticketRepository.findAll(queryInfo);
+        return ticketRepository.findAll(queryInfo).map(this::buildTicketInfo);
     }
 
     public List<BasicInfo> getTicket() {
@@ -84,11 +86,37 @@ public class TicketService {
         Ticket ticket = getTicket(objectId);
         ticket.setStatus(TicketStatus.processing);
 
-        TicketHandle ticketHandle = new TicketHandle();
+        TicketHandle ticketHandle = ticketHandleRepository.findByTicketId(objectId);
+        if (ticketHandle != null) {
+            throw new ServiceException("该工单已经被接单！");
+        }
+        ticketHandle = new TicketHandle();
         ticketHandle.setAccendant(accendantService.getCurrentAccendant());
         ticketHandle.setAcceptTime(new Date());
         ticketHandle.setTicket(ticket);
         ticketHandleRepository.save(ticketHandle);
+    }
+
+    public void processTicket(TicketHandle ticketHandle) {
+
+        TicketHandle current = ticketHandleRepository.findByTicketId(ticketHandle.getObjectId());
+        current.setRemark(ticketHandle.getRemark());
+        current.setResult(ticketHandle.getResult());
+        current.setFinishTime(new Date());
+
+        if (!CollectionUtils.isEmpty(ticketHandle.getAttachments())) {
+            List<ContentAttachment> contentAttachments = new ArrayList();
+            for (FileUploadInfo fileUploadInfo : ticketHandle.getAttachments()) {
+                ContentAttachment contentAttachment = new ContentAttachment();
+                contentAttachment.setFileInfo(fileUploadInfo);
+                contentAttachment.setRelatedType(TicketHandle.class.getSimpleName());
+                contentAttachment.setRelatedId(current.getObjectId());
+                contentAttachments.add(contentAttachment);
+            }
+            contentAttachmentService.save(TicketHandle.class.getSimpleName(), current.getObjectId(), null, contentAttachments);
+        }
+
+        current.getTicket().setStatus(TicketStatus.finish);
     }
 
     public void deleteTicket(Long objectId) {
@@ -99,5 +127,22 @@ public class TicketService {
     public void deleteTicket(List<Long> objectIds) {
 
         objectIds.forEach(this::deleteTicket);
+    }
+
+    private TicketInfo buildTicketInfo(Ticket ticket) {
+
+        TicketInfo ticketInfo = new TicketInfo();
+        ticketInfo.setObjectId(ticket.getObjectId());
+        ticketInfo.setPriority(ticket.getPriority());
+        ticketInfo.setContacts(ticket.getContacts());
+        ticketInfo.setPhoneNo(ticket.getPhoneNo());
+        ticketInfo.setContent(ticket.getContent());
+        ticketInfo.setStatus(ticket.getStatus());
+        ticketInfo.setSubmitter(ticket.getSubmitter().getName());
+        ticketInfo.setSubmitTime(ticket.getSubmitTime());
+        ticketInfo.setSystemName(ticket.getSystem().getName());
+        ticketInfo.setSystemId(ticket.getSystem().getObjectId());
+        ticketInfo.setAttachments(contentAttachmentService.getAttachmentLinks(ticket.getObjectId()));
+        return ticketInfo;
     }
 }
