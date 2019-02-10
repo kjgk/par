@@ -1,5 +1,6 @@
 package com.unicorn.par.domain.vo;
 
+import com.unicorn.std.domain.vo.FileDownloadInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,5 +32,5 @@ public class TicketInfo implements Serializable {
 
     private Integer status;
 
-    private List<String> attachments;
+    private List<FileDownloadInfo> attachments;
 }

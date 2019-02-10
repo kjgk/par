@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {Button, Checkbox, Divider, Empty, Form, Icon, List, Modal, Steps, Tabs, Upload, message, Row, Col} from 'antd'
 
 import styles from './inspection.module.less'
-import {apiPrefix, contentPath} from "../../../utils/config"
+import {apiPrefix, contextPath} from "../../../utils/config"
 import {Formatter} from "../../../components"
 
 const {Step} = Steps
@@ -64,7 +64,7 @@ const modal = ({
   }
 
   const uploaderProps = {
-    action: `${contentPath}${apiPrefix}/system/file/upload`,
+    action: `${contextPath}${apiPrefix}/system/file/upload`,
     multiple: true,
     accept: '.jpg,.pdf,.doc,.docx,.xls,.xlsx',
     listType: 'picture-card',

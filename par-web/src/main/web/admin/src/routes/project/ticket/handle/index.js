@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { routerRedux } from 'dva/router'
-import { connect } from 'dva'
+import {routerRedux} from 'dva/router'
+import {connect} from 'dva'
 import {Button, Col, Popconfirm, Row} from 'antd'
-import { Formatter, Page } from '../../../../components'
+import {Formatter, Page} from '../../../../components'
 import queryString from 'query-string'
 import List from '../List'
 import Filter from '../Filter'
+import ViewModal from '../ViewModal'
 
 const namespace = 'ticketHandle'
 
@@ -14,7 +15,7 @@ const Component = ({
                      location, dispatch, model, loading,
                    }) => {
   location.query = queryString.parse(location.search)
-  const { query, pathname } = location
+  const {query, pathname} = location
   const {
     list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
   } = model
@@ -34,13 +35,22 @@ const Component = ({
     loading: loading.effects[`${namespace}/query`],
     pagination,
     location,
-    onChange (page) {
+    onChange(page) {
       handleRefresh({
         page: page.current,
         pageSize: page.pageSize,
       })
     },
-    onAcceptItem (value) {
+    onViewItem(item) {
+      dispatch({
+        type: `${namespace}/showModal`,
+        payload: {
+          modalType: 'view',
+          currentItem: item,
+        },
+      })
+    },
+    onAcceptItem(value) {
       dispatch({
         type: `${namespace}/accept`,
         payload: value,
@@ -49,7 +59,7 @@ const Component = ({
           page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
         }))
     },
-    onFinishItem (value) {
+    onFinishItem(value) {
 
     },
   }
@@ -58,10 +68,22 @@ const Component = ({
     filter: {
       ...query,
     },
-    onFilterChange (value) {
+    onFilterChange(value) {
       handleRefresh({
         ...value,
         page: 1,
+      })
+    },
+  }
+
+  const viewModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    title: `工单详情`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
       })
     },
   }
@@ -70,6 +92,7 @@ const Component = ({
     <Page inner>
       <Filter {...filterProps} />
       <List {...listProps} />
+      {modalVisible && <ViewModal  {...viewModalProps}/>}
     </Page>
   )
 }

@@ -12,5 +12,5 @@ module.exports = {
     currentInfo: `${api}/current`,
     menus: `${api}/menus`,
   },
-  contentPath: '/par'
+  contextPath: '/par'
 }

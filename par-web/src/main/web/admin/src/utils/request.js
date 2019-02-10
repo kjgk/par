@@ -3,7 +3,7 @@ import JSOG from 'jsog'
 import {notification, message} from 'antd'
 import {routerRedux} from 'dva/router'
 import store from '../index'
-import {contentPath} from './config'
+import {contextPath} from './config'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -80,7 +80,7 @@ export default function request(url, options) {
     }
   }
 
-  return fetch(contentPath + url, newOptions)
+  return fetch(contextPath + url, newOptions)
     .then(checkStatus)
     .then(response => {
       return response.json()

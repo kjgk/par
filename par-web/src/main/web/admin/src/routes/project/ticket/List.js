@@ -23,7 +23,12 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, .
   }
 
   const handleAccept = (record) => {
-    onAcceptItem(record.objectId)
+    Modal.confirm({
+      title: '确定要接单吗?',
+      onOk() {
+        onAcceptItem(record.objectId)
+      },
+    })
   }
 
   const handleFinish = (record) => {
@@ -75,7 +80,7 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onFinishItem, location, .
               handleAccept(record)
             }}>接单</a></React.Fragment>}
           {onFinishItem && record.status === 1 && <React.Fragment><Divider type="vertical"/>
-            <a style={{color: '#50F'}} onClick={() => {
+            <a style={{color: '#6dbb91'}} onClick={() => {
               handleFinish(record)
             }}>结单</a></React.Fragment>}
           {onDeleteItem && <React.Fragment><Divider type="vertical"/>

@@ -6,7 +6,7 @@
 import dva from 'dva'
 import createLoading from 'dva-loading'
 import createHistory from 'history/createBrowserHistory'
-import { contentPath } from './utils/config'
+import { contextPath } from './utils/config'
 
 const development = process.env.NODE_ENV === 'development'
 
@@ -15,7 +15,7 @@ const app = dva({
   ...createLoading({
     effects: true,
   }),
-  history: createHistory({ basename: development ? '' : `${contentPath}/admin` }),
+  history: createHistory({ basename: development ? '' : `${contextPath}/admin` }),
   onError (error) {
     console.error(error.message)
   },

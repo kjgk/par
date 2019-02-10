@@ -7,6 +7,7 @@ import { Formatter, Page } from '../../../components'
 import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
+import ViewModal from './ViewModal'
 
 const namespace = 'ticket'
 const name = '工单'
@@ -71,6 +72,15 @@ const Component = ({
         },
       })
     },
+    onViewItem(item) {
+      dispatch({
+        type: `${namespace}/showModal`,
+        payload: {
+          modalType: 'view',
+          currentItem: item,
+        },
+      })
+    },
     rowSelection: {
       selectedRowKeys,
       onChange: (keys) => {
@@ -101,6 +111,18 @@ const Component = ({
     },
   }
 
+  const viewModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    title: `工单详情`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   return (
     <Page inner>
       <Filter {...filterProps} />
@@ -119,6 +141,7 @@ const Component = ({
         </Row>
       }
       <List {...listProps} />
+      {modalVisible && <ViewModal  {...viewModalProps}/>}
     </Page>
   )
 }

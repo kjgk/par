@@ -4,7 +4,7 @@ import {connect} from 'dva'
 import {Button, Divider, Form, Icon, Input, Radio, Upload} from "antd"
 import {Page} from "../../../../components"
 import SystemSelect from "../../../../sections/system/SystemSelect"
-import {apiPrefix, contentPath} from "../../../../utils/config"
+import {apiPrefix, contextPath} from "../../../../utils/config"
 import styles from "./ticket.create.module.less"
 import {Link} from "react-router-dom"
 
@@ -50,7 +50,7 @@ const Component = ({
   const confirmLoading = loading.effects[`${namespace}/save`]
 
   const uploaderProps = {
-    action: `${contentPath}${apiPrefix}/system/file/upload`,
+    action: `${contextPath}${apiPrefix}/system/file/upload`,
     multiple: true,
     name: 'attachment',
     fileList,
