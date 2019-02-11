@@ -57,7 +57,10 @@ const modal = ({
       }
       data.detailList.push({
         result: functionResults[fun.objectId] ? 1 : 0,
-        screenshots
+        screenshots,
+        'function': {
+          objectId: fun.objectId,
+        },
       })
     }
     onOk(data)

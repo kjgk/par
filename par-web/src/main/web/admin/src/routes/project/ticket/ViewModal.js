@@ -42,7 +42,7 @@ const modal = ({
           <div>{item.phoneNo}</div>
         </Form.Item>
         <Form.Item label="提交时间" {...formItemLayout}>
-          <div><Formatter.Date value={item.status}/></div>
+          <div><Formatter.Date value={item.submitTime}/></div>
         </Form.Item>
         <Form.Item label="状态" {...formItemLayout}>
           <div><TicketStatus value={item.status}/></div>

@@ -26,6 +26,10 @@ public class InspectionDetail extends DefaultIdentifiable {
     @JoinColumn(name = "inspection_id")
     private Inspection inspection;
 
+    @OneToOne
+    @JoinColumn(name = "function_id")
+    private Function function;
+
     private Integer result;
 
     @Transient

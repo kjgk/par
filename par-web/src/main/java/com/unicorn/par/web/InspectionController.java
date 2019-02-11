@@ -4,9 +4,14 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
+import com.unicorn.par.domain.po.Accendant;
 import com.unicorn.par.domain.po.Inspection;
 import com.unicorn.par.domain.po.QInspection;
+import com.unicorn.par.domain.vo.InspectionInfo;
+import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.InspectionService;
+import com.unicorn.system.domain.po.User;
+import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -24,9 +29,15 @@ public class InspectionController {
     @Autowired
     private InspectionService inspectionService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AccendantService accendantService;
+
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Inspection> list(PageInfo pageInfo, String keyword) {
+    public Page<InspectionInfo> list(PageInfo pageInfo, String keyword) {
 
         QInspection inspection = QInspection.inspection;
 
@@ -39,6 +50,14 @@ public class InspectionController {
                 expression = expression.and(inspection.name.containsIgnoreCase(s));
             }
         }
+
+        User currentUser = userService.getCurrentUser();
+        String roleTag = currentUser.getUserRoleList().get(0).getRole().getTag();
+        if ("Accendant".equals(roleTag)) {
+            Accendant currentAccendant = accendantService.getCurrentAccendant();
+            expression = expression.and(inspection.accendant.objectId.eq(currentAccendant.getObjectId()));
+        }
+
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.DESC, "createdDate")
         );

@@ -126,7 +126,7 @@ public class TicketService {
 
     public void deleteTicket(Long objectId) {
 
-        ticketRepository.deleteById(objectId);
+        ticketRepository.logicDelete(objectId);
     }
 
     public void deleteTicket(List<Long> objectIds) {

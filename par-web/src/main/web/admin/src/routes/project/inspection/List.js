@@ -4,11 +4,11 @@ import { Divider, Modal, Table } from 'antd'
 import { Formatter } from '../../../components'
 import queryString from 'query-string'
 
-const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
+const List = ({ onDeleteItem, onViewItem, location, ...tableProps }) => {
   location.query = queryString.parse(location.search)
 
-  const handleEdit = (record) => {
-    onEditItem(record)
+  const handleView = (record) => {
+    onViewItem(record)
   }
 
   const handleDelete = (record) => {
@@ -24,11 +24,11 @@ const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
   const columns = [
     {
       title: '系统',
-      dataIndex: 'system.name',
+      dataIndex: 'systemName',
     },
     {
       title: '巡检人',
-      dataIndex: 'accendant.username',
+      dataIndex: 'accendantName',
       width: 180,
     },
     {
@@ -43,7 +43,7 @@ const List = ({ onDeleteItem, onEditItem, location, ...tableProps }) => {
       render: (text, record) => {
         return <div>
           <a onClick={() => {
-            // handleEdit(record)
+            handleView(record)
           }}>查看</a>
           <Divider type="vertical"/>
           <a onClick={() => {

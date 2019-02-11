@@ -8,6 +8,7 @@ import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 import Modal from './Modal'
+import ViewModal from "./ViewModal"
 
 const namespace = 'inspection'
 const name = '系统巡检'
@@ -120,11 +121,11 @@ const Component = ({
           page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
         }))
     },
-    onEditItem(item) {
+    onViewItem(item) {
       dispatch({
         type: `${namespace}/showModal`,
         payload: {
-          modalType: 'update',
+          modalType: 'view',
           currentItem: item,
         },
       })
@@ -165,6 +166,18 @@ const Component = ({
     },
   }
 
+  const viewModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    title: `巡检详情`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   return (
     <Page inner>
       <Filter {...filterProps} />
@@ -183,7 +196,8 @@ const Component = ({
         </Row>
       }
       <List {...listProps} />
-      {modalVisible && <Modal {...modalProps} />}
+      {modalVisible && modalType === 'create' && <Modal {...modalProps} />}
+      {modalVisible && modalType === 'view' && <ViewModal  {...viewModalProps}/>}
     </Page>
   )
 }
