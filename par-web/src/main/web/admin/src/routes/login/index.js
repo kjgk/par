@@ -38,7 +38,7 @@ const Login = ({
     <div className={styles.form}>
       <div className={styles.logo}>
         <img alt="logo" src={require('../../assets/logo.svg')}/>
-        <span>管理登录</span>
+        <span>用户登录</span>
       </div>
       <form>
         {login.errorMessage && !loading.effects.login && renderMessage(login.errorMessage)}

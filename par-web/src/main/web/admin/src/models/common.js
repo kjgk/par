@@ -408,12 +408,14 @@ const createTreeModel = function (namespace, pathname, {query, get, create, upda
       * move({payload: info}, {call, put, select}) {
         const {treeData} = yield select(_ => _[namespace])
         const {
-          dragNodesKeys: [sourceId],
+          dragNodesKeys,
           dragNode: {props: {pos: pos1}},
           dropPosition,
           dropToGap,
           node: {props: {eventKey: targetId, pos: pos2}}
         } = info
+
+        const sourceId = dragNodesKeys[dragNodesKeys.length - 1]
 
         if (pos2.indexOf(pos1) === 0) {
           message.warn('不能移动到此处！')
