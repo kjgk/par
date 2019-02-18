@@ -35,10 +35,10 @@ const modal = ({
         <Form.Item label="工单描述" {...formItemLayout}>
           <div>{item.content}</div>
         </Form.Item>
-        <Form.Item label="联系人" {...formItemLayout}>
+        <Form.Item label="报修人" {...formItemLayout}>
           <div>{item.contacts}</div>
         </Form.Item>
-        <Form.Item label="联系方式" {...formItemLayout}>
+        <Form.Item label="报修人手机号" {...formItemLayout}>
           <div>{item.phoneNo}</div>
         </Form.Item>
         <Form.Item label="提交时间" {...formItemLayout}>

@@ -35,10 +35,10 @@ public class Ticket extends DefaultPersistent {
     @JoinColumn(name = "system_id")
     private System system;
 
-    // 联系人
+    // 报修人
     private String contacts;
 
-    // 联系人手机号码
+    // 报修人手机号
     private String phoneNo;
 
     @OneToOne

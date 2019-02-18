@@ -46,12 +46,12 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onProcessItem, location, 
       render: (value) => value && (value.length > 40 ? value.substring(0, 40) + '...' : value)
     },
     {
-      title: '联系人',
+      title: '报修人',
       dataIndex: 'contacts',
       width: 100,
     },
     {
-      title: '联系方式',
+      title: '报修人手机号',
       dataIndex: 'phoneNo',
       width: 100,
     },

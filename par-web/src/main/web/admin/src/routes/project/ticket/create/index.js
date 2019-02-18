@@ -124,15 +124,15 @@ const Component = ({
             }],
           })(<SystemSelect placeholder="请选择所属系统"/>)}
         </Form.Item>
-        <Form.Item label="联系人" hasFeedback {...formItemLayout}>
+        <Form.Item label="报修人" hasFeedback {...formItemLayout}>
           {getFieldDecorator('contacts', {
             initialValue: '',
-          })(<Input placeholder="请输入联系人"/>)}
+          })(<Input placeholder="请输入报修人"/>)}
         </Form.Item>
-        <Form.Item label="手机号" hasFeedback {...formItemLayout}>
+        <Form.Item label="报修人手机号" hasFeedback {...formItemLayout}>
           {getFieldDecorator('phoneNo', {
             initialValue: '',
-          })(<Input placeholder="请输入手机号"/>)}
+          })(<Input placeholder="请输入报修人手机号"/>)}
         </Form.Item>
         <Form.Item label="附件" hasFeedback {...formItemLayout}>
           <Upload {...uploaderProps}>
