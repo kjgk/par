@@ -1,4 +1,5 @@
 import service from '../../services/project/inspection'
+import {uploadFile} from '../../services/common'
 import systemService from '../../services/project/system'
 import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"
@@ -65,6 +66,55 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
         })
       }
     },
+
+    * uploadFileFromClipboard({payload = {}}, {call, put, select}) {
+
+      const {functionScreenshots, currentSystem} = yield select(_ => _[namespace])
+      const {file, functionId} = payload
+      let allowNextStep = false
+      const fileItem = {
+        uid: 'rc-upload-' + new Date().getTime(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        percent: 0,
+        status: "uploading",
+      }
+      functionScreenshots[functionId] = functionScreenshots[functionId] || {fileList: []}
+      functionScreenshots[functionId].fileList.push(fileItem)
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          functionScreenshots,
+          allowNextStep,
+        },
+      })
+
+      const response = yield call(uploadFile, file)
+
+      fileItem.percent = 100
+      fileItem.status = 'done'
+      fileItem.thumbUrl = response.link
+      fileItem.response = response
+
+      allowNextStep = true
+      for (let fun of currentSystem.functionList) {
+        let screenshots = functionScreenshots[fun.objectId]
+        if (screenshots && screenshots.fileList.length > 0) {
+        } else {
+          allowNextStep = false
+        }
+      }
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          functionScreenshots,
+          allowNextStep,
+        },
+      })
+    }
   },
 
   reducers: {

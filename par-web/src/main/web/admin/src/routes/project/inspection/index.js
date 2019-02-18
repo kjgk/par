@@ -99,6 +99,15 @@ const Component = ({
         payload: functionId,
       })
     },
+    onFormPaste(file, functionId) {
+      dispatch({
+        type: `${namespace}/uploadFileFromClipboard`,
+        payload: {
+          file,
+          functionId,
+        },
+      })
+    }
   }
 
   const listProps = {

@@ -1,5 +1,6 @@
 import {stringify} from 'qs'
 import {config, request} from '../utils'
+import {contextPath} from "../utils/config"
 
 const {apiPrefix} = config
 
@@ -70,4 +71,14 @@ const createTreeService = function (path) {
   }
 }
 
-export {createCrudService, createTreeService}
+const uploadFile = function (file) {
+
+  let formData = new FormData()
+  formData.append("attachment", file)
+  return request(`${apiPrefix}/system/file/upload`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
+export {createCrudService, createTreeService, uploadFile}

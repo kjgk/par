@@ -19,6 +19,7 @@ const modal = ({
                  onNextStep,
                  allowNextStep,
                  onUploadChange,
+                 onFormPaste,
                  functionScreenshots,
                  functionResults,
                  toggleResult,
@@ -83,6 +84,15 @@ const modal = ({
     screenshotsCount += screenshots.fileList.length
   }
 
+  const handlePaste = (event, functionId) => {
+    if (!(event.clipboardData && event.clipboardData.items)) {
+      return
+    }
+    for (let file of event.clipboardData.files) {
+      onFormPaste(file, functionId)
+    }
+  }
+
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
@@ -124,7 +134,7 @@ const modal = ({
             {currentSystem.functionList && currentSystem.functionList.length > 0 && <Tabs tabPosition="left">
               {currentSystem.functionList.map((item) =>
                 <TabPane tab={item.name} key={item.objectId}>
-                  <div className={styles['detail-form']}>
+                  <div className={styles['detail-form']} onPaste={(event) => handlePaste(event, item.objectId)}>
                     <div style={{margin: '0 0 10px 0'}}>
                       <Checkbox checked={functionResults[item.objectId]} onChange={() => {
                         toggleResult(item.objectId)
