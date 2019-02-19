@@ -1,7 +1,9 @@
 package com.unicorn.par.domain.vo;
 
 import com.unicorn.std.domain.vo.FileDownloadInfo;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -33,4 +35,29 @@ public class TicketInfo implements Serializable {
     private Integer status;
 
     private List<FileDownloadInfo> attachments;
+
+    private TicketHandleInfo handleInfo;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TicketHandleInfo implements Serializable {
+
+        private Long objectId;
+
+        private String accendant;
+
+        private Date acceptTime;
+
+        private Date finishTime;
+
+        private Integer result;
+
+        private String remark;
+
+        private List<FileDownloadInfo> attachments;
+    }
 }
+
+

@@ -148,6 +148,19 @@ public class TicketService {
         ticketInfo.setSystemName(ticket.getSystem().getName());
         ticketInfo.setSystemId(ticket.getSystem().getObjectId());
         ticketInfo.setAttachments(contentAttachmentService.getAttachmentLinks(ticket.getObjectId()));
+
+        TicketHandle ticketHandle = ticketHandleRepository.findByTicketId(ticket.getObjectId());
+        if (ticketHandle != null) {
+            TicketInfo.TicketHandleInfo ticketHandleInfo = new TicketInfo.TicketHandleInfo();
+            ticketHandleInfo.setObjectId(ticketHandle.getObjectId());
+            ticketHandleInfo.setAccendant(ticketHandle.getAccendant().getUsername());
+            ticketHandleInfo.setAcceptTime(ticketHandleInfo.getAcceptTime());
+            ticketHandleInfo.setFinishTime(ticketHandle.getFinishTime());
+            ticketHandleInfo.setResult(ticketHandle.getResult());
+            ticketHandleInfo.setRemark(ticketHandle.getRemark());
+            ticketHandleInfo.setAttachments(contentAttachmentService.getAttachmentLinks(ticketHandle.getObjectId()));
+            ticketInfo.setHandleInfo(ticketHandleInfo);
+        }
         return ticketInfo;
     }
 }

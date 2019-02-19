@@ -1,18 +1,9 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
-import {Button, Form, Input, Modal} from 'antd'
+import {Button, Col, Divider, Form, Input, Modal, Row} from 'antd'
 import TicketStatus from "../../../sections/ticket/TicketStatus"
 import {Formatter} from "../../../components"
 import {contextPath} from '../../../utils/config'
-
-const formItemLayout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-}
 
 const modal = ({
                  item = {},
@@ -28,32 +19,74 @@ const modal = ({
 
   return (
     <Modal {...modalOpts}>
-      <Form layout="horizontal">
-        <Form.Item label="所属系统" {...formItemLayout}>
-          <div>{item.systemName}</div>
-        </Form.Item>
-        <Form.Item label="工单描述" {...formItemLayout}>
-          <div>{item.content}</div>
-        </Form.Item>
-        <Form.Item label="报修人" {...formItemLayout}>
-          <div>{item.contacts}</div>
-        </Form.Item>
-        <Form.Item label="报修人手机号" {...formItemLayout}>
-          <div>{item.phoneNo}</div>
-        </Form.Item>
-        <Form.Item label="提交时间" {...formItemLayout}>
-          <div><Formatter.Date value={item.submitTime}/></div>
-        </Form.Item>
-        <Form.Item label="状态" {...formItemLayout}>
-          <div><TicketStatus value={item.status}/></div>
-        </Form.Item>
-        <Form.Item label="附件" {...formItemLayout}>
-          {item.attachments.map((attachment) =>
-            <div key={attachment.url}>
-              <a href={`${contextPath}${attachment.url}`} target="_blank">{attachment.filename}</a>
-            </div>
-          )}
-        </Form.Item>
+      <Form className="ant-advanced-form">
+        <Row gutter={24}>
+          <Col span={22} offset={2}>
+            <Form.Item label="所属系统">
+              {item.systemName}
+            </Form.Item>
+          </Col>
+          <Col span={22} offset={2}>
+            <Form.Item label="工单描述">
+              <div style={{whiteSpace: 'pre-wrap'}}>{item.content}</div>
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={2}>
+            <Form.Item label="报修人">
+              {item.contacts}
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={2}>
+            <Form.Item label="报修人手机号">
+              {item.phoneNo}
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={2}>
+            <Form.Item label="提交时间">
+              <Formatter.Date value={item.submitTime}/>
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={2}>
+            <Form.Item label="状态">
+              <div><TicketStatus value={item.status}/></div>
+            </Form.Item>
+          </Col>
+          <Col span={22} offset={2}>
+            <Form.Item label="附件">
+              {item.attachments.map((attachment) =>
+                <div key={attachment.url}>
+                  <a href={`${contextPath}${attachment.url}`} target="_blank">{attachment.filename}</a>
+                </div>
+              )}
+            </Form.Item>
+          </Col>
+          {
+            item.status === 2 && item.handleInfo && <Fragment>
+              <Divider>处理结果</Divider>
+              <Col span={22} offset={2}>
+                <Form.Item label="是否解决">
+                  {item.handleInfo.result === 1 ? '是' : '否'}
+                </Form.Item>
+              </Col>
+
+              <Col span={22} offset={2}>
+                <Form.Item label="备注">
+                  <div style={{whiteSpace: 'pre-wrap'}}>{item.handleInfo.remark}</div>
+                </Form.Item>
+              </Col>
+
+              <Col span={22} offset={2}>
+                <Form.Item label="附件">
+                  {item.handleInfo.attachments.map((attachment) =>
+                    <div key={attachment.url}>
+                      <a href={`${contextPath}${attachment.url}`} target="_blank">{attachment.filename}</a>
+                    </div>
+                  )}
+                </Form.Item>
+              </Col>
+            </Fragment>
+          }
+        </Row>
       </Form>
     </Modal>
   )
