@@ -10,7 +10,7 @@ import com.unicorn.par.domain.po.QInspection;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.InspectionService;
-import com.unicorn.system.domain.po.User;
+import com.unicorn.core.domain.po.User;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

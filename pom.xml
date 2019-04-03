@@ -6,7 +6,6 @@
 
     <name>par</name>
 
-    <groupId>com.unicorn</groupId>
     <artifactId>par</artifactId>
     <version>1.0.0-RELEASE</version>
     <packaging>pom</packaging>
@@ -21,41 +20,22 @@
     </properties>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.2.RELEASE</version>
+        <groupId>com.unicorn</groupId>
+        <artifactId>unc</artifactId>
+        <version>3.1.4-SNAPSHOT</version>
     </parent>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.unicorn</groupId>
-                <artifactId>unc-core</artifactId>
-                <version>2.1.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.unicorn</groupId>
-                <artifactId>unc-std</artifactId>
-                <version>2.1.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.unicorn</groupId>
-                <artifactId>unc-sms</artifactId>
-                <version>2.1.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.unicorn</groupId>
-                <artifactId>unc-web</artifactId>
-                <version>2.1.2</version>
-                <scope>compile</scope>
+                <artifactId>par-core</artifactId>
+                <version>1.0.0-RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-	<distributionManagement>
+    <distributionManagement>
         <repository>
             <id>nexus-releases</id>
             <name>Nexus Release Repository</name>

@@ -1,8 +1,8 @@
 package com.unicorn.par.web;
 
 import com.unicorn.core.domain.DefaultRecursive;
-import com.unicorn.system.domain.po.Menu;
-import com.unicorn.system.domain.po.User;
+import com.unicorn.core.domain.po.Menu;
+import com.unicorn.core.domain.po.User;
 import com.unicorn.system.service.MenuService;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

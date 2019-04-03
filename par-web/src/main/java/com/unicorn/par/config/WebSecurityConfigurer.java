@@ -1,9 +1,9 @@
 package com.unicorn.par.config;
 
 
-import com.unicorn.core.PasswordEncoder;
 import com.unicorn.par.security.DefaultLoginProcessingFilter;
 import com.unicorn.par.service.ProjectService;
+import com.unicorn.system.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;

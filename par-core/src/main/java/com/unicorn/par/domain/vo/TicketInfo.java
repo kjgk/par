@@ -1,6 +1,6 @@
 package com.unicorn.par.domain.vo;
 
-import com.unicorn.std.domain.vo.FileDownloadInfo;
+import com.unicorn.core.domain.vo.FileDownloadInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

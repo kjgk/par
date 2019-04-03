@@ -11,7 +11,7 @@ import com.unicorn.par.domain.po.TicketHandle;
 import com.unicorn.par.domain.vo.TicketInfo;
 import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.TicketService;
-import com.unicorn.system.domain.po.User;
+import com.unicorn.core.domain.po.User;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

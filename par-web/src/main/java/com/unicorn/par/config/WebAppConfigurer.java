@@ -1,8 +1,8 @@
 package com.unicorn.par.config;
 
 import com.alibaba.fastjson.JSON;
+import com.unicorn.core.domain.po.User;
 import com.unicorn.par.service.AccendantService;
-import com.unicorn.system.domain.po.User;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

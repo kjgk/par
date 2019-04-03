@@ -1,14 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Redirect, Route, routerRedux, Switch } from 'dva/router'
+import {Redirect, Route, routerRedux, Switch} from 'dva/router'
 import dynamic from 'dva/dynamic'
 import App from './routes/app'
-import { LocaleProvider } from 'antd'
+import {LocaleProvider} from 'antd'
 import zh_CN from 'antd/es/locale-provider/zh_CN'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
 
-const { ConnectedRouter } = routerRedux
+moment.locale('zh-cn')
 
-const Routers = function ({ history, app }) {
+const {ConnectedRouter} = routerRedux
+
+const Routers = function ({history, app}) {
   const error = dynamic({
     app,
     component: () => import('./routes/error'),
@@ -105,7 +109,7 @@ const Routers = function ({ history, app }) {
             <Route exact path="/project" render={() => <Redirect to="/project/accendant"/>}/>
             <Route exact path="/system" render={() => <Redirect to="/system/user"/>}/>
             {
-              routes.map(({ path, ...dynamics }, key) => (
+              routes.map(({path, ...dynamics}, key) => (
                 <Route key={key}
                        exact
                        path={path}

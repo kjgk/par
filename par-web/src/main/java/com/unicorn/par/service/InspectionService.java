@@ -8,7 +8,7 @@ import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.repository.InspectionDetailRepository;
 import com.unicorn.par.repository.InspectionRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
-import com.unicorn.std.domain.vo.FileUploadInfo;
+import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.std.service.ContentAttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

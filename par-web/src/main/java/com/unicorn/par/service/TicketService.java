@@ -10,7 +10,7 @@ import com.unicorn.par.domain.vo.TicketInfo;
 import com.unicorn.par.repository.TicketHandleRepository;
 import com.unicorn.par.repository.TicketRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
-import com.unicorn.std.domain.vo.FileUploadInfo;
+import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.std.service.ContentAttachmentService;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

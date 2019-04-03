@@ -23,6 +23,18 @@
 
         <dependency>
             <groupId>com.unicorn</groupId>
+            <artifactId>unc-std</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.unicorn</groupId>
+            <artifactId>unc-sms</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.unicorn</groupId>
             <artifactId>unc-web</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -30,8 +42,12 @@
         <dependency>
             <groupId>com.unicorn</groupId>
             <artifactId>par-core</artifactId>
-            <version>1.0.0-RELEASE</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
         <dependency>
@@ -40,8 +56,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>
