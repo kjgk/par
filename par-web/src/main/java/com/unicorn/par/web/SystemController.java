@@ -26,7 +26,7 @@ public class SystemController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<System> list(PageInfo pageInfo, String keyword) {
+    public Page<System> list(PageInfo pageInfo, String keyword, Long company) {
 
         QSystem system = QSystem.system;
 
@@ -42,8 +42,11 @@ public class SystemController {
                 );
             }
         }
+        if (company != null) {
+            expression = expression.and(system.company.objectId.eq(company));
+        }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.DESC, "createdDate")
+                new Sort(Sort.Direction.ASC, "objectId")
         );
         return systemService.getSystem(queryInfo);
     }

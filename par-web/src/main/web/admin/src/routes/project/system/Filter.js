@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, Col, Form, Input, Row } from 'antd'
+import CompanySelect from "../../../sections/company/CompanySelect"
 
 const { Search } = Input
 
@@ -48,15 +49,20 @@ const Filter = ({
     handleSubmit()
   }
 
-  const { keyword } = filter
+  const { keyword, company } = filter
 
   return (
     <Row gutter={24}>
       <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+        {getFieldDecorator('company', { initialValue: company })(<CompanySelect allowClear
+                                                                                placeholder="请选择所属单位"
+                                                                                onChange={() => setTimeout(handleSubmit)}/>)}
+      </Col>
+      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
         {getFieldDecorator('keyword', { initialValue: keyword })(<Search placeholder="请输入关键字"
                                                                          onSearch={handleSubmit}/>)}
       </Col>
-      <Col {...TwoColProps} xl={{ span: 20 }} md={{ span: 24 }} sm={{ span: 24 }}>
+      <Col {...TwoColProps} xl={{ span: 16 }} md={{ span: 24 }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',

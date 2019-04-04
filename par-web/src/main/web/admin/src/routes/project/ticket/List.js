@@ -53,7 +53,7 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onProcessItem, location, 
     {
       title: '报修人手机号',
       dataIndex: 'phoneNo',
-      width: 100,
+      width: 120,
     },
     {
       title: '状态',

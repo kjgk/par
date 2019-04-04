@@ -1,6 +1,6 @@
 /* global window */
 /* global document */
-import React from 'react'
+import React, {Fragment} from 'react'
 import NProgress from 'nprogress'
 import PropTypes from 'prop-types'
 import pathToRegexp from 'path-to-regexp'
@@ -83,14 +83,14 @@ const App = ({
   }
 
   if (openPages && openPages.includes(pathname)) {
-    return (<div>
+    return (<Fragment>
       <Loader fullScreen spinning={loading.effects['app/query']} />
       {children}
-    </div>)
+    </Fragment>)
   }
 
   return (
-    <div>
+    <Fragment>
       <Loader fullScreen spinning={loading.effects['app/query']} />
       <Helmet>
         <title>巡检平台</title>
@@ -117,7 +117,7 @@ const App = ({
           </Footer>
         </Layout>
       </Layout>
-    </div>
+    </Fragment>
   )
 }
 

@@ -94,6 +94,16 @@ export default {
               }, { call, put }) {
       const data = yield call(logout)
       if (data.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            user: {},
+            permissions: {
+              visit: [],
+            },
+            menu: [],
+          },
+        })
         yield put({ type: 'query' })
       } else {
         throw (data)

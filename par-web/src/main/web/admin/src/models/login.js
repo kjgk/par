@@ -22,9 +22,7 @@ export default modelExtend(model, {
         const { from } = locationQuery
         yield put({ type: 'app/query' })
         if (from && from !== '/login') {
-          yield put(routerRedux.push(from))
-        } else {
-          yield put(routerRedux.push('/project'))
+          // yield put(routerRedux.push(from))
         }
       } else {
         yield put({

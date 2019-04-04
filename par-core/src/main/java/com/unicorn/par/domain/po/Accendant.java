@@ -32,7 +32,7 @@ public class Accendant extends DefaultPersistent {
 
     @OneToOne
     @JoinColumn(name = "company_id")
-    private Company Company;
+    private Company company;
 
     @Transient
     private String username;

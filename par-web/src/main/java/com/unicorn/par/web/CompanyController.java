@@ -40,7 +40,7 @@ public class CompanyController {
             }
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.DESC, "createdDate")
+                new Sort(Sort.Direction.ASC, "objectId")
         );
         return companyService.getCompany(queryInfo);
     }

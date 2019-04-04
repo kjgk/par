@@ -25,7 +25,7 @@ public class AccendantController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Accendant> list(PageInfo pageInfo, String keyword) {
+    public Page<Accendant> list(PageInfo pageInfo, String keyword, Long company) {
 
         QAccendant accendant = QAccendant.accendant;
 
@@ -38,8 +38,11 @@ public class AccendantController {
                 expression = expression.and(accendant.user.name.containsIgnoreCase(s));
             }
         }
+        if (company != null) {
+            expression = expression.and(accendant.company.objectId.eq(company));
+        }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.DESC, "createdDate")
+                new Sort(Sort.Direction.ASC, "objectId")
         );
         return accendantService.getAccendant(queryInfo);
     }
