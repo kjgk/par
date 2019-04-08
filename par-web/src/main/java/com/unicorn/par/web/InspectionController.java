@@ -94,4 +94,10 @@ public class InspectionController {
 
         inspectionService.deleteInspection(objectIds);
     }
+
+    @RequestMapping(value = "/report", method = RequestMethod.GET)
+    public List getInspectionReport(String date, String viewMode) {
+
+        return inspectionService.getInspectionReport(viewMode, date);
+    }
 }

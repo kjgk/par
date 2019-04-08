@@ -19,8 +19,6 @@ export default modelExtend(model, {
         }
       })
     },
-
-
   },
   effects: {
 
@@ -34,7 +32,7 @@ export default modelExtend(model, {
         }))
       } else if (user.role === 'Manager') {
         yield put(routerRedux.push({
-          pathname: '/ticket',
+          pathname: '/inspection/report',
         }))
       } else if (user.role === 'Accendant') {
         yield put(routerRedux.push({
