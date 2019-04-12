@@ -3,6 +3,7 @@ package com.unicorn.par.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.domain.vo.FileUploadInfo;
+import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.Inspection;
 import com.unicorn.par.domain.po.InspectionDetail;
@@ -63,10 +64,13 @@ public class InspectionService {
 
         Inspection current;
         if (StringUtils.isEmpty(inspection.getObjectId())) {
+            int minuteOfDay = new DateTime().getMinuteOfDay();
+            if (!((minuteOfDay >= 8.5 * 60 && minuteOfDay <= 9.5 * 60) || (minuteOfDay >= 12.5 * 60 && minuteOfDay <= 13.5 * 60))) {
+                throw new ServiceException("请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！");
+            }
             current = inspectionRepository.save(inspection);
             current.setInspectionTime(new Date());
             current.setAccendant(accendantService.getCurrentAccendant());
-            int orderNo = 1;
             for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
                 InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
                 detail.setInspection(current);

@@ -3,6 +3,8 @@ import {uploadFile} from '../../services/common'
 import systemService from '../../services/project/system'
 import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"
+import moment from "moment"
+import {message} from 'antd'
 
 const namespace = 'inspection'
 const pathname = '/inspection'
@@ -21,6 +23,19 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
   effects: {
 
     * firstStep({payload = {}}, {call, put, select}) {
+
+      // 判断当前时间是否在超过下午4点
+      let minuteOfDay = moment().hours() * 60 + moment().minutes()
+      if (!((minuteOfDay >= 8.5 * 60 && minuteOfDay <= 9.5 * 60) || (minuteOfDay >= 12.5 * 60 && minuteOfDay <= 13.5 * 60))) {
+        message.error('请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！')
+        return {}
+      }
+      yield put({
+        type: 'showModal',
+        payload: {
+          modalType: 'create',
+        },
+      })
       yield put({
         type: 'updateState',
         payload: {

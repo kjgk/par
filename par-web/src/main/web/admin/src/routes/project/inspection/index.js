@@ -164,12 +164,6 @@ const Component = ({
     },
     onAdd() {
       dispatch({
-        type: `${namespace}/showModal`,
-        payload: {
-          modalType: 'create',
-        },
-      })
-      dispatch({
         type: `${namespace}/firstStep`,
       })
     },

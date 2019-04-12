@@ -56,6 +56,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(defaultLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/index.html").permitAll()
                 .antMatchers("/admin/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/dist/**").permitAll()

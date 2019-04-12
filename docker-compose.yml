@@ -1,0 +1,39 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+  postgres:
+    image: postgres:10
+    volumes:
+      - /app/par/postgres:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+  web:
+    image: tomcat:9
+    ports:
+      - "8000:8080"
+    volumes:
+      - /app/par/web:/usr/local/tomcat/webapps/par
+      - /app/par/upload:/app/par/upload
+      - /app/par/temp:/app/par/temp
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+
+# 1.postgres开启远程访问
+#   echo host all all 0.0.0.0/0 md5 >> postgres/pg_hba.conf
+# 2.初始化数据库
+#   docker cp par.dmp par_postgres_1:/root/
+#   docker exec -it par_postgres_1 bash
+#   psql -U postgres
+#   > create database par;
+#   > \q
+#   psql -U postgres par < /root/par.dmp

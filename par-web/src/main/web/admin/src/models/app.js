@@ -3,13 +3,13 @@
 /* global location */
 /* eslint no-restricted-globals: ["error", "event"] */
 
-import { routerRedux } from 'dva/router'
+import {routerRedux} from 'dva/router'
 import {config} from '../utils'
-import { logout, query } from '../services/app'
+import {logout, query} from '../services/app'
 import * as menusService from '../services/menus'
 import queryString from 'query-string'
 
-const { prefix } = config
+const {prefix} = config
 
 export default {
   namespace: 'app',
@@ -29,7 +29,7 @@ export default {
   },
   subscriptions: {
 
-    setupHistory ({ dispatch, history }) {
+    setupHistory({dispatch, history}) {
       history.listen((location) => {
         dispatch({
           type: 'updateState',
@@ -41,13 +41,13 @@ export default {
       })
     },
 
-    setup ({ dispatch }) {
-      dispatch({ type: 'query' })
+    setup({dispatch}) {
+      dispatch({type: 'query'})
       let tid
       window.onresize = () => {
         clearTimeout(tid)
         tid = setTimeout(() => {
-          dispatch({ type: 'changeNavbar' })
+          dispatch({type: 'changeNavbar'})
         }, 300)
       }
     },
@@ -55,11 +55,11 @@ export default {
   },
   effects: {
 
-    * query ({
-               payload,
-             }, { call, put, select }) {
-      const { success, user } = yield call(query, payload)
-      const { locationPathname } = yield select(_ => _.app)
+    * query({
+              payload,
+            }, {call, put, select}) {
+      const {success, user} = yield call(query, payload)
+      const {locationPathname} = yield select(_ => _.app)
       if (success && user) {
         const menuList = yield call(menusService.query)
         let menu = menuList
@@ -74,7 +74,7 @@ export default {
             menu,
           },
         })
-        if (location.pathname === '/login') {
+        if (locationPathname === '/login') {
           yield put(routerRedux.push({
             pathname: '/',
           }))
@@ -89,9 +89,9 @@ export default {
       }
     },
 
-    * logout ({
-                payload,
-              }, { call, put }) {
+    * logout({
+               payload,
+             }, {call, put}) {
       const data = yield call(logout)
       if (data.success) {
         yield put({
@@ -104,14 +104,14 @@ export default {
             menu: [],
           },
         })
-        yield put({ type: 'query' })
+        yield put({type: 'query'})
       } else {
         throw (data)
       }
     },
 
-    * changeNavbar (action, { put, select }) {
-      const { app } = yield (select(_ => _))
+    * changeNavbar(action, {put, select}) {
+      const {app} = yield (select(_ => _))
       const isNavbar = document.body.clientWidth < 769
       if (isNavbar !== app.isNavbar) {
         yield put({
@@ -123,14 +123,14 @@ export default {
 
   },
   reducers: {
-    updateState (state, { payload }) {
+    updateState(state, {payload}) {
       return {
         ...state,
         ...payload,
       }
     },
 
-    switchSider (state) {
+    switchSider(state) {
       window.localStorage.setItem(`${prefix}siderFold`, !state.siderFold)
       return {
         ...state,
@@ -138,7 +138,7 @@ export default {
       }
     },
 
-    switchTheme (state) {
+    switchTheme(state) {
       window.localStorage.setItem(`${prefix}darkTheme`, !state.darkTheme)
       return {
         ...state,
@@ -146,21 +146,21 @@ export default {
       }
     },
 
-    switchMenuPopver (state) {
+    switchMenuPopver(state) {
       return {
         ...state,
         menuPopoverVisible: !state.menuPopoverVisible,
       }
     },
 
-    handleNavbar (state, { payload }) {
+    handleNavbar(state, {payload}) {
       return {
         ...state,
         isNavbar: payload,
       }
     },
 
-    handleNavOpenKeys (state, { payload: navOpenKeys }) {
+    handleNavOpenKeys(state, {payload: navOpenKeys}) {
       return {
         ...state,
         ...navOpenKeys,
