@@ -1,0 +1,61 @@
+import service from '../../services/project/monthly.report'
+import systemService from '../../services/project/system'
+import {createCrudModel, model} from '../common'
+import modelExtend from "dva-model-extend"
+import queryString from "query-string"
+
+const namespace = 'monthlyReport'
+const pathname = '/monthly/report'
+
+export default modelExtend(createCrudModel(namespace, pathname, service), {
+  namespace,
+  state: {
+    list: [],
+    systemList: [],
+  },
+  subscriptions: {
+
+    setup({dispatch, history}) {
+      history.listen((location) => {
+        if (location.pathname === '/monthly/report') {
+          dispatch({
+            type: 'query',
+            payload: {
+              ...queryString.parse(location.search),
+            },
+          })
+        } else {
+          dispatch({
+            type: 'updateState',
+            payload: {
+              list: [],
+              systemList: [],
+            }
+          })
+        }
+      })
+    },
+  },
+  effects: {
+
+    * query({payload = {}}, {call, put, select}) {
+      let {systemList} = yield select(_ => _[namespace])
+      if (systemList.length === 0) {
+        systemList = yield call(systemService.getSystemList)
+      }
+      let result = yield call(service.query, {
+        systemId: systemList.length > 0 && systemList[0].objectId,
+        ...payload
+      })
+      yield put({
+        type: 'updateState',
+        payload: {
+          list: result.content,
+          systemList,
+        }
+      })
+    },
+  },
+
+  reducers: {},
+})
