@@ -1,6 +1,7 @@
 package com.unicorn;
 
 import com.unicorn.core.service.EnvironmentService;
+import com.unicorn.par.service.HolidayService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,16 @@ public class Runner {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        };
+    }
+
+    //    @Bean
+    CommandLineRunner initHoliday(
+            HolidayService holidayService
+    ) {
+        return args -> {
+            holidayService.initHoliday(2019);
+            holidayService.initHoliday2();
         };
     }
 }

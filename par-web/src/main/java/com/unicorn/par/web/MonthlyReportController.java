@@ -13,7 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.unicorn.base.web.ApiNamespace.API_V1;
 
@@ -37,7 +40,7 @@ public class MonthlyReportController {
             expression = expression.and(monthlyReport.system.objectId.eq(systemId));
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.DESC, "submitTime").and(new Sort(Sort.Direction.ASC, "system.objectId"))
+                new Sort(Sort.Direction.DESC, "month").and(new Sort(Sort.Direction.ASC, "system.objectId"))
         );
         return monthlyReportService.getMonthlyReport(queryInfo);
     }
@@ -71,5 +74,20 @@ public class MonthlyReportController {
     public void delete(@RequestBody List<Long> objectIds) {
 
         monthlyReportService.deleteMonthlyReport(objectIds);
+    }
+
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
+    public Map getCurrentMonthlyReport(Long systemId) {
+
+        Map result = new HashMap();
+        Date currentMonth = monthlyReportService.getCurrentMonth();
+        if (currentMonth != null) {
+            MonthlyReport currentMonthlyReport = monthlyReportService.getMonthlyReport(systemId, currentMonth);
+            if (currentMonthlyReport != null) {
+                result.put("currentMonthlyReport", currentMonthlyReport.getObjectId());
+            }
+        }
+        result.put("currentMonth", currentMonth);
+        return result;
     }
 }

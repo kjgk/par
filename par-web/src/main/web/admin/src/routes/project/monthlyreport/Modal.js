@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 import {Col, Divider, Form, Input, Modal, Row} from 'antd'
 import styles from "./index.module.less"
 
@@ -16,6 +17,7 @@ const formItemLayout = {
 
 const modal = ({
                  item = {},
+                 currentMonth,
                  onOk,
                  viewMode,
                  form: {
@@ -28,7 +30,7 @@ const modal = ({
 
   const modalOpts = {
     ...modalProps,
-    title: item.system.name + ' - 月报',
+    title: `${item.system.name} - ${moment(item.month || currentMonth).format('YYYY年M月')} - 月报`,
     onOk: () => {
       validateFields((errors) => {
         if (errors) {

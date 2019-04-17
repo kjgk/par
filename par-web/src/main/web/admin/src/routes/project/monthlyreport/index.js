@@ -1,12 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {routerRedux} from 'dva/router'
+import moment from 'moment'
 import {connect} from 'dva'
 import {Page} from '../../../components'
 import queryString from 'query-string'
 import {Button, Card, Col, Icon, Row, Tabs} from "antd"
 import Modal from "./Modal"
 import ViewModal from "./ViewModal"
+import styles from "./index.module.less"
 
 const {TabPane} = Tabs
 const namespace = 'monthlyReport'
@@ -19,8 +21,8 @@ const Component = ({
   const {query, pathname} = location
   const {
     list, systemList, currentItem, modalVisible, modalType,
+    currentMonth, currentMonthlyReport,
   } = model
-
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -69,6 +71,7 @@ const Component = ({
 
   const modalProps = {
     item: currentItem,
+    currentMonth,
     visible: modalVisible,
     maskClosable: false,
     width: 840,
@@ -104,20 +107,38 @@ const Component = ({
     },
   }
 
+  const getReportTitle = (item) => {
+
+    let month = moment(item.month)
+    return month.format("YYYY年 M月")
+  }
+
   return (
     <Page inner>
       <Tabs activeKey={query.systemId || (systemList[0] && systemList[0].objectId)} onChange={(systemId) => handleRefresh({systemId})}>
         {systemList.map(system => <TabPane tab={system.name} key={system.objectId}>
-          <Button htmlType="button" type="primary" onClick={() => handleAdd(system)}>
+          <Button disabled={!currentMonth || currentMonthlyReport} htmlType="button" type="primary" onClick={() => handleAdd(system)}>
             <Icon type="plus"/> 提交月报
           </Button>
           <Row gutter={16} style={{marginTop: 15}}>
             {
               list.map(item => <Col key={item.objectId} md={12} lg={6} xxl={4}>
-                <Card title={item.submitTime} hoverable
-                      actions={[<Icon type="eye" onClick={() => handleView(item)}/>, <Icon type="edit" onClick={() => handleEdit(item)}/>,
-                        <Icon type="file-word"/>]}>
-                  <a href="#">More</a>
+                <Card className={styles.report_item} title={getReportTitle(item)} hoverable
+                      onClick={() => handleView(item)}
+                      actions={[
+                        <Icon type="eye"/>,
+                        item.objectId === currentMonthlyReport ? <Icon type="edit" onClick={(event) => {
+                          event.stopPropagation()
+                          event.preventDefault()
+                          handleEdit(item)
+                        }}/> : null,
+                        <Icon type="file-word" onClick={(event) => {
+                          event.stopPropagation()
+                          event.preventDefault()
+                          // handleEdit(item)
+                        }}/>,
+                      ].filter(action => action !== null)}>
+                  {item.keyWork || item.maintenance || item.perfection}
                 </Card>
               </Col>)
             }

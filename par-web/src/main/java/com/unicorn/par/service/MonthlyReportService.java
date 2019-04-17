@@ -1,10 +1,15 @@
 package com.unicorn.par.service;
 
 import com.unicorn.core.domain.vo.BasicInfo;
+import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.MonthlyReport;
+import com.unicorn.par.domain.po.QMonthlyReport;
 import com.unicorn.par.repository.MonthlyReportRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +28,9 @@ public class MonthlyReportService {
     @Autowired
     private AccendantService accendantService;
 
+    @Autowired
+    private HolidayService holidayService;
+
     public Page<MonthlyReport> getMonthlyReport(QueryInfo queryInfo) {
 
         return monthlyReportRepository.findAll(queryInfo);
@@ -38,11 +46,23 @@ public class MonthlyReportService {
         return monthlyReportRepository.get(objectId);
     }
 
+    public MonthlyReport getMonthlyReport(Long systemId, Date month) {
+
+        QMonthlyReport monthlyReport = QMonthlyReport.monthlyReport;
+        return monthlyReportRepository.findOne(monthlyReport.month.eq(month).and(monthlyReport.system.objectId.eq(systemId))).orElse(null);
+    }
+
     public void saveMonthlyReport(MonthlyReport monthlyReport) {
 
+        Date currentMonth = getCurrentMonth();
+        if (currentMonth == null) {
+            throw new ServiceException("请在每月底提交月报");
+        }
         MonthlyReport current;
         if (StringUtils.isEmpty(monthlyReport.getObjectId())) {
             current = monthlyReportRepository.save(monthlyReport);
+            current.setMonth(currentMonth);
+            current.setSubmitTime(new Date());
         } else {
             current = monthlyReportRepository.getOne(monthlyReport.getObjectId());
             current.setMeeting(monthlyReport.getMeeting());
@@ -59,8 +79,6 @@ public class MonthlyReportService {
             current.setFault(monthlyReport.getFault());
             current.setProblem(monthlyReport.getProblem());
         }
-
-        current.setSubmitTime(new Date());
         current.setAccendant(accendantService.getCurrentAccendant());
     }
 
@@ -72,5 +90,34 @@ public class MonthlyReportService {
     public void deleteMonthlyReport(List<Long> objectIds) {
 
         objectIds.forEach(this::deleteMonthlyReport);
+    }
+
+    /**
+     * 获取当前月报的月份（为每月最后3个工作日至下月前2个工作日，其它时间返回空）
+     */
+    @Cacheable(value = "currentMonthReport")
+    public Date getCurrentMonth() {
+
+        final int[] rules = new int[]{3, 2};
+        Date now = new Date();
+        DateTime dateTime = new DateTime(now).withTimeAtStartOfDay();
+        int workdayOfMonth = holidayService.workdayOfMonth(now);
+        if (dateTime.getDayOfMonth() < 15) {
+            // 每月的前2个工作日允许填写上个月月报
+            if (workdayOfMonth < rules[1] || (workdayOfMonth == rules[1] && holidayService.isWorkday(now))) {
+                return dateTime.minusMonths(1).withDayOfMonth(1).toDate();
+            }
+        } else {
+            int workdays = holidayService.workdaysOfMonth(dateTime.getYear(), dateTime.getMonthOfYear());
+            // 每月的最后3个工作日允许填写本月月报
+            if (workdays - workdayOfMonth < rules[0]) {
+                return dateTime.withDayOfMonth(1).toDate();
+            }
+        }
+        return null;
+    }
+
+    @CacheEvict(value = "currentMonthReport")
+    public void invalidCurrentMonth() {
     }
 }
