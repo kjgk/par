@@ -56,7 +56,7 @@ public class MonthlyReportService {
 
         Date currentMonth = getCurrentMonth();
         if (currentMonth == null) {
-            throw new ServiceException("请在每月底提交月报");
+            throw new ServiceException("请在每月最后3个工作日提交月报！");
         }
         MonthlyReport current;
         if (StringUtils.isEmpty(monthlyReport.getObjectId())) {

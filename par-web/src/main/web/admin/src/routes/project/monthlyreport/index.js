@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {routerRedux} from 'dva/router'
 import moment from 'moment'
 import {connect} from 'dva'
 import {Page} from '../../../components'
 import queryString from 'query-string'
-import {Button, Card, Col, Icon, Row, Tabs} from "antd"
+import {Button, Card, Col, Icon, Row, Tabs, message} from "antd"
 import Modal from "./Modal"
 import ViewModal from "./ViewModal"
 import styles from "./index.module.less"
@@ -60,13 +60,15 @@ const Component = ({
   }
 
   const handleView = (item) => {
-    dispatch({
-      type: `${namespace}/showModal`,
-      payload: {
-        modalType: 'view',
-        currentItem: item,
-      },
-    })
+    if (item.month) {
+      dispatch({
+        type: `${namespace}/showModal`,
+        payload: {
+          modalType: 'view',
+          currentItem: item,
+        },
+      })
+    }
   }
 
   const modalProps = {
@@ -109,40 +111,52 @@ const Component = ({
 
   const getReportTitle = (item) => {
 
-    let month = moment(item.month)
-    return month.format("YYYY年 M月")
+    if (item.month) {
+      return moment(item.month).format("YYYY年 M月")
+    }
+    return '未知'
   }
+
+  let {systemId, month} = query
+  systemId = systemId || (systemList[0] && systemList[0].objectId)
 
   return (
     <Page inner>
-      <Tabs activeKey={query.systemId || (systemList[0] && systemList[0].objectId)} onChange={(systemId) => handleRefresh({systemId})}>
+      <Tabs activeKey={systemId} onChange={(systemId) => handleRefresh({systemId})}>
         {systemList.map(system => <TabPane tab={system.name} key={system.objectId}>
-          <Button disabled={!currentMonth || currentMonthlyReport} htmlType="button" type="primary" onClick={() => handleAdd(system)}>
-            <Icon type="plus"/> 提交月报
-          </Button>
-          <Row gutter={16} style={{marginTop: 15}}>
-            {
-              list.map(item => <Col key={item.objectId} md={12} lg={6} xxl={4}>
-                <Card className={styles.report_item} title={getReportTitle(item)} hoverable
-                      onClick={() => handleView(item)}
-                      actions={[
-                        <Icon type="eye"/>,
-                        item.objectId === currentMonthlyReport ? <Icon type="edit" onClick={(event) => {
-                          event.stopPropagation()
-                          event.preventDefault()
-                          handleEdit(item)
-                        }}/> : null,
-                        <Icon type="file-word" onClick={(event) => {
-                          event.stopPropagation()
-                          event.preventDefault()
-                          // handleEdit(item)
-                        }}/>,
-                      ].filter(action => action !== null)}>
-                  {item.keyWork || item.maintenance || item.perfection}
-                </Card>
-              </Col>)
-            }
-          </Row>
+          {
+            system.objectId === systemId && <Fragment>
+              <div className={styles["report-alert"]}>请在每月最后3个工作日提交月报！</div>
+              <div style={{textAlign: 'center'}}>
+                <Button disabled={!currentMonth || currentMonthlyReport} htmlType="button" type="primary" onClick={() => handleAdd(system)}>
+                  <Icon type="plus"/> 提交月报
+                </Button>
+              </div>
+              <Row gutter={16} style={{marginTop: 15}}>
+                {
+                  list.map(item => <Col key={item.objectId} md={12} lg={6} xxl={4}>
+                    <Card className={styles.report_item} title={getReportTitle(item)} hoverable
+                          onClick={() => handleView(item)}
+                          actions={[
+                            <Icon type="eye"/>,
+                            item.objectId === currentMonthlyReport ? <Icon type="edit" onClick={(event) => {
+                              event.stopPropagation()
+                              event.preventDefault()
+                              handleEdit(item)
+                            }}/> : null,
+                            <Icon type="file-word" onClick={(event) => {
+                              event.stopPropagation()
+                              event.preventDefault()
+                              message.info('月报暂不支持导出！')
+                            }}/>,
+                          ].filter(action => action !== null)}>
+                      {item.keyWork || item.maintenance || item.perfection}
+                    </Card>
+                  </Col>)
+                }
+              </Row>
+            </Fragment>
+          }
         </TabPane>)}
       </Tabs>,
       {modalVisible && modalType !== 'view' && <Modal {...modalProps} />}

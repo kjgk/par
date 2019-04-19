@@ -61,6 +61,8 @@ project:
   # 项目网址
   public_url:
 
+  online_date: 201905
+
 
 # 秒滴短信服务 http://www.miaodiyun.com
 sms:

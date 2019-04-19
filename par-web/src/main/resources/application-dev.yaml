@@ -47,7 +47,7 @@ spring:
       time-to-live: 1h
   redis:
     host: 127.0.0.1
-    database: 8
+    database: 2
 
 environment:
   path:
@@ -64,7 +64,7 @@ project:
   # 项目网址
   public_url:
 
-  online_date: 201902
+  online_date: 201904
 
 
 # 秒滴短信服务 http://www.miaodiyun.com
