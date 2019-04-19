@@ -28,8 +28,6 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-
-
         <Divider>
           <div>{item.systemName}</div>
           <div>

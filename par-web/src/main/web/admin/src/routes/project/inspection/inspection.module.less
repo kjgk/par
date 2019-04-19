@@ -48,3 +48,112 @@
     }
   }
 }
+
+.inspection-alert {
+  position: absolute;
+  text-align: center;
+  font-size: 18px;
+  width: 100%;
+  color: red;
+  margin-top: 10px;
+}
+
+.inspection-calendar {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  :global {
+
+    .ant-fullcalendar-header {
+      .ant-fullcalendar-month-select {
+        margin-left: 10px;
+      }
+
+      .ant-radio-group {
+        display: none;
+      }
+    }
+
+    .ant-fullcalendar-column-header {
+      text-align: center;
+    }
+
+    .ant-fullcalendar-last-month-cell, .ant-fullcalendar-next-month-btn-day {
+      .inspection-calendar-cell {
+        background: #EFEFEF;
+
+        .inspection-calendar-cell-value {
+          color: #CDCDCD;
+        }
+      }
+
+      &.ant-fullcalendar-disabled-cell {
+        .inspection-calendar-cell-value {
+          visibility: hidden;
+        }
+
+        .inspection-calendar-cell-item {
+          visibility: hidden
+        }
+      }
+    }
+
+    .ant-fullcalendar-disabled-cell {
+      cursor: not-allowed;
+
+      .inspection-calendar-cell-value {
+        color: #CDCDCD;
+      }
+
+      .inspection-calendar-cell-item {
+        border: none !important;
+        visibility: hidden;
+      }
+    }
+
+    .inspection-calendar-cell {
+      border-top: 2px solid #CDCDCD;
+      text-align: center;
+      height: 80px;
+      &.holiday {
+        > .inspection-calendar-cell-value {
+          color: #ffa39e;
+        }
+
+        .inspection-calendar-cell-item {
+          visibility: hidden;
+        }
+      }
+
+      .inspection-calendar-cell-value {
+        text-align: center;
+        font-size: 24px;
+      }
+
+      .inspection-calendar-cell-item {
+        display: inline-block;
+        width: 30%;
+        margin: 5px;
+        border: 1px solid #CDCDCD;
+        font-size: 16px;
+        &.item-checked {
+          color: #fff;
+          border-color: #52c41a;
+          background: #52c41a;
+          cursor: pointer;
+        }
+
+        &.item-unchecked {
+          color: #fff;
+          border-color: #f55a69;
+          background: #f55a69;
+        }
+
+        &.item-input {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+

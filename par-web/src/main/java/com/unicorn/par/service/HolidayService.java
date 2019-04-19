@@ -12,6 +12,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -60,7 +61,7 @@ public class HolidayService {
     }
 
 
-    public Integer checkDate(Date date) {
+    private Integer checkDate(Date date) {
 
         log.info("开始获取{}", date);
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -110,6 +111,7 @@ public class HolidayService {
         )).intValue();
     }
 
+    @Cacheable(value = "workday")
     public boolean isWorkday(Date day) {
 
         Holiday holiday = holidayRepository.findOne(QHoliday.holiday.date.eq(new DateTime(day).withTimeAtStartOfDay().toDate())).orElse(null);

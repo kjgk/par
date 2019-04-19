@@ -1,15 +1,14 @@
 package com.unicorn.par.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
-import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.Inspection;
 import com.unicorn.par.domain.po.InspectionDetail;
 import com.unicorn.par.domain.po.QInspection;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.vo.InspectionInfo;
+import com.unicorn.par.domain.vo.InspectionMonthResult;
 import com.unicorn.par.repository.InspectionDetailRepository;
 import com.unicorn.par.repository.InspectionRepository;
 import com.unicorn.par.repository.SystemRepository;
@@ -18,7 +17,6 @@ import com.unicorn.std.service.ContentAttachmentService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -45,32 +43,128 @@ public class InspectionService {
     @Autowired
     private AccendantService accendantService;
 
-    public Page<InspectionInfo> getInspection(QueryInfo queryInfo) {
+    @Autowired
+    private HolidayService holidayService;
 
-        return inspectionRepository.findAll(queryInfo).map(this::buildInspectionInfo);
+    @Autowired
+    private ProjectService projectService;
+
+    public InspectionMonthResult getInspectionMonthResult(String month, Long systemId) {
+
+        InspectionMonthResult result = new InspectionMonthResult();
+        result.setOnlineDate(projectService.getOnlineDate());
+        QInspection inspection = QInspection.inspection;
+        BooleanExpression expression = inspection.isNotNull();
+
+        // 获取当月和上月的数据
+        DateTime dateTime = new DateTime()
+                .withTimeAtStartOfDay()
+                .withDayOfMonth(1)
+                .withMonthOfYear(Integer.valueOf(month.substring(4)))
+                .withYear(Integer.valueOf(month.substring(0, 4)))
+                .minusMonths(1);
+        DateTime endTime = dateTime.plusMonths(2);
+
+        expression = expression
+                .and(inspection.inspectionTime.goe(dateTime.toDate()))
+                .and(inspection.inspectionTime.loe(endTime.toDate()));
+
+        // 获取日历信息
+        while (dateTime.isBefore(endTime)) {
+            result.getDateInfo().put(dateTime.getMillis(), !holidayService.isWorkday(dateTime.toDate()));
+            dateTime = dateTime.plusDays(1);
+        }
+
+        // 获取巡检信息
+        if (systemId == null) {
+            return result;
+        } else {
+            expression = expression.and(inspection.system.objectId.eq(systemId));
+        }
+        inspectionRepository.findAll(expression, new Sort(Sort.Direction.ASC, "inspectionTime"))
+                .forEach(ins -> {
+                    InspectionMonthResult.Detail detail = new InspectionMonthResult.Detail();
+                    DateTime insTime = new DateTime(ins.getInspectionTime());
+                    detail.setDate(insTime.withTimeAtStartOfDay().toDate());
+                    detail.setSegment(ins.getSegment());
+                    detail.setInspectionId(ins.getObjectId());
+                    detail.setResult(1);
+                    result.getDetailList().put(detail.toString(), detail);
+                });
+
+        Integer segment = getInspectionSegment(new Date());
+        DateTime startTime = new DateTime().withTimeAtStartOfDay();
+        boolean exists1 = inspectionRepository.exists(
+                inspection.system.objectId.eq(systemId)
+                        .and(inspection.inspectionTime.between(startTime.toDate(), startTime.plusDays(1).toDate()))
+                        .and(inspection.segment.eq(1))
+                        .and(inspection.deleted.eq(0))
+        );
+        boolean exists2 = inspectionRepository.exists(
+                inspection.system.objectId.eq(systemId)
+                        .and(inspection.inspectionTime.between(startTime.toDate(), startTime.plusDays(1).toDate()))
+                        .and(inspection.segment.eq(3))
+                        .and(inspection.deleted.eq(0))
+        );
+        if (exists1) {
+            result.setSegmentResult1(1);
+        } else {
+            if (segment < 1) {
+                result.setSegmentResult1(null);
+            } else if (segment == 1) {
+                result.setSegmentResult1(0);
+            } else {
+                result.setSegmentResult1(2);
+            }
+        }
+        if (exists2) {
+            result.setSegmentResult2(1);
+        } else {
+            if (segment < 3) {
+                result.setSegmentResult2(null);
+            } else if (segment == 3) {
+                result.setSegmentResult2(0);
+            } else {
+                result.setSegmentResult2(2);
+            }
+        }
+
+
+        return result;
     }
 
-    public List<BasicInfo> getInspection() {
+    public InspectionInfo getInspectionInfo(Long objectId) {
 
-        return inspectionRepository.list();
+        return buildInspectionInfo(inspectionRepository.get(objectId));
     }
 
-    public Inspection getInspection(Long objectId) {
+    private Integer getInspectionSegment(Date date) {
 
-        return inspectionRepository.get(objectId);
+        int minuteOfDay = new DateTime(date).getMinuteOfDay();
+        if (minuteOfDay < 8.5 * 60) {
+            return 0;
+        } else if (minuteOfDay <= 9.5 * 60) {
+            return 1;
+        } else if (minuteOfDay < 12.5 * 60) {
+            return 2;
+        } else if (minuteOfDay <= 13.5 * 60) {
+            return 3;
+        }
+        return 4;
     }
 
     public void saveInspection(Inspection inspection) {
 
         Inspection current;
         if (StringUtils.isEmpty(inspection.getObjectId())) {
-            int minuteOfDay = new DateTime().getMinuteOfDay();
-            if (!((minuteOfDay >= 8.5 * 60 && minuteOfDay <= 9.5 * 60) || (minuteOfDay >= 12.5 * 60 && minuteOfDay <= 13.5 * 60))) {
+            Integer inspectionSegment = getInspectionSegment(new Date());
+            if (inspectionSegment % 2 == 0) {
                 throw new ServiceException("请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！");
             }
             current = inspectionRepository.save(inspection);
             current.setInspectionTime(new Date());
             current.setAccendant(accendantService.getCurrentAccendant());
+            current.setSegment(inspectionSegment);
             for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
                 InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
                 detail.setInspection(current);
@@ -99,7 +193,6 @@ public class InspectionService {
 
         objectIds.forEach(this::deleteInspection);
     }
-
 
     @Cacheable(value = "inspectionReport")
     public List getInspectionReport(String viewMode, String date) {

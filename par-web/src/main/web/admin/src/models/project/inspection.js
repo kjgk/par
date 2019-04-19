@@ -5,6 +5,7 @@ import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"
 import moment from "moment"
 import {message} from 'antd'
+import queryString from "query-string"
 
 const namespace = 'inspection'
 const pathname = '/inspection'
@@ -13,6 +14,7 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
   namespace,
   state: {
     systemList: [],
+    inspectionResults: {},
     currentStep: 0,
     currentSystem: undefined,
     allowNextStep: false,
@@ -20,39 +22,87 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
     functionResults: {},
   },
 
+  subscriptions: {
+    setup({dispatch, history}) {
+      history.listen((location) => {
+        if (location.pathname === pathname) {
+          dispatch({
+            type: 'query',
+            payload: {
+              ...queryString.parse(location.search),
+            },
+          })
+        } else {
+          dispatch({
+            type: 'updateState',
+            payload: {
+              systemList: [],
+              inspectionResults: {},
+              currentItem: {},
+              modalVisible: false,
+              modalType: 'create',
+              selectedRowKeys: [],
+              currentStep: 0,
+              currentSystem: undefined,
+              allowNextStep: false,
+              functionScreenshots: {},
+              functionResults: {},
+            }
+          })
+        }
+      })
+    },
+  },
+
   effects: {
 
-    * firstStep({payload = {}}, {call, put, select}) {
-
-      // 判断当前时间是否在超过下午4点
-      let minuteOfDay = moment().hours() * 60 + moment().minutes()
-      if (!((minuteOfDay >= 8.5 * 60 && minuteOfDay <= 9.5 * 60) || (minuteOfDay >= 12.5 * 60 && minuteOfDay <= 13.5 * 60))) {
-        message.error('请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！')
-        return {}
+    * query({payload = {}}, {call, put, select}) {
+      let {systemList} = yield select(_ => _[namespace])
+      if (systemList.length === 0) {
+        systemList = yield call(systemService.getSystemList)
       }
-      yield put({
-        type: 'showModal',
-        payload: {
-          modalType: 'create',
-        },
+      let systemId = payload.systemId || (systemList.length > 0 && systemList[0].objectId)
+      let {detailList, dateInfo, onlineDate, segmentResult1, segmentResult2, now,} = yield call(service.query, {
+        systemId,
+        month: moment().format('YYYYMM'),
+        ...payload
       })
       yield put({
         type: 'updateState',
         payload: {
-          systemList: [],
+          systemList,
+          inspectionResults: {
+            inspectionInfo: detailList,
+            holidayInfo: dateInfo,
+            calendarStartDate: moment(onlineDate),
+            segmentResult1,
+            segmentResult2,
+            now,
+          }
+        }
+      })
+    },
+
+
+    * firstStep({payload = {}}, {call, put, select}) {
+      const {systemList} = yield select(_ => _[namespace])
+      // 掉过第一步，直接到第二步
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: true,
+          modalType: 'create',
           currentStep: 0,
-          currentSystem: undefined,
+          currentSystem: payload,
           allowNextStep: false,
           functionScreenshots: {},
           functionResults: {},
         },
       })
-      const systemList = yield call(systemService.getSystemList, payload)
+
       yield put({
-        type: 'updateState',
-        payload: {
-          systemList
-        },
+        type: 'nextStep',
+        payload: {}
       })
     },
 
@@ -127,6 +177,19 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
         payload: {
           functionScreenshots,
           allowNextStep,
+        },
+      })
+    },
+
+    * viewInspection({payload = {}}, {call, put, select}) {
+
+      const currentItem = yield call(service.get, payload)
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: true,
+          modalType: 'view',
+          currentItem,
         },
       })
     }

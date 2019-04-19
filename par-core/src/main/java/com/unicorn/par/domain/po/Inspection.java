@@ -34,4 +34,11 @@ public class Inspection extends DefaultNomenclator {
     private List<InspectionDetail> detailList;
 
     private Date inspectionTime;
+
+    /**
+     * 巡检时间段
+     * 1=上午 (8:30-9:30)
+     * 2=中午 (12:30-13:30)
+     */
+    private Integer segment;
 }

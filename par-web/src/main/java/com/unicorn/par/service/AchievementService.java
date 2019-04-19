@@ -54,10 +54,10 @@ public class AchievementService {
                             .and(QInspection.inspection.inspectionTime.lt(month.plusMonths(1).toDate()))
             );
             achievement.setInspectionScore(
-                    Double.valueOf(
+                    Math.min(50, Double.valueOf(
                             Math.sqrt(1.0 * count / holidayService.workdaysOfMonth(month.getYear(), month.getMonthOfYear()))
                                     * 50
-                    ).intValue()
+                    ).intValue())
             );
 
             // 计算月报得分

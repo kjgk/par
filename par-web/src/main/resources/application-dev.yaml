@@ -1,7 +1,7 @@
 debug: true
 
 server:
-  port: 8088
+  port: 8086
   tomcat:
     accesslog:
       enabled: true
@@ -63,6 +63,8 @@ project:
 
   # 项目网址
   public_url:
+
+  online_date: 201902
 
 
 # 秒滴短信服务 http://www.miaodiyun.com
