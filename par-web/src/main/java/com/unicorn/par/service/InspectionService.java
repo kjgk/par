@@ -9,24 +9,32 @@ import com.unicorn.par.domain.po.QInspection;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
+import com.unicorn.par.domain.vo.InspectionMonthSummary;
 import com.unicorn.par.repository.InspectionDetailRepository;
 import com.unicorn.par.repository.InspectionRepository;
 import com.unicorn.par.repository.SystemRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
 import com.unicorn.std.service.ContentAttachmentService;
+import com.unicorn.utils.DateUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
 public class InspectionService {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private InspectionRepository inspectionRepository;
@@ -195,51 +203,42 @@ public class InspectionService {
     }
 
     @Cacheable(value = "inspectionReport")
-    public List getInspectionReport(String viewMode, String date) {
+    public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
 
-        List result = new ArrayList();
-        Integer year = Integer.valueOf(date.substring(0, 4));
-        Integer week = Integer.valueOf(date.substring(4));
+        InspectionMonthSummary result = new InspectionMonthSummary();
 
-        DateTime weekStartTime = new DateTime()
+        DateTime monthStartDate = new DateTime()
                 .withYear(year)
-                .withWeekOfWeekyear(week)
-                .withDayOfWeek(1)
+                .withMonthOfYear(month)
+                .withDayOfMonth(1)
                 .withTimeAtStartOfDay();
 
-        BooleanExpression expression = QInspection.inspection.inspectionTime.between(weekStartTime.toDate(), weekStartTime.plusWeeks(1).toDate());
-        List<Inspection> inspectionList = inspectionRepository.findAll(expression, new Sort(Sort.Direction.ASC, "inspectionTime"));
-
         List<Integer> defaultValues = new ArrayList();
-        for (int i = 1; i <= 7; i++) {
-            if (weekStartTime.plusDays(i).isAfterNow()) {
+        for (int i = 0; i < DateUtils.getDaysOfMonth(monthStartDate.toDate()); i++) {
+            DateTime dateTime = monthStartDate.plusDays(i);
+            if (dateTime.isAfterNow()) {
                 defaultValues.add(null);
             } else {
-                defaultValues.add(0);
+                defaultValues.add(holidayService.isWorkday(dateTime.toDate()) ? 0 : -1);
             }
+            result.getDateList().add(i + 1 + "号");
         }
 
-        for (System system : systemRepository.findAll(new Sort(Sort.Direction.ASC, "company.name"))) {
-            Map item = new HashMap();
-            List<Integer> values = Arrays.asList(new Integer[defaultValues.size()]);
-            Collections.copy(values, defaultValues);
-            item.put("systemName", system.getName());
-            item.put("values", values);
-            for (Inspection inspection : inspectionList) {
-                if (!system.getObjectId().equals(inspection.getSystem().getObjectId())) {
-                    continue;
-                }
-                int dayOfWeek = new DateTime(inspection.getInspectionTime()).getDayOfWeek();
-                int value = 1;
-                for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
-                    if (inspectionDetail.getResult() != 1) {
-                        value = 2;
-                        break;
-                    }
-                }
-                values.set(dayOfWeek - 1, value);
+        List<System> systemList = systemRepository.findAll(new Sort(Sort.Direction.ASC, "company.name"));
+
+        List<String> inspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection" +
+                " where inspection_time between ? and ?", String.class, monthStartDate.toDate(), monthStartDate.plusMonths(1).toDate());
+
+        int systemIndex = 0;
+        for (System system : systemList) {
+            result.getSystemList().add(system.getName());
+            int dateIndex = 0;
+            for (Integer defaultValue : defaultValues) {
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-1") ? new Integer(1) : defaultValue});   // 上午
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-3") ? new Integer(1) : defaultValue});   // 下午
+                dateIndex++;
             }
-            result.add(item);
+            systemIndex++;
         }
         return result;
     }
@@ -266,4 +265,5 @@ public class InspectionService {
 
         return inspectionInfo;
     }
+
 }

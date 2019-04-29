@@ -3,6 +3,7 @@ package com.unicorn.par.web;
 import com.unicorn.par.domain.po.Inspection;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
+import com.unicorn.par.domain.vo.InspectionMonthSummary;
 import com.unicorn.par.service.InspectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +57,8 @@ public class InspectionController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public List getInspectionReport(String date, String viewMode) {
+    public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
 
-        return inspectionService.getInspectionReport(viewMode, date);
+        return inspectionService.getInspectionReport(year, month);
     }
 }

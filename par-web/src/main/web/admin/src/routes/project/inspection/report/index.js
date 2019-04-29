@@ -2,53 +2,20 @@ import React from 'react'
 import {connect} from 'dva'
 import styles from './index.module.less'
 import {Page} from "../../../../components"
-import {Icon, Table, DatePicker} from "antd"
+import {Divider, Radio, Select} from "antd"
 import {routerRedux} from "dva/router"
 import queryString from "query-string"
-import moment from "moment"
+import ReportChart from "./Chart"
 
-const {WeekPicker} = DatePicker
 const namespace = 'inspectionReport'
 const Component = ({
                      location, dispatch, model, loading,
                    }) => {
 
-  location.query = queryString.parse(location.search)
-  const {query, pathname} = location
-  const {weekDays, reportList} = model
-
-  const dataSource = reportList.map((item) => {
-    let data = {
-      systemName: item.systemName,
-    }
-    item.values.forEach((value, i) => {
-      data[`d${i}`] = value
-    })
-    return data
-  })
-
-  const columns = [
-    {
-      title: '系统名称',
-      dataIndex: 'systemName',
-      key: 'systemName',
-      width: 320,
-    },
-    ...weekDays.map((week, i) => ({
-      title: week,
-      dataIndex: `d${i}`,
-      key: `d${i}`,
-      width: '11%',
-      render(value) {
-        return {
-          null: undefined,
-          0: <Icon type="exclamation-circle" theme="twoTone" twoToneColor="#f80"/>,
-          1: <Icon type="check-circle" theme="twoTone" twoToneColor="#6b7"/>,
-          2: <Icon type="close-circle" theme="twoTone" twoToneColor="#e22"/>,
-        }[value]
-      }
-    })),
-  ]
+  const {pathname} = location
+  const query = queryString.parse(location.search)
+  const {year, month} = query
+  const {yearMonths, inspectionResults} = model
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -60,23 +27,34 @@ const Component = ({
     }))
   }
 
-  let date = moment()
-  if (query.date) {
-    date.year(parseInt(query.date.substring(0, 4), 10))
-    date.week(parseInt(query.date.substring(4), 10))
+  const handleChange = (e) => {
+    handleRefresh({
+      month: e.target.value,
+    })
+  }
+
+  const chartStyle = {
+    margin: '0 auto',
+    textAlign: 'center',
   }
 
   return (
     <Page inner>
       <div className={styles.main}>
         <div className={styles.filter}>
-          <WeekPicker allowClear={false} value={date} disabledDate={(d) => d.isAfter(moment())}
-                      onChange={(v) => handleRefresh({date: v.year() + '' + v.week()})}/>
+          <Select defaultValue="2019" style={{ width: 100 }}>
+            <Select.Option value="2019">2019</Select.Option>
+          </Select>
+          &nbsp;
+          <Radio.Group defaultValue={parseInt(month, 10)} onChange={handleChange}>
+            {yearMonths.map(month => <Radio.Button key={month.value} disabled={!month.enabled} value={month.value}>{`${month.value}月`}</Radio.Button>)}
+          </Radio.Group>
         </div>
-        <Table rowKey='systemName' dataSource={dataSource} columns={columns} pagination={false} size="small" scroll={{y: 640}} bordered/>
+        <div style={chartStyle}>
+          <ReportChart {...inspectionResults}/>
+        </div>
       </div>
     </Page>
-
   )
 }
 

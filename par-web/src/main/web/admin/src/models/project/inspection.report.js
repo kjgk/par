@@ -3,26 +3,24 @@ import {model} from '../common'
 import modelExtend from "dva-model-extend"
 import queryString from "query-string"
 import moment from "moment"
+import {routerRedux} from "dva/router"
 
 const namespace = 'inspectionReport'
-
+const pathname = '/inspection/report'
 export default modelExtend(model, {
   namespace,
   state: {
-    weekDays: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-    reportList: [],
+    yearMonths: [],
+    inspectionResults: [],
   },
   subscriptions: {
 
     setupHistory({dispatch, history}) {
       history.listen((location) => {
-        if (location.pathname === '/inspection/report') {
-          let now = moment()
+        if (location.pathname === pathname) {
           dispatch({
             type: 'query',
             payload: {
-              viewMode: 'week',
-              date: now.year() + '' + now.week(),
               ...queryString.parse(location.search),
             },
           })
@@ -30,7 +28,8 @@ export default modelExtend(model, {
           dispatch({
             type: 'updateState',
             payload: {
-              reportList: [],
+              yearMonths: [],
+              inspectionResults: [],
             }
           })
         }
@@ -40,11 +39,47 @@ export default modelExtend(model, {
   effects: {
 
     * query({payload = {}}, {call, put, select}) {
-      let reportList = yield call(service.getInspectionReport, payload)
+
+      const now = moment(), yearMonths = []
+      let {year, month} = payload
+      let dateValid = true
+      year = parseInt(year, 10)
+      month = parseInt(month, 10)
+      if (isNaN(month) || month < 1 || month > 12) {
+        month = now.month() + 1
+        dateValid = false
+      }
+      if (isNaN(year) || year > now.year()) {
+        year = now.year()
+        dateValid = false
+      }
+      if (moment().year(year).month(month - 1).startOf('M').isAfter(now)) {
+        dateValid = false
+        month = now.month() + 1
+      }
+      if (!dateValid) {
+        yield put(routerRedux.push({
+          pathname,
+          search: queryString.stringify({
+            month,
+            year,
+          }),
+        }))
+      }
+
+      for (let i = 1; i <= 12; i++) {
+        yearMonths.push({
+          value: i,
+          enabled: now.isAfter(moment().year(year).month(i - 1).startOf('d')),
+        })
+      }
+
+      let inspectionResults = yield call(service.getInspectionReport, {month, year,})
       yield put({
         type: 'updateState',
         payload: {
-          reportList,
+          inspectionResults,
+          yearMonths,
         }
       })
     },
