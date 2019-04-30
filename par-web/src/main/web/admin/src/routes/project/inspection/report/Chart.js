@@ -31,6 +31,9 @@ Shape.registerShape('polygon', 'doublePoint', {
   }
 })
 
+const segmentNames = {1: '上午', 3: '下午'}
+const stateNames = {1: '已巡检', 0: '未巡检'}
+
 const ReportChart = ({
                        systemList = [],
                        dateList = [],
@@ -63,8 +66,9 @@ const ReportChart = ({
     height={700}
     data={dataList}
     scale={cols}
-    padding={[0, 20, 40, 250]}
+    padding={[40, 20, 20, 250]}
     forceFit
+    animate={false}
   >
     <Axis
       name="name"
@@ -80,6 +84,7 @@ const ReportChart = ({
     />
     <Axis
       name="day"
+      position="top"
       grid={{
         align: 'center',
         lineStyle: {
@@ -95,18 +100,20 @@ const ReportChart = ({
       position="day*name"
       // color={['value', '#FFCCCC-#20AA73']}
       shape="doublePoint"
-      tooltip={['segment*name*value', (segment, name, value) => {
+      tooltip={['day*segment*name*value', (day, segment, name, value) => {
         if (value === null) {
-          return {}
+          return {
+            content: '未到巡检时间',
+          }
         }
         if (value === -1) {
           return {
-            content: '休息日'
+            content: '休息日',
           }
         }
         return {
-          content: systemList[name] + {1: '上午', 3: '下午'}[segment] + {0: '已巡检', 1: '未巡检'}[value]
-        };
+          content: systemList[name] + '：' + (day + 1) + '号' + segmentNames[segment] + '：' + stateNames[value],
+        }
       }]}
     >
     </Geom>

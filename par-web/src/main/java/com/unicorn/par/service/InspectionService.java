@@ -212,14 +212,20 @@ public class InspectionService {
                 .withMonthOfYear(month)
                 .withDayOfMonth(1)
                 .withTimeAtStartOfDay();
-
+        DateTime startOfDay = new DateTime().withTimeAtStartOfDay();
         List<Integer> defaultValues = new ArrayList();
+
         for (int i = 0; i < DateUtils.getDaysOfMonth(monthStartDate.toDate()); i++) {
             DateTime dateTime = monthStartDate.plusDays(i);
             if (dateTime.isAfterNow()) {
                 defaultValues.add(null);
             } else {
-                defaultValues.add(holidayService.isWorkday(dateTime.toDate()) ? 0 : -1);
+                boolean workday = holidayService.isWorkday(dateTime.toDate());
+                if (workday && dateTime.isEqual(startOfDay)) {
+                    defaultValues.add(100); // 100表示当天
+                } else {
+                    defaultValues.add(workday ? 0 : -1);
+                }
             }
             result.getDateList().add(i + 1 + "号");
         }
@@ -234,8 +240,25 @@ public class InspectionService {
             result.getSystemList().add(system.getName());
             int dateIndex = 0;
             for (Integer defaultValue : defaultValues) {
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-1") ? new Integer(1) : defaultValue});   // 上午
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-3") ? new Integer(1) : defaultValue});   // 下午
+                Integer segment1DefaultValue = defaultValue;
+                Integer segment3DefaultValue = defaultValue;
+                if (defaultValue != null && defaultValue.equals(100)) {
+                    Integer segment = getInspectionSegment(new Date());
+                    if (segment == 0 || segment == 1) {
+                        segment1DefaultValue = null;
+                        segment3DefaultValue = null;
+                    }
+                    if (segment == 2 || segment == 3) {
+                        segment1DefaultValue = 0;
+                        segment3DefaultValue = null;
+                    }
+                    if (segment == 4) {
+                        segment1DefaultValue = 0;
+                        segment3DefaultValue = 0;
+                    }
+                }
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-1") ? new Integer(1) : segment1DefaultValue});   // 上午
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-3") ? new Integer(1) : segment3DefaultValue});   // 下午
                 dateIndex++;
             }
             systemIndex++;
