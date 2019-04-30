@@ -10,6 +10,7 @@ module.exports = {
   api: {
     userLogin: `/login/account`,
     userLogout: `/logout`,
+    userModifyPassword: `${api}/system/user/modifyPassword`,
     currentInfo: `${api}/current`,
     menus: `${api}/menus`,
   },

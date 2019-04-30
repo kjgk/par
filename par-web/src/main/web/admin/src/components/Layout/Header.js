@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Menu, Icon, Popover, Layout } from 'antd'
+import {Icon, Layout, Menu, Popover} from 'antd'
 import classnames from 'classnames'
 import styles from './Header.module.less'
 import Menus from './Menu'
@@ -8,9 +8,12 @@ import Menus from './Menu'
 const { SubMenu } = Menu
 
 const Header = ({
-  user, logout, switchSider, siderFold, isNavbar, menuPopoverVisible, location, switchMenuPopover, navOpenKeys, changeOpenKeys, menu,
+  user, logout, modifyPassword, switchSider, siderFold, isNavbar, menuPopoverVisible, location, switchMenuPopover, navOpenKeys, changeOpenKeys, menu,
 }) => {
-  let handleClickMenu = e => e.key === 'logout' && logout()
+  let handleClickMenu = e => {
+    e.key === 'modifyPassword' && modifyPassword()
+    e.key === 'logout' && logout()
+  }
   const menusProps = {
     menu,
     siderFold: false,
@@ -36,9 +39,9 @@ const Header = ({
           <Icon type={classnames({ 'menu-unfold': siderFold, 'menu-fold': !siderFold })} />
         </div>}
       <div className={styles.rightWarpper}>
-        <div className={styles.button}>
-          <Icon type="mail" />
-        </div>
+        {/*<div className={styles.button}>*/}
+          {/*<Icon type="mail" />*/}
+        {/*</div>*/}
         <Menu mode="horizontal" onClick={handleClickMenu}>
           <SubMenu
             style={{
@@ -49,6 +52,9 @@ const Header = ({
               {user.username}
             </span>}
           >
+            <Menu.Item key="modifyPassword">
+              修改密码
+            </Menu.Item>
             <Menu.Item key="logout">
               退出
             </Menu.Item>

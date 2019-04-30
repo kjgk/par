@@ -16,9 +16,9 @@ services:
   web:
     image: tomcat:9
     ports:
-      - "8000:8080"
+      - "8080:8080"
     volumes:
-      - /app/par/web:/usr/local/tomcat/webapps/par
+      - /app/par/web:/usr/local/tomcat/webapps/ROOT
       - /app/par/upload:/app/par/upload
       - /app/par/temp:/app/par/temp
       - /etc/localtime:/etc/localtime:ro

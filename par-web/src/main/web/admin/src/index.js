@@ -23,6 +23,7 @@ const app = dva({
 
 // 2. Model
 app.model(require('./models/app').default)
+app.model(require('./models/system/modifyPassword').default)
 
 // 3. Router
 app.router(require('./router').default)
