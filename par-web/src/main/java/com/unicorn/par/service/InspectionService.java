@@ -18,7 +18,6 @@ import com.unicorn.std.service.ContentAttachmentService;
 import com.unicorn.utils.DateUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -202,7 +201,6 @@ public class InspectionService {
         objectIds.forEach(this::deleteInspection);
     }
 
-    @Cacheable(value = "inspectionReport")
     public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
 
         InspectionMonthSummary result = new InspectionMonthSummary();

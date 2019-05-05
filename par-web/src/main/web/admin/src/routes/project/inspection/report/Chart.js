@@ -1,7 +1,6 @@
 import React from 'react'
 import {Axis, Chart, Geom, Shape, Tooltip} from 'bizcharts'
 
-
 Shape.registerShape('polygon', 'doublePoint', {
   draw(cfg, container) {
     const {segment, value} = cfg.origin._origin
@@ -103,7 +102,7 @@ const ReportChart = ({
       tooltip={['day*segment*name*value', (day, segment, name, value) => {
         if (value === null) {
           return {
-            content: '未到巡检时间',
+            content: '待巡检',
           }
         }
         if (value === -1) {

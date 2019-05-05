@@ -70,7 +70,7 @@ const modal = ({
   const uploaderProps = {
     action: `${contextPath}${apiPrefix}/system/file/upload`,
     multiple: true,
-    accept: '.jpg,.pdf,.doc,.docx,.xls,.xlsx',
+    accept: '.jpg,.jpeg,.png,.bmp',
     listType: 'picture-card',
     name: 'attachment',
   }
@@ -101,7 +101,6 @@ const modal = ({
           <Step title="检查系统功能点" description=""/>
           <Step title="完成" description=""/>
         </Steps>
-
         <div className={styles['inspection-form']}>
           {currentStep === 0 && <div className={styles['step-1']}>
             <List

@@ -37,3 +37,7 @@ services:
 #   > create database par;
 #   > \q
 #   psql -U postgres par < /root/par.dmp
+
+
+# pg_dump -U postgres par > par.dmp
+# docker cp postgres:/par.dmp par.dmp

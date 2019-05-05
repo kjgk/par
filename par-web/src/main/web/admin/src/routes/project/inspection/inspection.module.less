@@ -112,14 +112,24 @@
     }
 
     .ant-fullcalendar-today {
-      color: @primary-color;
-      font-weight: bold;
+      .inspection-calendar-cell-value {
+        > span {
+          color: #FFFFFF;
+          background-color: @primary-color;
+          border-radius: 16px;
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+        }
+      }
     }
 
     .inspection-calendar-cell {
       border-top: 2px solid #CDCDCD;
       text-align: center;
       height: 80px;
+      padding-top: 5px;
       &.holiday {
         > .inspection-calendar-cell-value {
           color: #ffa39e;
@@ -141,6 +151,7 @@
         margin: 5px;
         border: 1px solid #CDCDCD;
         font-size: 16px;
+
         &.item-checked {
           color: #fff;
           border-color: #52c41a;

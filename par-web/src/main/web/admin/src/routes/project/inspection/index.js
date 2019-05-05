@@ -155,7 +155,9 @@ const Component = ({
                       let today = todayMills === time
                       return <div
                         className={classnames({'inspection-calendar-cell': true, 'holiday': holidayInfo[time]})}>
-                        <div className="inspection-calendar-cell-value">{date.format('D')}</div>
+                        <div className="inspection-calendar-cell-value">
+                          <span>{date.format('D')}</span>
+                        </div>
                         {
                           (!today || segmentResult1 === 1 || segmentResult1 === 2) &&
                           <div className={classnames({'inspection-calendar-cell-item': true, 'item-checked': !!ins1, 'item-unchecked': !ins1})}
