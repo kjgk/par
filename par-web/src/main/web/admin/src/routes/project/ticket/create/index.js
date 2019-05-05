@@ -4,7 +4,7 @@ import {connect} from 'dva'
 import {Button, Divider, Form, Icon, Input, Radio, Upload} from "antd"
 import {Page} from "../../../../components"
 import SystemSelect from "../../../../sections/system/SystemSelect"
-import {apiPrefix, contextPath} from "../../../../utils/config"
+import {api, contextPath} from "../../../../utils/config"
 import styles from "./ticket.create.module.less"
 import {Link} from "react-router-dom"
 
@@ -50,12 +50,12 @@ const Component = ({
   const confirmLoading = loading.effects[`${namespace}/save`]
 
   const uploaderProps = {
-    action: `${contextPath}${apiPrefix}/system/file/upload`,
+    action: `${contextPath}${api.fileUpload}`,
     multiple: true,
     name: 'attachment',
     fileList,
     beforeUpload() {
-      if (fileList.length >= 3) {
+      if (fileList.length >= fileLimit) {
         return false
       }
     },
@@ -90,7 +90,7 @@ const Component = ({
     <Page inner>
       {showSuccess && <div className={styles.success} onClick={resetForm}>
         <h1>
-          <Icon type="check-circle" /> 工单提交成功！</h1>
+          <Icon type="check-circle"/> 工单提交成功！</h1>
         <div>
           您可以&nbsp;
           <a onClick={resetForm}>继续提交工单</a><Divider type="vertical"/>

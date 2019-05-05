@@ -14,6 +14,8 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
     systemList: [],
     currentMonth: undefined,
     currentMonthlyReport: undefined,
+    fileList: [],
+    fileLimit: 3,
   },
   subscriptions: {
 
@@ -66,6 +68,17 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
           systemList,
         }
       })
+    },
+  },
+  reducers: {
+    uploadChange(state, {payload}) {
+      if (payload.fileList.length > state.fileLimit) {
+        return state
+      }
+      return {
+        ...state,
+        fileList: payload.fileList,
+      }
     },
   },
 })

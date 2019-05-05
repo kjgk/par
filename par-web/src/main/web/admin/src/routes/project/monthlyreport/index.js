@@ -21,7 +21,7 @@ const Component = ({
   const {query, pathname} = location
   const {
     list, systemList, currentItem, modalVisible, modalType,
-    currentMonth, currentMonthlyReport,
+    currentMonth, currentMonthlyReport, fileList, fileLimit,
   } = model
 
   const handleRefresh = (newQuery) => {
@@ -55,6 +55,12 @@ const Component = ({
       payload: {
         modalType: 'update',
         currentItem: item,
+        fileList: item.attachments.map(attachment => ({
+          uid: attachment.attachmentId,
+          name: attachment.filename,
+          status: 'done',
+          attachmentId: attachment.attachmentId,
+        })),
       },
     })
   }
@@ -75,6 +81,8 @@ const Component = ({
     item: currentItem,
     currentMonth,
     visible: modalVisible,
+    fileList,
+    fileLimit,
     maskClosable: false,
     width: 840,
     confirmLoading: loading.effects[`${namespace}/${modalType}`],
@@ -90,6 +98,12 @@ const Component = ({
         type: `${namespace}/hideModal`,
       })
     },
+    onUploadChange(data) {
+      dispatch({
+        type: `${namespace}/uploadChange`,
+        payload: data,
+      })
+    }
   }
 
   const viewModalProps = {

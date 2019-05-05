@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Button, Form, Icon, Input, Modal, Radio, Upload} from 'antd'
-import {apiPrefix, contextPath} from "../../../../utils/config"
+import {api, contextPath} from "../../../../utils/config"
 
 const RadioGroup = Radio.Group
 
@@ -42,15 +42,9 @@ const modal = ({
   }
 
   const uploaderProps = {
-    action: `${contextPath}${apiPrefix}/system/file/upload`,
+    action: `${contextPath}${api.fileUpload}`,
     multiple: true,
     name: 'attachment',
-    // onChange(data) {
-    //   dispatch({
-    //     type: `${namespace}/uploadChange`,
-    //     payload: data,
-    //   })
-    // }
   }
 
   return (

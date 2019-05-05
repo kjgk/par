@@ -1,20 +1,27 @@
 package com.unicorn.par.service;
 
+import com.unicorn.core.domain.vo.AttachmentInfo;
 import com.unicorn.core.domain.vo.BasicInfo;
+import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.QMonthlyReport;
 import com.unicorn.par.repository.MonthlyReportRepository;
+import com.unicorn.std.domain.po.Attachment;
+import com.unicorn.std.domain.po.ContentAttachment;
+import com.unicorn.std.service.ContentAttachmentService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +33,9 @@ public class MonthlyReportService {
     private MonthlyReportRepository monthlyReportRepository;
 
     @Autowired
+    private ContentAttachmentService contentAttachmentService;
+
+    @Autowired
     private AccendantService accendantService;
 
     @Autowired
@@ -33,7 +43,19 @@ public class MonthlyReportService {
 
     public Page<MonthlyReport> getMonthlyReport(QueryInfo queryInfo) {
 
-        return monthlyReportRepository.findAll(queryInfo);
+        return monthlyReportRepository.findAll(queryInfo).map(monthlyReport -> {
+
+            // 加载附件
+            monthlyReport.setAttachments(new ArrayList());
+            List<ContentAttachment> attachmentList = contentAttachmentService.getAttachmentList(monthlyReport.getObjectId());
+            for (ContentAttachment contentAttachment : attachmentList) {
+                AttachmentInfo attachmentInfo = new AttachmentInfo();
+                attachmentInfo.setFilename(contentAttachment.getAttachment().getOriginalFilename());
+                attachmentInfo.setAttachmentId(contentAttachment.getAttachment().getObjectId());
+                monthlyReport.getAttachments().add(attachmentInfo);
+            }
+            return monthlyReport;
+        });
     }
 
     public List<BasicInfo> getMonthlyReport() {
@@ -79,6 +101,24 @@ public class MonthlyReportService {
             current.setFault(monthlyReport.getFault());
             current.setProblem(monthlyReport.getProblem());
         }
+
+        List<ContentAttachment> contentAttachments = new ArrayList();
+        if (!CollectionUtils.isEmpty(monthlyReport.getAttachments())) {
+            for (AttachmentInfo attachmentInfo : monthlyReport.getAttachments()) {
+                ContentAttachment contentAttachment = new ContentAttachment();
+                if (attachmentInfo.getAttachmentId() != null) {
+                    contentAttachment.setAttachment(new Attachment());
+                    contentAttachment.getAttachment().setObjectId(attachmentInfo.getAttachmentId());
+                } else {
+                    contentAttachment.setFileInfo(FileUploadInfo.valueOf(attachmentInfo.getTempFilename(), attachmentInfo.getFilename()));
+                }
+                contentAttachment.setRelatedType(MonthlyReport.class.getSimpleName());
+                contentAttachment.setRelatedId(current.getObjectId());
+                contentAttachments.add(contentAttachment);
+            }
+        }
+        contentAttachmentService.save(MonthlyReport.class.getSimpleName(), current.getObjectId(), null, contentAttachments);
+
         current.setAccendant(accendantService.getCurrentAccendant());
     }
 

@@ -13,6 +13,7 @@ module.exports = {
     userModifyPassword: `${api}/system/user/modifyPassword`,
     currentInfo: `${api}/current`,
     menus: `${api}/menus`,
+    fileUpload: `${api}/system/file/upload`,
   },
   contextPath: '/par'
 }

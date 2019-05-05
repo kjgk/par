@@ -1,6 +1,6 @@
 import {stringify} from 'qs'
 import {config, request} from '../utils'
-import {contextPath} from "../utils/config"
+import {contextPath, api} from "../utils/config"
 
 const {apiPrefix} = config
 
@@ -75,7 +75,7 @@ const uploadFile = function (file) {
 
   let formData = new FormData()
   formData.append("attachment", file)
-  return request(`${apiPrefix}/system/file/upload`, {
+  return request(`${contextPath}${api.fileUpload}`, {
     method: 'POST',
     body: formData,
   })
