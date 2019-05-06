@@ -7,8 +7,9 @@ import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.enumeration.MonthlyReportStatus;
 import com.unicorn.par.domain.po.MonthlyReport;
+import com.unicorn.par.domain.po.MonthlyReportAudit;
 import com.unicorn.par.domain.po.QMonthlyReport;
-import com.unicorn.par.domain.vo.MonthlyReportAudit;
+import com.unicorn.par.repository.MonthlyReportAuditRepository;
 import com.unicorn.par.repository.MonthlyReportRepository;
 import com.unicorn.std.domain.po.Attachment;
 import com.unicorn.std.domain.po.ContentAttachment;
@@ -33,6 +34,9 @@ public class MonthlyReportService {
 
     @Autowired
     private MonthlyReportRepository monthlyReportRepository;
+
+    @Autowired
+    private MonthlyReportAuditRepository monthlyReportAuditRepository;
 
     @Autowired
     private ContentAttachmentService contentAttachmentService;
@@ -168,8 +172,12 @@ public class MonthlyReportService {
     // 月报审核
     public void auditMonthlyReport(MonthlyReportAudit audit) {
 
-        MonthlyReport current = monthlyReportRepository.get(audit.getMonthlyReportId());
+        MonthlyReport current = monthlyReportRepository.get(audit.getMonthlyReport().getObjectId());
         current.setStatus(audit.getResult() == 1 ? MonthlyReportStatus.Resolve : MonthlyReportStatus.Reject);
         current.setAuditMessage(audit.getMessage());
+
+        audit.setMonthlyReport(current);
+        audit.setAuditTime(new Date());
+        monthlyReportAuditRepository.save(audit);
     }
 }

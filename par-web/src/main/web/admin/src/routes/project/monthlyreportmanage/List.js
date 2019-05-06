@@ -1,51 +1,63 @@
-import React from 'react'
-import {Divider, Table} from 'antd'
+import React, {Fragment} from 'react'
+import {Divider, Table, Tag} from 'antd'
 import {Formatter} from '../../../components'
 import queryString from 'query-string'
 
-const List = ({onDeleteItem, onEditItem, location, monthlyReportStatus, ...tableProps}) => {
+const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableProps}) => {
   location.query = queryString.parse(location.search)
 
-  const handleEdit = (record) => {
-    onEditItem(record)
+  const handleAudit = (record) => {
+    onAuditItem(record)
   }
   const handleView = (record) => {
-    onEditItem(record)
+    onViewItem(record)
   }
 
   const columns = [
     {
-      title: '所属系统',
+      title: '月报  ',
       dataIndex: 'system.name',
       align: 'left',
+      width: 360,
       render: (value, record) => <span><Formatter.Date value={record.month} pattern="YYYY年M月"/> - {value}</span>,
     },
     {
-      title: '主要内容',
+      title: '重点工作',
       align: 'left',
-      dataIndex: 'maintenance',
+      dataIndex: 'keyWork',
+      render: (value) => value && value.substring(0, 40),
     },
     {
       title: '状态',
       dataIndex: 'status',
-      width: 120,
-      render: (value) => monthlyReportStatus[value],
+      width: 100,
+      render: (value) => <Tag color={monthlyReportStatus[value][1]}>{monthlyReportStatus[value][0]}</Tag>,
     },
     {
       title: '提交时间',
       dataIndex: 'createdDate',
-      width: 180,
+      width: 160,
       render: (value) => <Formatter.Date value={value}/>,
     },
     {
+      title: '提交人',
+      dataIndex: 'accendant.username',
+      width: 100,
+    },
+    {
       title: '操作',
-      width: 120,
+      width: 110,
+      dataIndex: 'objectId',
       render: (text, record) => {
         return <div>
-          <a onClick={() => {
-            handleEdit(record)
-          }}>审核</a>
-          <Divider type="vertical"/>
+          {
+            record.status === 0 && <Fragment>
+              <a onClick={() => {
+                handleAudit(record)
+              }}>审核</a>
+              <Divider type="vertical"/>
+            </Fragment>
+          }
           <a onClick={() => {
             handleView(record)
           }}>查看</a>

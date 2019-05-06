@@ -190,35 +190,35 @@ const modal = ({
             {getFieldDecorator('keyWork', {
               initialValue: item.keyWork,
             })(
-              <TextArea rows={6} placeholder="请输入重点工作"/>
+              <TextArea rows={10} placeholder="请输入重点工作"/>
             )}
           </TabPane>
           <TabPane tab="运行维护" key={2}>
             {getFieldDecorator('maintenance', {
               initialValue: item.maintenance,
             })(
-              <TextArea rows={6} placeholder="请输入运行维护"/>
+              <TextArea rows={10} placeholder="请输入运行维护"/>
             )}
           </TabPane>
           <TabPane tab="功能完善" key={3}>
             {getFieldDecorator('perfection', {
               initialValue: item.perfection,
             })(
-              <TextArea rows={6} placeholder="请输入功能完善"/>
+              <TextArea rows={10} placeholder="请输入功能完善"/>
             )}
           </TabPane>
           <TabPane tab="故障及故障分析" key={4}>
             {getFieldDecorator('fault', {
               initialValue: item.fault,
             })(
-              <TextArea rows={6} placeholder="请输入故障及故障分析"/>
+              <TextArea rows={10} placeholder="请输入故障及故障分析"/>
             )}
           </TabPane>
           <TabPane tab="存在问题" key={5}>
             {getFieldDecorator('problem', {
               initialValue: item.problem,
             })(
-              <TextArea rows={6} placeholder="请输入存在问题"/>
+              <TextArea rows={10} placeholder="请输入存在问题"/>
             )}
           </TabPane>
           <TabPane tab="附件" key={10}>

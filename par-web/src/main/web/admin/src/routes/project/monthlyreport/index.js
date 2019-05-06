@@ -5,7 +5,7 @@ import moment from 'moment'
 import {connect} from 'dva'
 import {Page} from '../../../components'
 import queryString from 'query-string'
-import {Button, Card, Col, Icon, Row, Tabs, message} from "antd"
+import {Button, Card, Col, Icon, Row, Tabs, message, Tag} from "antd"
 import Modal from "./Modal"
 import ViewModal from "./ViewModal"
 import styles from "./index.module.less"
@@ -124,9 +124,16 @@ const Component = ({
   }
 
   const getReportTitle = (item) => {
-
     if (item.month) {
-      return moment(item.month).format("YYYY年 M月")
+      return <Fragment>
+        {moment(item.month).format("YYYY年 M月")}
+        <div style={{float: 'right'}}>
+          {item.status === 0 && <Tag color="blue">已提交</Tag>}
+          {item.status === 1 && <Tag color="green">已通过</Tag>}
+          {item.status === 2 && <Tag color="red">已退回，请修改</Tag>}
+          {item.status === 5 && <Tag color="geekblue">已归档</Tag>}
+        </div>
+      </Fragment>
     }
     return '未知'
   }
@@ -148,22 +155,26 @@ const Component = ({
               </div>
               <Row gutter={16} style={{marginTop: 15}}>
                 {
-                  list.map(item => <Col key={item.objectId} md={12} lg={6} xxl={4}>
+                  list.map(item => <Col key={item.objectId} md={12} xl={8} xxl={6}>
                     <Card className={styles.report_item} title={getReportTitle(item)} hoverable
                           onClick={() => handleView(item)}
                           actions={[
-                            <Icon type="eye"/>,
-                            item.objectId === currentMonthlyReport ? <Icon type="edit" onClick={(event) => {
-                              event.stopPropagation()
-                              event.preventDefault()
-                              handleEdit(item)
-                            }}/> : null,
-                            <Icon type="file-word" onClick={(event) => {
-                              event.stopPropagation()
-                              event.preventDefault()
-                              message.info('月报暂不支持导出！')
-                            }}/>,
+                            <Icon type="file-text"/>,
+                            item.objectId === currentMonthlyReport && (item.status === 0 || item.status === 2) ?
+                              <Icon type="form"
+                                    onClick={(event) => {
+                                      event.stopPropagation()
+                                      event.preventDefault()
+                                      handleEdit(item)
+                                    }}/> : null,
+                            <Icon type="file-word"
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                    event.preventDefault()
+                                    message.info('月报暂不支持导出！')
+                                  }}/>,
                           ].filter(action => action !== null)}>
+                      {item.status === 2 && <div title={item.auditMessage} style={{color: 'red', whiteSpace: 'normal'}}>退回意见：{item.auditMessage || '无'}</div>}
                       {item.keyWork || item.maintenance || item.perfection}
                     </Card>
                   </Col>)

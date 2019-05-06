@@ -13,4 +13,10 @@ export default {
   getAllMonthReport(params) {
     return request(`${api}/all?${stringify(params)}`)
   },
+  auditMonthReport(id, params) {
+    return request(`${api}/${id}/audit`, {
+      method: 'POST',
+      body: params,
+    })
+  },
 }

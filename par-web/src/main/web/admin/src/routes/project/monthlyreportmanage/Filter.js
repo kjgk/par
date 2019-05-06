@@ -80,7 +80,7 @@ const Filter = ({
                   placeholder="请选择状态"
                   style={{width: '100%'}}
                   onChange={() => setTimeout(handleSubmit)}>
-            {Object.keys(monthlyReportStatus).map(key => <Option value={key} key={key}>{monthlyReportStatus[key]}</Option>)}
+            {Object.keys(monthlyReportStatus).map(key => <Option value={key} key={key}>{monthlyReportStatus[key][0]}</Option>)}
           </Select>
         )}
       </Col>

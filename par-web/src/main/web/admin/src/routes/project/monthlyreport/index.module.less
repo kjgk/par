@@ -6,7 +6,11 @@
       white-space: pre;
       overflow: hidden;
       text-overflow: ellipsis;
-      height: 112px;
+      height: 132px;
+
+      &:after, &:before {
+        content: none;
+      }
     }
   }
 }
@@ -15,7 +19,7 @@
   :global {
     .ant-form-item {
       display: flex;
-
+      margin: 0 0 10px 0;
       .ant-form-item-label {
         > label > span {
           width: 200px;

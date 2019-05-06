@@ -6,6 +6,8 @@ import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 import {monthlyReportStatus} from '../../../models/dict'
+import ViewModal from "../monthlyreport/ViewModal"
+import AuditModal from "./AuditModal"
 
 const namespace = 'monthlyReportManage'
 const name = '月报管理'
@@ -61,20 +63,20 @@ const Component = ({
         pageSize: page.pageSize,
       })
     },
-    onDeleteItem(id) {
-      dispatch({
-        type: `${namespace}/delete`,
-        payload: id,
-      })
-        .then(() => handleRefresh({
-          page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
-        }))
-    },
-    onEditItem(item) {
+    onAuditItem(item) {
       dispatch({
         type: `${namespace}/showModal`,
         payload: {
-          modalType: 'update',
+          modalType: 'audit',
+          currentItem: item,
+        },
+      })
+    },
+    onViewItem(item) {
+      dispatch({
+        type: `${namespace}/showModal`,
+        payload: {
+          modalType: 'view',
           currentItem: item,
         },
       })
@@ -102,11 +104,48 @@ const Component = ({
     },
   }
 
+  const auditModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    width: 640,
+    onOk(data) {
+      dispatch({
+        type: `${namespace}/audit`,
+        payload: data,
+      })
+        .then(() => handleRefresh())
+    },
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
+  const viewModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    width: 840,
+    onOk() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   return (
     <Page inner>
       <Filter {...filterProps} />
       <List {...listProps} />
-      {/*{modalVisible && <Modal {...modalProps} />}*/}
+      {modalVisible && modalType === 'audit' && <AuditModal {...auditModalProps} />}
+      {modalVisible && modalType === 'view' && <ViewModal {...viewModalProps} />}
     </Page>
   )
 }

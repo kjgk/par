@@ -6,7 +6,7 @@ import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.QMonthlyReport;
-import com.unicorn.par.domain.vo.MonthlyReportAudit;
+import com.unicorn.par.domain.po.MonthlyReportAudit;
 import com.unicorn.par.service.MonthlyReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -111,7 +111,8 @@ public class MonthlyReportController extends BaseController {
     @RequestMapping(value = "/{objectId}/audit", method = RequestMethod.POST)
     public void auditMonthlyReport(@PathVariable("objectId") Long objectId, @RequestBody MonthlyReportAudit audit) {
 
-        audit.setMonthlyReportId(objectId);
+        audit.setMonthlyReport(new MonthlyReport());
+        audit.getMonthlyReport().setObjectId(objectId);
         monthlyReportService.auditMonthlyReport(audit);
     }
 }

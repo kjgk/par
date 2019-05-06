@@ -11,7 +11,7 @@ const modal = ({
 
   const modalOpts = {
     ...modalProps,
-    footer: <Button type="primary" onClick={modalProps.onCancel}>确定</Button>,
+    footer: <Button type="default" onClick={modalProps.onCancel}>关闭</Button>,
     title: `${item.system.name} - ${moment(item.month).format('YYYY年M月')} - 月报`,
   }
 
