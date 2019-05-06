@@ -66,6 +66,10 @@ public class MonthlyReport extends DefaultPersistent {
     @Column(columnDefinition = "text")
     private String problem;
 
+    private Integer status;
+
+    private String auditMessage;
+
     @Transient
     List<AttachmentInfo> attachments;
 }

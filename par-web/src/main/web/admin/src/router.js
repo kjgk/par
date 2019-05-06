@@ -108,6 +108,11 @@ const Routers = function ({history, app}) {
       models: () => [import('./models/project/monthly.report')],
       component: () => import('./routes/project/monthlyreport'),
     },
+    {
+      path: '/monthly/report/manage',
+      models: () => [import('./models/project/monthly.report.manage')],
+      component: () => import('./routes/project/monthlyreportmanage'),
+    },
   ]
 
   return (

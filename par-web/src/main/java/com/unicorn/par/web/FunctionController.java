@@ -25,7 +25,7 @@ public class FunctionController {
     private FunctionService functionService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Function> list(PageInfo pageInfo, String keyword, Long system) {
+    public Page<Function> list(PageInfo pageInfo, String keyword, Long systemId) {
 
         QFunction function = QFunction.function;
 
@@ -38,8 +38,8 @@ public class FunctionController {
                 expression = expression.and(function.name.containsIgnoreCase(s));
             }
         }
-        if (system != null) {
-            expression = expression.and(function.system.objectId.eq(system));
+        if (systemId != null) {
+            expression = expression.and(function.system.objectId.eq(systemId));
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.ASC, "system.name").and(new Sort(Sort.Direction.ASC, "orderNo"))

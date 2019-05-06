@@ -65,7 +65,7 @@ public class TicketService {
             current = ticketRepository.save(ticket);
             current.setSubmitTime(new Date());
             current.setSubmitter(userService.getCurrentUser());
-            current.setStatus(TicketStatus.pending);
+            current.setStatus(TicketStatus.Pending);
             if (!CollectionUtils.isEmpty(ticket.getAttachments())) {
                 List<ContentAttachment> contentAttachments = new ArrayList();
                 for (FileUploadInfo fileUploadInfo : ticket.getAttachments()) {
@@ -84,7 +84,7 @@ public class TicketService {
     public void acceptTicket(Long objectId) {
 
         Ticket ticket = getTicket(objectId);
-        ticket.setStatus(TicketStatus.processing);
+        ticket.setStatus(TicketStatus.Processing);
 
         TicketHandle ticketHandle = ticketHandleRepository.findByTicketId(objectId);
         if (ticketHandle != null) {
@@ -121,7 +121,7 @@ public class TicketService {
             contentAttachmentService.save(TicketHandle.class.getSimpleName(), current.getObjectId(), null, contentAttachments);
         }
 
-        current.getTicket().setStatus(TicketStatus.finish);
+        current.getTicket().setStatus(TicketStatus.Finish);
     }
 
     public void deleteTicket(Long objectId) {

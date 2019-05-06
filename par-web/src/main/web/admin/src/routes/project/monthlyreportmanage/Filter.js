@@ -1,9 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Col, Form, Input, Row } from 'antd'
+import {Button, Col, DatePicker, Form, Input, Row, Select} from 'antd'
 import SystemSelect from "../../../sections/system/SystemSelect"
+import moment from "moment"
 
-const { Search } = Input
+const {Search} = Input
+
+const {MonthPicker} = DatePicker
 
 const ColProps = {
   xs: 24,
@@ -18,10 +21,13 @@ const TwoColProps = {
   xl: 96,
 }
 
+const Option = Select.Option
+
 const Filter = ({
                   onAdd,
                   onFilterChange,
                   filter,
+                  monthlyReportStatus,
                   form: {
                     getFieldDecorator,
                     getFieldsValue,
@@ -31,7 +37,10 @@ const Filter = ({
 
   const handleSubmit = () => {
     let fields = getFieldsValue()
-    onFilterChange(fields)
+    onFilterChange({
+      ...fields,
+      month: fields.month && fields.month.format('YYYY-MM')
+    })
   }
 
   const handleReset = () => {
@@ -49,20 +58,33 @@ const Filter = ({
     handleSubmit()
   }
 
-  const { keyword, systemId } = filter
+  const {status, month, systemId} = filter
 
   return (
     <Row gutter={24}>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('system', { initialValue: systemId })(<SystemSelect allowClear
-                                                                                placeholder="请选择所属系统"
-                                                                                onChange={() => setTimeout(handleSubmit)}/>)}
+      <Col {...ColProps} xl={{span: 6}} md={{span: 8}}>
+        {getFieldDecorator('systemId', {initialValue: systemId})(
+          <SystemSelect allowClear
+                        placeholder="请选择所属系统"
+                        onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('keyword', { initialValue: keyword })(<Search placeholder="请输入关键字"
-                                                                         onSearch={handleSubmit}/>)}
+      <Col {...ColProps} xl={{span: 3}} md={{span: 8}}>
+        {getFieldDecorator('month', {initialValue: month && moment(month)})(
+          <MonthPicker style={{width: '100%'}} onChange={() => setTimeout(handleSubmit)} placeholder="请选择月份"
+          />)}
       </Col>
-      <Col {...TwoColProps} xl={{ span: 16 }} md={{ span: 24 }}>
+      <Col {...ColProps} xl={{span: 3}} md={{span: 8}}>
+        {getFieldDecorator('status', {initialValue: status})(
+          <Select optionFilterProp="children"
+                  allowClear
+                  placeholder="请选择状态"
+                  style={{width: '100%'}}
+                  onChange={() => setTimeout(handleSubmit)}>
+            {Object.keys(monthlyReportStatus).map(key => <Option value={key} key={key}>{monthlyReportStatus[key]}</Option>)}
+          </Select>
+        )}
+      </Col>
+      <Col {...TwoColProps} xl={{span: 8}} md={{span: 8}}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -71,9 +93,6 @@ const Filter = ({
           <div>
             <Button type="primary" className="margin-right" onClick={handleSubmit}>查询</Button>
             <Button onClick={handleReset}>重置</Button>
-          </div>
-          <div className="flex-vertical-center">
-            <Button icon="plus" onClick={onAdd}>新建</Button>
           </div>
         </div>
       </Col>

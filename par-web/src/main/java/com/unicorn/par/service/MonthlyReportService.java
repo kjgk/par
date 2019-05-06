@@ -5,8 +5,10 @@ import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
+import com.unicorn.par.domain.enumeration.MonthlyReportStatus;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.QMonthlyReport;
+import com.unicorn.par.domain.vo.MonthlyReportAudit;
 import com.unicorn.par.repository.MonthlyReportRepository;
 import com.unicorn.std.domain.po.Attachment;
 import com.unicorn.std.domain.po.ContentAttachment;
@@ -76,15 +78,15 @@ public class MonthlyReportService {
 
     public void saveMonthlyReport(MonthlyReport monthlyReport) {
 
-        Date currentMonth = getCurrentMonth();
-        if (currentMonth == null) {
-            throw new ServiceException("请在每月最后3个工作日提交月报！");
-        }
+
         MonthlyReport current;
         if (StringUtils.isEmpty(monthlyReport.getObjectId())) {
+            Date currentMonth = getCurrentMonth();
+            if (currentMonth == null) {
+                throw new ServiceException("请在每月最后3个工作日提交月报！");
+            }
             current = monthlyReportRepository.save(monthlyReport);
             current.setMonth(currentMonth);
-            current.setSubmitTime(new Date());
         } else {
             current = monthlyReportRepository.getOne(monthlyReport.getObjectId());
             current.setMeeting(monthlyReport.getMeeting());
@@ -101,6 +103,8 @@ public class MonthlyReportService {
             current.setFault(monthlyReport.getFault());
             current.setProblem(monthlyReport.getProblem());
         }
+        current.setSubmitTime(new Date());
+        current.setStatus(MonthlyReportStatus.Submit);
 
         List<ContentAttachment> contentAttachments = new ArrayList();
         if (!CollectionUtils.isEmpty(monthlyReport.getAttachments())) {
@@ -159,5 +163,13 @@ public class MonthlyReportService {
 
     @CacheEvict(value = "currentMonthReport")
     public void invalidCurrentMonth() {
+    }
+
+    // 月报审核
+    public void auditMonthlyReport(MonthlyReportAudit audit) {
+
+        MonthlyReport current = monthlyReportRepository.get(audit.getMonthlyReportId());
+        current.setStatus(audit.getResult() == 1 ? MonthlyReportStatus.Resolve : MonthlyReportStatus.Reject);
+        current.setAuditMessage(audit.getMessage());
     }
 }

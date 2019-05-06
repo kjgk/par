@@ -21,7 +21,7 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
 
     setup({dispatch, history}) {
       history.listen((location) => {
-        if (location.pathname === '/monthly/report') {
+        if (location.pathname === pathname) {
           dispatch({
             type: 'query',
             payload: {
