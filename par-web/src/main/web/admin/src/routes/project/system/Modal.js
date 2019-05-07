@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Form, Input, Modal } from 'antd'
 import CompanySelect from "../../../sections/company/CompanySelect"
+import SupervisorSelect from "../../../sections/supervisor/SupervisorSelect"
 
 const formItemLayout = {
   labelCol: {
@@ -69,6 +70,11 @@ const modal = ({
           {getFieldDecorator('description', {
             initialValue: item.description,
           })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}
+        </Form.Item>
+        <Form.Item label="项目负责人" hasFeedback {...formItemLayout}>
+          {getFieldDecorator('supervisor.objectId', {
+            initialValue: item.supervisor && item.supervisor.objectId,
+          })(<SupervisorSelect placeholder="请选择项目负责人"/>)}
         </Form.Item>
       </Form>
     </Modal>

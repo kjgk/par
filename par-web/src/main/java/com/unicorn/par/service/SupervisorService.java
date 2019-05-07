@@ -4,6 +4,7 @@ import com.unicorn.core.domain.po.Account;
 import com.unicorn.core.domain.po.Role;
 import com.unicorn.core.domain.po.User;
 import com.unicorn.core.domain.po.UserRole;
+import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.core.repository.RoleRepository;
 import com.unicorn.par.domain.po.Supervisor;
@@ -18,6 +19,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -53,6 +55,12 @@ public class SupervisorService {
 
         return supervisorRepository.findAll(queryInfo);
     }
+
+    public List<BasicInfo> getSupervisor() {
+
+        return supervisorRepository.findAll().stream().map(supervisor -> BasicInfo.valueOf(supervisor.getObjectId(), supervisor.getUsername())).collect(Collectors.toList());
+    }
+
 
     public Supervisor getSupervisor(Long objectId) {
 

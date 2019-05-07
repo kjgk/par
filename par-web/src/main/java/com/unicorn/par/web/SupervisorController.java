@@ -1,6 +1,7 @@
 package com.unicorn.par.web;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.Supervisor;
@@ -41,6 +42,12 @@ public class SupervisorController {
                 new Sort(Sort.Direction.ASC, "objectId")
         );
         return supervisorService.getSupervisor(queryInfo);
+    }
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public List<BasicInfo> list() {
+
+        return supervisorService.getSupervisor();
     }
 
     @RequestMapping(method = RequestMethod.POST)

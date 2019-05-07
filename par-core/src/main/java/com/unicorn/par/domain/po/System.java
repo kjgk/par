@@ -24,5 +24,9 @@ public class System extends DefaultNomenclator {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @OneToOne
+    @JoinColumn(name = "supervisor_id")
+    private Supervisor supervisor;
+
     private String url;
 }

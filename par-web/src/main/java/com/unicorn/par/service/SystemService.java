@@ -72,6 +72,7 @@ public class SystemService {
             current.setName(system.getName());
             current.setUrl(system.getUrl());
             current.setCompany(system.getCompany());
+            current.setSupervisor(system.getSupervisor());
             current.setDescription(system.getDescription());
         }
     }

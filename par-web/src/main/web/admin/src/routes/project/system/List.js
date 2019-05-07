@@ -39,6 +39,10 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
       dataIndex: 'url',
     },
     {
+      title: '项目负责人',
+      dataIndex: 'supervisor.username',
+    },
+    {
       title: '创建时间',
       dataIndex: 'createdDate',
       width: 180,
