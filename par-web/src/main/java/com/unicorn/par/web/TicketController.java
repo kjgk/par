@@ -57,8 +57,6 @@ public class TicketController {
 
         User currentUser = userService.getCurrentUser();
         String roleTag = currentUser.getUserRoleList().get(0).getRole().getTag();
-//        if("Manager".equals(roleTag)) {
-//        }
         if ("Accendant".equals(roleTag)) {
             Accendant currentAccendant = accendantService.getCurrentAccendant();
             expression = expression.and(ticket.system.company.objectId.eq(currentAccendant.getCompany().getObjectId()));

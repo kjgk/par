@@ -6,8 +6,8 @@ import com.unicorn.core.domain.po.User;
 import com.unicorn.core.domain.po.UserRole;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.core.repository.RoleRepository;
-import com.unicorn.par.domain.po.Accendant;
-import com.unicorn.par.repository.AccendantRepository;
+import com.unicorn.par.domain.po.Supervisor;
+import com.unicorn.par.repository.SupervisorRepository;
 import com.unicorn.system.service.AccountService;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ import java.util.List;
 
 @Service
 @Transactional
-public class AccendantService {
+public class SupervisorService {
 
     @Autowired
-    private AccendantRepository accendantRepository;
+    private SupervisorRepository supervisorRepository;
 
     @Autowired
     private UserService userService;
@@ -35,7 +35,7 @@ public class AccendantService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Accendant getCurrentAccendant() {
+    public Supervisor getCurrentSupervisor() {
 
         User currentUser = userService.getCurrentUser();
         if (currentUser == null) {
@@ -44,35 +44,35 @@ public class AccendantService {
         return getByUser(currentUser);
     }
 
-    public Accendant getByUser(User user) {
+    public Supervisor getByUser(User user) {
 
-        return accendantRepository.findByUserObjectId(user.getObjectId());
+        return supervisorRepository.findByUserObjectId(user.getObjectId());
     }
 
-    public Page<Accendant> getAccendant(QueryInfo queryInfo) {
+    public Page<Supervisor> getSupervisor(QueryInfo queryInfo) {
 
-        return accendantRepository.findAll(queryInfo);
+        return supervisorRepository.findAll(queryInfo);
     }
 
-    public Accendant getAccendant(Long objectId) {
+    public Supervisor getSupervisor(Long objectId) {
 
-        return accendantRepository.get(objectId);
+        return supervisorRepository.get(objectId);
     }
 
-    public void saveAccendant(Accendant accendant) {
+    public void saveSupervisor(Supervisor supervisor) {
 
-        Accendant current;
-        if (StringUtils.isEmpty(accendant.getObjectId())) {
+        Supervisor current;
+        if (StringUtils.isEmpty(supervisor.getObjectId())) {
 
-            String phoneNo = accendant.getPhoneNo();
+            String phoneNo = supervisor.getPhoneNo();
 
-            Role role = roleRepository.findByTag("Accendant");
+            Role role = roleRepository.findByTag("Supervisor");
             UserRole userRole = new UserRole();
             userRole.setRole(role);
 
             // 保存到User表
             User user = new User();
-            user.setName(accendant.getUsername());
+            user.setName(supervisor.getUsername());
             user.setUserRoleList(Arrays.asList(userRole));
             user = userService.saveUser(user);
 
@@ -83,24 +83,23 @@ public class AccendantService {
             account.setName(phoneNo);
             accountService.saveAccount(account);
 
-            // 保存到Accendant表
-            accendant.setUser(user);
-            current = accendantRepository.save(accendant);
+            // 保存到Supervisor表
+            supervisor.setUser(user);
+            current = supervisorRepository.save(supervisor);
         } else {
-            current = accendantRepository.getOne(accendant.getObjectId());
-            current.getUser().setName(accendant.getUsername());
-            current.setCompany(accendant.getCompany());
-            current.setPhoneNo(accendant.getPhoneNo());
+            current = supervisorRepository.getOne(supervisor.getObjectId());
+            current.getUser().setName(supervisor.getUsername());
+            current.setPhoneNo(supervisor.getPhoneNo());
         }
     }
 
-    public void deleteAccendant(Long objectId) {
+    public void deleteSupervisor(Long objectId) {
 
-        accendantRepository.deleteById(objectId);
+        supervisorRepository.deleteById(objectId);
     }
 
-    public void deleteAccendant(List<Long> objectIds) {
+    public void deleteSupervisor(List<Long> objectIds) {
 
-        objectIds.forEach(this::deleteAccendant);
+        objectIds.forEach(this::deleteSupervisor);
     }
 }

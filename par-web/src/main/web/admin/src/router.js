@@ -69,6 +69,11 @@ const Routers = function ({history, app}) {
       component: () => import('./routes/project/accendant/'),
     },
     {
+      path: '/project/supervisor',
+      models: () => [import('./models/project/supervisor')],
+      component: () => import('./routes/project/supervisor/'),
+    },
+    {
       path: '/project/system',
       models: () => [import('./models/project/system')],
       component: () => import('./routes/project/system/'),

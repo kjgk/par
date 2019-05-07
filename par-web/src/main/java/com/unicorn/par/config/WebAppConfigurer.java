@@ -2,7 +2,6 @@ package com.unicorn.par.config;
 
 import com.alibaba.fastjson.JSON;
 import com.unicorn.core.domain.po.User;
-import com.unicorn.par.service.AccendantService;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -37,9 +36,6 @@ public class WebAppConfigurer implements WebMvcConfigurer {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private AccendantService signUserService;
-
     @Bean(name = "authenticationSuccessHandler")
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new SimpleUrlAuthenticationSuccessHandler() {
@@ -57,10 +53,6 @@ public class WebAppConfigurer implements WebMvcConfigurer {
                 result.put("success", true);
                 result.put("user", userData);
                 result.put("session", Base64Utils.encodeToString(request.getSession().getId().getBytes()));
-                // 记录 LoginToken
-                result.put("loginToken", Base64Utils.encodeToString(
-                        signUserService.saveKeepLoginToken(user.getAccount().getName(), user.getAccount().getPassword()).getBytes()
-                ));
                 response.getWriter().print(new String(JSON.toJSONString(result).getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
             }
         };

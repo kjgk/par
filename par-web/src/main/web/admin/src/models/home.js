@@ -30,7 +30,7 @@ export default modelExtend(model, {
         yield put(routerRedux.push({
           pathname: '/system',
         }))
-      } else if (user.role === 'Manager') {
+      } else if (user.role === 'Supervisor') {
         yield put(routerRedux.push({
           pathname: '/inspection/report',
         }))

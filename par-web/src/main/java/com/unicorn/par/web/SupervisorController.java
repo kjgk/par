@@ -3,9 +3,9 @@ package com.unicorn.par.web;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
-import com.unicorn.par.domain.po.Accendant;
-import com.unicorn.par.domain.po.QAccendant;
-import com.unicorn.par.service.AccendantService;
+import com.unicorn.par.domain.po.Supervisor;
+import com.unicorn.par.domain.po.QSupervisor;
+import com.unicorn.par.service.SupervisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -17,57 +17,54 @@ import java.util.List;
 import static com.unicorn.base.web.ApiNamespace.API_V1;
 
 @RestController
-@RequestMapping(API_V1 + "/accendant")
-public class AccendantController {
+@RequestMapping(API_V1 + "/supervisor")
+public class SupervisorController {
 
     @Autowired
-    private AccendantService accendantService;
+    private SupervisorService supervisorService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Accendant> list(PageInfo pageInfo, String keyword, Long company) {
+    public Page<Supervisor> list(PageInfo pageInfo, String keyword) {
 
-        QAccendant accendant = QAccendant.accendant;
+        QSupervisor supervisor = QSupervisor.supervisor;
 
-        BooleanExpression expression = accendant.isNotNull();
+        BooleanExpression expression = supervisor.isNotNull();
         if (!StringUtils.isEmpty(keyword)) {
             for (String s : keyword.split(" ")) {
                 if (StringUtils.isEmpty(s)) {
                     continue;
                 }
-                expression = expression.and(accendant.user.name.containsIgnoreCase(s));
+                expression = expression.and(supervisor.user.name.containsIgnoreCase(s));
             }
-        }
-        if (company != null) {
-            expression = expression.and(accendant.company.objectId.eq(company));
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.ASC, "objectId")
         );
-        return accendantService.getAccendant(queryInfo);
+        return supervisorService.getSupervisor(queryInfo);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void createAccendant(@RequestBody Accendant accendant) {
+    public void createSupervisor(@RequestBody Supervisor supervisor) {
 
-        accendantService.saveAccendant(accendant);
+        supervisorService.saveSupervisor(supervisor);
     }
 
     @RequestMapping(value = "/{objectId}", method = RequestMethod.PATCH)
-    public void updateAccendant(@PathVariable("objectId") Long objectId, @RequestBody Accendant accendant) {
+    public void updateSupervisor(@PathVariable("objectId") Long objectId, @RequestBody Supervisor supervisor) {
 
-        accendant.setObjectId(objectId);
-        accendantService.saveAccendant(accendant);
+        supervisor.setObjectId(objectId);
+        supervisorService.saveSupervisor(supervisor);
     }
 
     @RequestMapping(value = "/{objectId}", method = RequestMethod.DELETE)
-    public void deleteAccendant(@PathVariable("objectId") Long objectId) {
+    public void deleteSupervisor(@PathVariable("objectId") Long objectId) {
 
-        accendantService.deleteAccendant(objectId);
+        supervisorService.deleteSupervisor(objectId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     public void delete(@RequestBody List<Long> objectIds) {
 
-        accendantService.deleteAccendant(objectIds);
+        supervisorService.deleteSupervisor(objectIds);
     }
 }
