@@ -29,7 +29,7 @@ public class MainTask {
 
     // 计算绩效得分
     // 每日凌晨4点执行
-    @Scheduled(cron = "0 0 4 1/1 * ?")
+//    @Scheduled(cron = "0 0 4 1/1 * ?")
 //    @Scheduled(fixedDelay = 1000)
     public void generateAchievement() {
 
