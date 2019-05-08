@@ -8,16 +8,44 @@ const pathname = '/ticket/handle'
 
 export default modelExtend(createCrudModel(namespace, pathname, service), {
   namespace,
-  state: {},
+  state: {
+    fileList: [],
+    fileLimit: 3,
+  },
   effects: {
     * accept({payload = {}}, {call, put, select}) {
       yield call(service.acceptTicket, payload)
       message.success('接单成功！')
     },
     * process({payload = {}}, {call, put, select}) {
-      yield call(service.processTicket, payload)
-      yield put({type: 'hideModal'})
+      const {fileList} = yield select(_ => _[namespace])
+      const attachments = []
+      for (const file of fileList) {
+        attachments.push(file.response)
+      }
+      yield call(service.processTicket, {
+        ...payload,
+        attachments,
+      })
       message.success('处理成功！')
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: false,
+          fileList: []
+        },
+      })
+    },
+  },
+  reducers: {
+    uploadChange(state, {payload}) {
+      if (payload.fileList.length > state.fileLimit) {
+        return state
+      }
+      return {
+        ...state,
+        fileList: payload.fileList,
+      }
     },
   },
 })

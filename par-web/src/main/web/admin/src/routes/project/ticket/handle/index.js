@@ -18,7 +18,7 @@ const Component = ({
   location.query = queryString.parse(location.search)
   const {query, pathname} = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
+    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys, fileList, fileLimit,
   } = model
 
   const handleRefresh = (newQuery) => {
@@ -100,6 +100,14 @@ const Component = ({
     visible: modalVisible,
     maskClosable: false,
     title: `工单结单`,
+    fileList,
+    fileLimit,
+    onUploadChange(data) {
+      dispatch({
+        type: `${namespace}/uploadChange`,
+        payload: data,
+      })
+    },
     onOk(data) {
       dispatch({
         type: `${namespace}/process`,

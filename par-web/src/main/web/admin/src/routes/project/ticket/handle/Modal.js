@@ -16,6 +16,9 @@ const formItemLayout = {
 
 const modal = ({
                  item = {},
+                 fileList,
+                 fileLimit,
+                 onUploadChange,
                  onOk,
                  form: {
                    getFieldDecorator,
@@ -45,6 +48,15 @@ const modal = ({
     action: `${contextPath}${api.fileUpload}`,
     multiple: true,
     name: 'attachment',
+    fileList,
+    beforeUpload() {
+      if (fileList.length >= fileLimit) {
+        return false
+      }
+    },
+    onChange(data) {
+      onUploadChange(data)
+    }
   }
 
   return (
@@ -65,9 +77,10 @@ const modal = ({
         </Form.Item>
         <Form.Item label="附件" hasFeedback {...formItemLayout}>
           <Upload {...uploaderProps}>
-            <Button >
+            <Button disabled={fileList.length >= fileLimit}>
               <Icon type="upload"/> 上传附件
             </Button>
+            <span style={{color: '#666'}}> 您可以上传{fileLimit}个附件</span>
           </Upload>
         </Form.Item>
       </Form>

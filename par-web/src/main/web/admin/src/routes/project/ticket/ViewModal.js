@@ -51,7 +51,7 @@ const modal = ({
               <div><TicketStatus value={item.status}/></div>
             </Form.Item>
           </Col>
-          <Col span={22} offset={2}>
+          {item && item.attachments.length > 0 && <Col span={22} offset={2}>
             <Form.Item label="附件">
               {item.attachments.map((attachment) =>
                 <div key={attachment.url}>
@@ -59,13 +59,13 @@ const modal = ({
                 </div>
               )}
             </Form.Item>
-          </Col>
+          </Col>}
           {
             item.status === 2 && item.handleInfo && <Fragment>
               <Divider>处理结果</Divider>
               <Col span={22} offset={2}>
                 <Form.Item label="是否解决">
-                  {item.handleInfo.result === 1 ? '是' : '否'}
+                  {item.handleInfo.result === 1 ? '已解决' : '未解决'}
                 </Form.Item>
               </Col>
 
@@ -75,7 +75,19 @@ const modal = ({
                 </Form.Item>
               </Col>
 
-              <Col span={22} offset={2}>
+              <Col span={10} offset={2}>
+                <Form.Item label="接单时间">
+                  <Formatter.Date value={item.handleInfo.acceptTime}/>
+                </Form.Item>
+              </Col>
+
+              {item.handleInfo.finishTime && <Col span={10} offset={2}>
+                <Form.Item label="完成时间">
+                  <Formatter.Date value={item.handleInfo.finishTime}/>
+                </Form.Item>
+              </Col>}
+
+              {item && item.handleInfo.attachments.length > 0 && <Col span={22} offset={2}>
                 <Form.Item label="附件">
                   {item.handleInfo.attachments.map((attachment) =>
                     <div key={attachment.url}>
@@ -83,7 +95,7 @@ const modal = ({
                     </div>
                   )}
                 </Form.Item>
-              </Col>
+              </Col>}
             </Fragment>
           }
         </Row>
