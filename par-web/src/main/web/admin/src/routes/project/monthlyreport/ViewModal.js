@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {Button, Col, Divider, Form, Input, Modal, Row} from 'antd'
 import moment from "moment"
 import styles from "./index.module.less"
+import {contextPath} from "../../../utils/config"
 
 const modal = ({
                  item = {},
@@ -70,6 +71,19 @@ const modal = ({
         <div className={styles.display_field}>{item.fault || '无'}</div>
         <Divider>【存在问题】</Divider>
         <div className={styles.display_field}>{item.problem || '无'}</div>
+        {
+          item.attachments.length > 0 &&
+          <Fragment>
+            <Divider>【附件】</Divider>
+            <div className={styles.display_field}>
+              {item.attachments.map((attachment) =>
+                <div key={attachment.url}>
+                  <a href={`${contextPath}${attachment.imageUrl || attachment.url}`} target="_blank">{attachment.filename}</a>
+                </div>
+              )}
+            </div>
+          </Fragment>
+        }
       </Form>
     </Modal>
   )

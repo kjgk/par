@@ -50,16 +50,7 @@ public class MonthlyReportService {
     public Page<MonthlyReport> getMonthlyReport(QueryInfo queryInfo) {
 
         return monthlyReportRepository.findAll(queryInfo).map(monthlyReport -> {
-
-            // 加载附件
-            monthlyReport.setAttachments(new ArrayList());
-            List<ContentAttachment> attachmentList = contentAttachmentService.getAttachmentList(monthlyReport.getObjectId());
-            for (ContentAttachment contentAttachment : attachmentList) {
-                AttachmentInfo attachmentInfo = new AttachmentInfo();
-                attachmentInfo.setFilename(contentAttachment.getAttachment().getOriginalFilename());
-                attachmentInfo.setAttachmentId(contentAttachment.getAttachment().getObjectId());
-                monthlyReport.getAttachments().add(attachmentInfo);
-            }
+            monthlyReport.setAttachments(contentAttachmentService.getAttachmentInfos(monthlyReport.getObjectId()));
             return monthlyReport;
         });
     }
