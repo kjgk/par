@@ -66,6 +66,7 @@ const Filter = ({
         {getFieldDecorator('systemId', {initialValue: systemId})(
           <SystemSelect allowClear
                         placeholder="请选择所属系统"
+                        self={true}
                         onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
       <Col {...ColProps} xl={{span: 3}} md={{span: 8}}>

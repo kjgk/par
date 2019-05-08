@@ -3,9 +3,7 @@ package com.unicorn.par.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
-import com.unicorn.par.domain.po.Inspection;
-import com.unicorn.par.domain.po.InspectionDetail;
-import com.unicorn.par.domain.po.QInspection;
+import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
@@ -25,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +48,9 @@ public class InspectionService {
 
     @Autowired
     private AccendantService accendantService;
+
+    @Autowired
+    private SupervisorService supervisorService;
 
     @Autowired
     private HolidayService holidayService;
@@ -170,7 +172,10 @@ public class InspectionService {
             }
             current = inspectionRepository.save(inspection);
             current.setInspectionTime(new Date());
+            // 巡检人可以是系统维护人员也可以是项目管理员
             current.setAccendant(accendantService.getCurrentAccendant());
+            current.setSupervisor(supervisorService.getCurrentSupervisor());
+
             current.setSegment(inspectionSegment);
             for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
                 InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
@@ -187,7 +192,7 @@ public class InspectionService {
             }
         } else {
             current = inspectionRepository.getOne(inspection.getObjectId());
-            // todo 修改
+            // todo 修改巡检记录 目前不允许修改
         }
     }
 
@@ -228,7 +233,16 @@ public class InspectionService {
             result.getDateList().add(i + 1 + "号");
         }
 
-        List<System> systemList = systemRepository.findAll(new Sort(Sort.Direction.ASC, "company.name"));
+        List<System> systemList;
+        Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
+        Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
+        if (currentSupervisor != null) {
+            systemList = systemRepository.findAll(QSystem.system.supervisor.objectId.eq(currentSupervisor.getObjectId()), sort);
+        } else {
+            systemList = systemRepository.findAll(sort);
+        }
+
+        Collections.reverse(systemList);
 
         List<String> inspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection" +
                 " where inspection_time between ? and ?", String.class, monthStartDate.toDate(), monthStartDate.plusMonths(1).toDate());
@@ -268,8 +282,12 @@ public class InspectionService {
 
         InspectionInfo inspectionInfo = new InspectionInfo();
         inspectionInfo.setObjectId(inspection.getObjectId());
-        inspectionInfo.setAccendantId(inspection.getAccendant().getObjectId());
-        inspectionInfo.setAccendantName(inspection.getAccendant().getUsername());
+        if (inspection.getAccendant() != null) {
+            inspectionInfo.setUsername(inspection.getAccendant().getUsername());
+        } else if (inspection.getSupervisor() != null) {
+            inspectionInfo.setUsername(inspection.getSupervisor().getUsername());
+        }
+
         inspectionInfo.setInspectionTime(inspection.getInspectionTime());
         inspectionInfo.setSystemId(inspection.getSystem().getObjectId());
         inspectionInfo.setSystemName(inspection.getSystem().getName());

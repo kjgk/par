@@ -122,7 +122,7 @@ const Component = ({
               required: true,
               message: '请选择所属系统',
             }],
-          })(<SystemSelect placeholder="请选择所属系统"/>)}
+          })(<SystemSelect self={true} placeholder="请选择所属系统"/>)}
         </Form.Item>
         <Form.Item label="报修人" hasFeedback {...formItemLayout}>
           {getFieldDecorator('contacts', {

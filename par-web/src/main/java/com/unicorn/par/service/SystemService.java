@@ -2,9 +2,7 @@ package com.unicorn.par.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.query.QueryInfo;
-import com.unicorn.par.domain.po.Accendant;
-import com.unicorn.par.domain.po.QFunction;
-import com.unicorn.par.domain.po.QSystem;
+import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.vo.SystemInfo;
 import com.unicorn.par.repository.FunctionRepository;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +31,9 @@ public class SystemService {
     @Autowired
     private AccendantService accendantService;
 
+    @Autowired
+    private SupervisorService supervisorService;
+
     public Page<System> getSystem(QueryInfo queryInfo) {
 
         return systemRepository.findAll(queryInfo);
@@ -40,13 +42,23 @@ public class SystemService {
     public List<SystemInfo> getSystemList(Integer self) {
 
         List<System> systemList;
+        Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
         if (self == null || self != 1) {
-            systemList = systemRepository.findAll();
+            systemList = systemRepository.findAll(sort);
         } else {
             Accendant currentAccendant = accendantService.getCurrentAccendant();
-            QSystem system = QSystem.system;
-            BooleanExpression expression = system.company.objectId.eq(currentAccendant.getCompany().getObjectId());
-            systemList = systemRepository.findAll(expression);
+            Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
+            if (currentAccendant != null) {
+                QSystem system = QSystem.system;
+                BooleanExpression expression = system.company.objectId.eq(currentAccendant.getCompany().getObjectId());
+                systemList = systemRepository.findAll(expression, sort);
+            } else if (currentSupervisor != null) {
+                QSystem system = QSystem.system;
+                BooleanExpression expression = system.supervisor.objectId.eq(currentSupervisor.getObjectId());
+                systemList = systemRepository.findAll(expression, sort);
+            } else {
+                systemList = new ArrayList();
+            }
         }
         QFunction function = QFunction.function;
         return systemList.stream().map(system ->

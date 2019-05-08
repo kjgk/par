@@ -4,26 +4,22 @@ import service from '../../services/project/system'
 
 const Option = Select.Option
 
-let list
-
 export default class Component extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      list: list || [],
+      list: [],
       value: props.value,
     }
   }
 
   componentDidMount() {
-    if (list === undefined || list.length === 0) {
-      this.initStatus()
-    }
+    this.initStatus()
   }
 
   async initStatus() {
-    list = await service.list()
+    const list = await service.getSystemList(this.props.self !== true)
     this.setState({
       list,
     })

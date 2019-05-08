@@ -30,6 +30,10 @@ public class Inspection extends DefaultNomenclator {
     @JoinColumn(name = "accendant_id")
     private Accendant accendant;
 
+    @OneToOne
+    @JoinColumn(name = "supervisor_id")
+    private Supervisor supervisor;
+
     @OneToMany(mappedBy = "inspection")
     private List<InspectionDetail> detailList;
 

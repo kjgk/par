@@ -62,7 +62,7 @@ const ReportChart = ({
   }
 
   return <Chart
-    height={700}
+    height={22 * systemList.length + 60}
     data={dataList}
     scale={cols}
     padding={[40, 20, 20, 250]}

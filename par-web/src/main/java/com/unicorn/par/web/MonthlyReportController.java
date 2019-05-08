@@ -7,7 +7,9 @@ import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.QMonthlyReport;
 import com.unicorn.par.domain.po.MonthlyReportAudit;
+import com.unicorn.par.domain.po.Supervisor;
 import com.unicorn.par.service.MonthlyReportService;
+import com.unicorn.par.service.SupervisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -28,6 +30,9 @@ public class MonthlyReportController extends BaseController {
     @Autowired
     private MonthlyReportService monthlyReportService;
 
+    @Autowired
+    private SupervisorService supervisorService;
+
     @RequestMapping(method = RequestMethod.GET)
     public Page<MonthlyReport> list(PageInfo pageInfo, Long systemId) {
 
@@ -36,6 +41,8 @@ public class MonthlyReportController extends BaseController {
         BooleanExpression expression = monthlyReport.isNotNull();
         if (systemId != null) {
             expression = expression.and(monthlyReport.system.objectId.eq(systemId));
+        } else {
+            expression = expression.and(monthlyReport.isNull());
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.DESC, "month").and(new Sort(Sort.Direction.ASC, "system.objectId"))
@@ -84,7 +91,6 @@ public class MonthlyReportController extends BaseController {
     }
 
     // 月报管理列表
-//    @Secured(value = {"ROLE_REPORT_AUDIT"})
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public Page<MonthlyReport> all(PageInfo pageInfo, Long systemId, Date month, Integer status) {
 
@@ -93,6 +99,11 @@ public class MonthlyReportController extends BaseController {
         BooleanExpression expression = monthlyReport.isNotNull();
         if (systemId != null) {
             expression = expression.and(monthlyReport.system.objectId.eq(systemId));
+        } else {
+            Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
+            if (currentSupervisor != null) {
+                expression = expression.and(monthlyReport.system.supervisor.objectId.eq(currentSupervisor.getObjectId()));
+            }
         }
         if (month != null) {
             expression = expression.and(monthlyReport.month.eq(month));

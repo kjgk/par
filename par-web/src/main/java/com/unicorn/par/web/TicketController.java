@@ -1,6 +1,7 @@
 package com.unicorn.par.web;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.unicorn.core.domain.po.User;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
@@ -11,7 +12,6 @@ import com.unicorn.par.domain.po.TicketHandle;
 import com.unicorn.par.domain.vo.TicketInfo;
 import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.TicketService;
-import com.unicorn.core.domain.po.User;
 import com.unicorn.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +60,9 @@ public class TicketController {
         if ("Accendant".equals(roleTag)) {
             Accendant currentAccendant = accendantService.getCurrentAccendant();
             expression = expression.and(ticket.system.company.objectId.eq(currentAccendant.getCompany().getObjectId()));
+        }
+        if ("Supervisor".equals(roleTag)) {
+            expression = expression.and(ticket.submitter.objectId.eq(currentUser.getObjectId()));
         }
 
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,

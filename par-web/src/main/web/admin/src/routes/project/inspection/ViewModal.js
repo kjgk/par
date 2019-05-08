@@ -32,7 +32,7 @@ const modal = ({
           <div>{item.systemName}</div>
           <div>
             <small style={{color: '#666'}}>
-              巡检人：{item.accendantName} &nbsp;&nbsp;
+              巡检人：{item.username} &nbsp;&nbsp;
               巡检时间：<Formatter.Date value={item.inspectionTime}/>
             </small>
           </div>

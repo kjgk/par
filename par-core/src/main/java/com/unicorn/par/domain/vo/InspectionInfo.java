@@ -17,9 +17,7 @@ public class InspectionInfo implements Serializable {
 
     private Long systemId;
 
-    private String accendantName;
-
-    private Long accendantId;
+    private String username;
 
     private Date inspectionTime;
 

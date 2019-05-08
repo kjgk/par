@@ -45,9 +45,8 @@ public class SystemController {
         if (company != null) {
             expression = expression.and(system.company.objectId.eq(company));
         }
-        QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.ASC, "objectId")
-        );
+        Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
+        QueryInfo queryInfo = new QueryInfo(expression, pageInfo, sort);
         return systemService.getSystem(queryInfo);
     }
 
