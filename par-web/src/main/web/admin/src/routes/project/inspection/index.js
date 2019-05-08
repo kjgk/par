@@ -139,7 +139,7 @@ const Component = ({
             .map(system => <TabPane tab={system.name} key={system.objectId}>
               {
                 system.objectId === systemId && <Fragment>
-                  <div className={styles["inspection-alert"]}>请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！</div>
+                  <div className={styles["inspection-alert"]}>请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！</div>
                   <Calendar
                     className={styles['inspection-calendar']}
                     validRange={[calendarStartDate, moment(now)]}
@@ -163,7 +163,7 @@ const Component = ({
                           <div className={classnames({'inspection-calendar-cell-item': true, 'item-checked': !!ins1, 'item-unchecked': !ins1})}
                                onClick={() => !!ins1 && handleView(ins1.inspectionId)}
                           >
-                            {ins1 ? <Icon type="check-square"/> : <Icon type="close-square"/>}
+                            {ins1 ? <Icon type="check"/> : <Icon type="close"/>}
                           </div>
                         }
                         {
@@ -171,7 +171,7 @@ const Component = ({
                           <div className={classnames({'inspection-calendar-cell-item': true, 'item-checked': !!ins2, 'item-unchecked': !ins2})}
                                onClick={() => !!ins2 && handleView(ins2.inspectionId)}
                           >
-                            {ins2 ? <Icon type="check-square"/> : <Icon type="close-square"/>}
+                            {ins2 ? <Icon type="check"/> : <Icon type="close"/>}
                           </div>
                         }
                         {

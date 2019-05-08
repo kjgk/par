@@ -53,16 +53,16 @@ const Filter = ({
 
   return (
     <Row gutter={24}>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+      <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }}>
         {getFieldDecorator('system', { initialValue: systemId })(<SystemSelect allowClear
                                                                                 placeholder="请选择所属系统"
                                                                                 onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+      <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }}>
         {getFieldDecorator('keyword', { initialValue: keyword })(<Search placeholder="请输入关键字"
                                                                          onSearch={handleSubmit}/>)}
       </Col>
-      <Col {...TwoColProps} xl={{ span: 16 }} md={{ span: 24 }}>
+      <Col {...TwoColProps} xl={{ span: 12 }} md={{ span: 24 }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',

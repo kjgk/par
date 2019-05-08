@@ -11,3 +11,8 @@ delete from sys_user where objectid not in (2000, 1000);
 
 delete from sed_accendant;
 delete from sed_company;
+
+truncate table std_attachment cascade;
+truncate table sed_ticket cascade;
+truncate table sed_monthlyreport cascade;
+truncate table sed_inspection cascade;

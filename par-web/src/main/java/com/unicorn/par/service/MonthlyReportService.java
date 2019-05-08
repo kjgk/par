@@ -73,12 +73,11 @@ public class MonthlyReportService {
 
     public void saveMonthlyReport(MonthlyReport monthlyReport) {
 
-
         MonthlyReport current;
         if (StringUtils.isEmpty(monthlyReport.getObjectId())) {
             Date currentMonth = getCurrentMonth();
             if (currentMonth == null) {
-                throw new ServiceException("请在每月最后3个工作日提交月报！");
+                throw new ServiceException("请在每月最后1个工作日提交月报！");
             }
             current = monthlyReportRepository.save(monthlyReport);
             current.setMonth(currentMonth);
@@ -132,12 +131,12 @@ public class MonthlyReportService {
     }
 
     /**
-     * 获取当前月报的月份（为每月最后3个工作日至下月前2个工作日，其它时间返回空）
+     * 获取当前月报的月份（为每月最后1个工作日至下月前2个工作日，其它时间返回空）
      */
     @Cacheable(value = "currentMonthReport")
     public Date getCurrentMonth() {
 
-        final int[] rules = new int[]{3, 2};
+        final int[] rules = new int[]{1, 2};
         Date now = new Date();
         DateTime dateTime = new DateTime(now).withTimeAtStartOfDay();
         int workdayOfMonth = holidayService.workdayOfMonth(now);
@@ -148,7 +147,7 @@ public class MonthlyReportService {
             }
         } else {
             int workdays = holidayService.workdaysOfMonth(dateTime.getYear(), dateTime.getMonthOfYear());
-            // 每月的最后3个工作日允许填写本月月报
+            // 每月的最后1个工作日允许填写本月月报
             if (workdays - workdayOfMonth < rules[0]) {
                 return dateTime.withDayOfMonth(1).toDate();
             }

@@ -147,7 +147,7 @@ const Component = ({
         {systemList.map(system => <TabPane tab={system.name} key={system.objectId}>
           {
             system.objectId === systemId && <Fragment>
-              <div className={styles["report-alert"]}>请在每月最后3个工作日提交月报！</div>
+              <div className={styles["report-alert"]}>请在每月最后1个工作日提交月报！</div>
               <div style={{textAlign: 'center'}}>
                 <Button disabled={!currentMonth || currentMonthlyReport} htmlType="button" type="primary" onClick={() => handleAdd(system)}>
                   <Icon type="plus"/> 提交月报

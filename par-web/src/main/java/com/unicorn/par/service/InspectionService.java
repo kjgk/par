@@ -152,11 +152,11 @@ public class InspectionService {
         int minuteOfDay = new DateTime(date).getMinuteOfDay();
         if (minuteOfDay < 8.5 * 60) {
             return 0;
-        } else if (minuteOfDay <= 9.5 * 60) {
+        } else if (minuteOfDay <= 10 * 60) {
             return 1;
         } else if (minuteOfDay < 12.5 * 60) {
             return 2;
-        } else if (minuteOfDay <= 13.5 * 60) {
+        } else if (minuteOfDay <= 14 * 60) {
             return 3;
         }
         return 4;
@@ -168,7 +168,7 @@ public class InspectionService {
         if (StringUtils.isEmpty(inspection.getObjectId())) {
             Integer inspectionSegment = getInspectionSegment(new Date());
             if (inspectionSegment % 2 == 0) {
-                throw new ServiceException("请在每天【8:30-9:30】和【12:30-13:30】提交巡检记录！");
+                throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
             }
             current = inspectionRepository.save(inspection);
             current.setInspectionTime(new Date());
