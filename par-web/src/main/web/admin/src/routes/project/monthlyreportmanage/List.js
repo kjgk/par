@@ -2,6 +2,7 @@ import React, {Fragment} from 'react'
 import {Divider, Table, Tag} from 'antd'
 import {Formatter} from '../../../components'
 import queryString from 'query-string'
+import {apiPrefix, contextPath} from "../../../utils/config"
 
 const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableProps}) => {
   location.query = queryString.parse(location.search)
@@ -61,6 +62,8 @@ const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableP
           <a onClick={() => {
             handleView(record)
           }}>查看</a>
+          <Divider type="vertical"/>
+          <a target="_blank" href={`${contextPath}${apiPrefix}/monthlyReport/${record.objectId}/export`}>下载</a>
         </div>
       },
     },
