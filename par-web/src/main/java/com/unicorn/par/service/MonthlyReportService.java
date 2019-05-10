@@ -1,10 +1,14 @@
 package com.unicorn.par.service;
 
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.util.BytePictureUtils;
 import com.unicorn.core.domain.vo.AttachmentInfo;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
+import com.unicorn.core.service.EnvironmentService;
 import com.unicorn.par.domain.enumeration.MonthlyReportStatus;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.MonthlyReportAudit;
@@ -24,8 +28,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -46,6 +52,9 @@ public class MonthlyReportService {
 
     @Autowired
     private HolidayService holidayService;
+
+    @Autowired
+    private EnvironmentService environmentService;
 
     public Page<MonthlyReport> getMonthlyReport(QueryInfo queryInfo) {
 
@@ -136,7 +145,7 @@ public class MonthlyReportService {
     @Cacheable(value = "currentMonthReport")
     public Date getCurrentMonth() {
 
-        final int[] rules = new int[]{1, 2};
+        final int[] rules = new int[]{1, 10};
         Date now = new Date();
         DateTime dateTime = new DateTime(now).withTimeAtStartOfDay();
         int workdayOfMonth = holidayService.workdayOfMonth(now);
@@ -169,5 +178,41 @@ public class MonthlyReportService {
         audit.setMonthlyReport(current);
         audit.setAuditTime(new Date());
         monthlyReportAuditRepository.save(audit);
+    }
+
+    // 月报导出word
+    public XWPFTemplate getMonthlyReportTemplate(Long objectId) {
+
+        MonthlyReport monthlyReport = monthlyReportRepository.get(objectId);
+
+        String templateFileName = this.getClass().getResource("/").getPath() + "templates/MonthlyReport.docx";
+        XWPFTemplate template = XWPFTemplate.compile(templateFileName)
+                .render(new HashMap() {{
+                    put("system", monthlyReport.getSystem().getName());
+                    put("daily", monthlyReport.getDaily());
+                    put("meeting", monthlyReport.getMeeting());
+                    put("doorToDoor", monthlyReport.getDoorToDoor());
+                    put("consultation", monthlyReport.getConsultation());
+                    put("networkAssistance", monthlyReport.getNetworkAssistance());
+                    put("dataAndFunction", monthlyReport.getDataAndFunction());
+                    put("train", monthlyReport.getTrain());
+                    put("documents", monthlyReport.getDocuments());
+                    put("keyWork", monthlyReport.getKeyWork());
+                    put("maintenance", monthlyReport.getMaintenance());
+                    put("perfection", monthlyReport.getPerfection());
+                    put("fault", monthlyReport.getFault());
+                    put("problem", monthlyReport.getProblem());
+
+                    // 图片附件
+                    List<ContentAttachment> attachmentList = contentAttachmentService.getAttachmentList(objectId);
+                    int index = 0;
+                    for (ContentAttachment contentAttachment : attachmentList) {
+                        if ("jpg".equals(contentAttachment.getAttachment().getFileType())) {
+                            byte[] localByteArray = BytePictureUtils.getLocalByteArray(new File(environmentService.getUploadPath() + contentAttachment.getAttachment().getFilename()));
+                            put("picture" + ++index, new PictureRenderData(480, 320, ".jpg", localByteArray));
+                        }
+                    }
+                }});
+        return template;
     }
 }

@@ -9,6 +9,7 @@ import {Button, Card, Col, Icon, Row, Tabs, message, Tag} from "antd"
 import Modal from "./Modal"
 import ViewModal from "./ViewModal"
 import styles from "./index.module.less"
+import {api, apiPrefix, contextPath} from "../../../utils/config"
 
 const {TabPane} = Tabs
 const namespace = 'monthlyReport'
@@ -167,12 +168,9 @@ const Component = ({
                                       event.preventDefault()
                                       handleEdit(item)
                                     }}/> : null,
-                            <Icon type="file-word"
-                                  onClick={(event) => {
-                                    event.stopPropagation()
-                                    event.preventDefault()
-                                    message.info('月报暂不支持导出！')
-                                  }}/>,
+                            <a style={{fontSize: 16}} target="_blank" href={`${contextPath}${apiPrefix}/monthlyReport/${item.objectId}/export`}>
+                              <Icon type="file-word"/>
+                            </a>,
                           ].filter(action => action !== null)}>
                       {item.status === 2 && <div title={item.auditMessage} style={{color: 'red', whiteSpace: 'normal'}}>退回意见：{item.auditMessage || '无'}</div>}
                       {item.keyWork || item.maintenance || item.perfection}

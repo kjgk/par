@@ -1,21 +1,26 @@
 package com.unicorn.par.web;
 
+import com.deepoove.poi.XWPFTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.base.web.BaseController;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.MonthlyReport;
-import com.unicorn.par.domain.po.QMonthlyReport;
 import com.unicorn.par.domain.po.MonthlyReportAudit;
+import com.unicorn.par.domain.po.QMonthlyReport;
 import com.unicorn.par.domain.po.Supervisor;
 import com.unicorn.par.service.MonthlyReportService;
 import com.unicorn.par.service.SupervisorService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -125,5 +130,21 @@ public class MonthlyReportController extends BaseController {
         audit.setMonthlyReport(new MonthlyReport());
         audit.getMonthlyReport().setObjectId(objectId);
         monthlyReportService.auditMonthlyReport(audit);
+    }
+
+    @RequestMapping(value = "/{objectId}/export", method = RequestMethod.GET)
+    public void exportMonthlyReport(@PathVariable("objectId") Long objectId, HttpServletResponse response) throws IOException {
+
+        MonthlyReport monthlyReport = monthlyReportService.getMonthlyReport(objectId);
+        String filename = monthlyReport.getSystem().getName() + new DateTime(monthlyReport.getMonth()).getMonthOfYear() + "月月报" + ".docx";
+        XWPFTemplate template = monthlyReportService.getMonthlyReportTemplate(objectId);
+        response.setContentType("application/msword");
+        response.setHeader("Content-Disposition", "filename="
+                + new String(filename.getBytes("GBK"), StandardCharsets.ISO_8859_1)
+        );
+        template.write(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+        template.close();
     }
 }
