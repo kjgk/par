@@ -107,7 +107,7 @@ public class MonthlyReportController extends BaseController {
         } else {
             Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
             if (currentSupervisor != null) {
-                expression = expression.and(monthlyReport.system.supervisor.objectId.eq(currentSupervisor.getObjectId()));
+                expression = expression.and(monthlyReport.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId()));
             }
         }
         if (month != null) {

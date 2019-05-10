@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Divider, Modal, Table } from 'antd'
-import { Formatter } from '../../../components'
+import {Divider, Modal, Table} from 'antd'
+import {Formatter} from '../../../components'
 import queryString from 'query-string'
 
-const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProps }) => {
+const List = ({onDeleteItem, onEditItem, onEditFunction, location, ...tableProps}) => {
   location.query = queryString.parse(location.search)
 
   const handleEdit = (record) => {
@@ -19,7 +19,7 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
     Modal.confirm({
       title: '确定要删除该数据吗?',
       okType: 'danger',
-      onOk () {
+      onOk() {
         onDeleteItem(record.objectId)
       },
     })
@@ -40,7 +40,8 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
     },
     {
       title: '项目负责人',
-      dataIndex: 'supervisor.username',
+      dataIndex: 'supervisors',
+      render: (value) => value.map(item => item.supervisor.username).join(),
     },
     {
       title: '创建时间',
@@ -58,7 +59,7 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
           }}>编辑</a>
           {/*<Divider type="vertical"/>*/}
           {/*<a onClick={() => {*/}
-            {/*handleEditFunction(record)*/}
+          {/*handleEditFunction(record)*/}
           {/*}}>设置功能点</a>*/}
           <Divider type="vertical"/>
           <a onClick={() => {
@@ -73,7 +74,7 @@ const List = ({ onDeleteItem, onEditItem, onEditFunction, location, ...tableProp
     <Table
       {...tableProps}
       bordered
-      scroll={{ x: 800 }}
+      scroll={{x: 800}}
       columns={columns}
       rowKey='objectId'
     />

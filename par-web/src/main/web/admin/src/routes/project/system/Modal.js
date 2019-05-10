@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal } from 'antd'
+import {Form, Input, Modal} from 'antd'
 import CompanySelect from "../../../sections/company/CompanySelect"
 import SupervisorSelect from "../../../sections/supervisor/SupervisorSelect"
 
@@ -27,18 +27,25 @@ const modal = ({
   const modalOpts = {
     ...modalProps,
     onOk: () => {
-      validateFields((errors) => {
+      validateFields((errors, {supervisors, ...values}) => {
         if (errors) {
           return
         }
         const data = {
-          ...getFieldsValue(),
+          ...values,
           objectId: item.objectId,
+          supervisors: supervisors.map(objectId => ({
+            supervisor: {
+              objectId,
+            },
+          }))
         }
         onOk(data)
       })
     },
   }
+
+  const supervisors = item.supervisors ? item.supervisors.map(item => item.supervisor.objectId) : [];
 
   return (
     <Modal {...modalOpts}>
@@ -72,9 +79,9 @@ const modal = ({
           })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}
         </Form.Item>
         <Form.Item label="项目负责人" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('supervisor.objectId', {
-            initialValue: item.supervisor && item.supervisor.objectId,
-          })(<SupervisorSelect placeholder="请选择项目负责人"/>)}
+          {getFieldDecorator('supervisors', {
+            initialValue: supervisors,
+          })(<SupervisorSelect placeholder="请选择项目负责人" mode="tags"/>)}
         </Form.Item>
       </Form>
     </Modal>

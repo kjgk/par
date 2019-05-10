@@ -2,11 +2,12 @@ package com.unicorn.par.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.query.QueryInfo;
-import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.po.System;
+import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.vo.SystemInfo;
 import com.unicorn.par.repository.FunctionRepository;
 import com.unicorn.par.repository.SystemRepository;
+import com.unicorn.par.repository.SystemSupervisorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -32,6 +33,9 @@ public class SystemService {
     private AccendantService accendantService;
 
     @Autowired
+    private SystemSupervisorRepository systemSupervisorRepository;
+
+    @Autowired
     private SupervisorService supervisorService;
 
     public Page<System> getSystem(QueryInfo queryInfo) {
@@ -54,7 +58,7 @@ public class SystemService {
                 systemList = systemRepository.findAll(expression, sort);
             } else if (currentSupervisor != null) {
                 QSystem system = QSystem.system;
-                BooleanExpression expression = system.supervisor.objectId.eq(currentSupervisor.getObjectId());
+                BooleanExpression expression = system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId());
                 systemList = systemRepository.findAll(expression, sort);
             } else {
                 systemList = new ArrayList();
@@ -84,8 +88,13 @@ public class SystemService {
             current.setName(system.getName());
             current.setUrl(system.getUrl());
             current.setCompany(system.getCompany());
-            current.setSupervisor(system.getSupervisor());
             current.setDescription(system.getDescription());
+            systemSupervisorRepository.deleteBySystemId(current.getObjectId());
+        }
+
+        for (SystemSupervisor systemSupervisor : system.getSupervisors()) {
+            systemSupervisor.setSystem(current);
+            systemSupervisorRepository.save(systemSupervisor);
         }
     }
 

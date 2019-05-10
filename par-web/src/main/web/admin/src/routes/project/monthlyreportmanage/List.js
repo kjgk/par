@@ -51,19 +51,23 @@ const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableP
       dataIndex: 'objectId',
       render: (text, record) => {
         return <div>
-          {
-            record.status === 0 && <Fragment>
-              <a onClick={() => {
-                handleAudit(record)
-              }}>审核</a>
-              <Divider type="vertical"/>
-            </Fragment>
-          }
           <a onClick={() => {
             handleView(record)
           }}>查看</a>
-          <Divider type="vertical"/>
-          <a target="_blank" href={`${contextPath}${apiPrefix}/monthlyReport/${record.objectId}/export`}>下载</a>
+          {
+            record.status === 0 && <Fragment>
+              <Divider type="vertical"/>
+              <a onClick={() => {
+                handleAudit(record)
+              }}>审核</a>
+            </Fragment>
+          }
+          {
+            (record.status === 1 || record.status === 5) && <Fragment>
+              <Divider type="vertical"/>
+              <a target="_blank" href={`${contextPath}${apiPrefix}/monthlyReport/${record.objectId}/export`}>下载</a>
+            </Fragment>
+          }
         </div>
       },
     },

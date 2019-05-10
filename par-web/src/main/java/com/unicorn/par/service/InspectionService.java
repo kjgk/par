@@ -237,7 +237,7 @@ public class InspectionService {
         Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
         Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
         if (currentSupervisor != null) {
-            systemList = systemRepository.findAll(QSystem.system.supervisor.objectId.eq(currentSupervisor.getObjectId()), sort);
+            systemList = systemRepository.findAll(QSystem.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId()), sort);
         } else {
             systemList = systemRepository.findAll(sort);
         }
