@@ -81,7 +81,7 @@ const modal = ({
       <Form className={styles.modal_form}>
         <Row gutter={0}>
           <Col span={11}>
-            <Form.Item label={<span>组织或参加各类项目会议</span>}>
+            <Form.Item label={<span>组织或参加各类项目会议（次）</span>}>
               {getFieldDecorator('meeting', {
                 initialValue: item.meeting,
                 rules: [{
@@ -94,7 +94,7 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>系统日常巡检</span>}>
+            <Form.Item label={<span>系统日常巡检（次）</span>}>
               {getFieldDecorator('daily', {
                 initialValue: item.daily,
                 rules: [{
@@ -107,7 +107,7 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>咨询类服务</span>}>
+            <Form.Item label={<span>咨询类服务（次）</span>}>
               {getFieldDecorator('consultation', {
                 initialValue: item.consultation,
                 rules: [{
@@ -120,7 +120,7 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>网络协助类</span>}>
+            <Form.Item label={<span>网络协助类（次）</span>}>
               {getFieldDecorator('networkAssistance', {
                 initialValue: item.networkAssistance,
                 rules: [{
@@ -133,7 +133,7 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>上门技术支持</span>}>
+            <Form.Item label={<span>上门技术支持（次）</span>}>
               {getFieldDecorator('doorToDoor', {
                 initialValue: item.doorToDoor,
                 rules: [{
@@ -146,7 +146,7 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>数据处理及功能完善</span>}>
+            <Form.Item label={<span>数据处理及功能完善（次）</span>}>
               {getFieldDecorator('dataAndFunction', {
                 initialValue: item.dataAndFunction,
                 rules: [{
@@ -159,9 +159,22 @@ const modal = ({
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>各类文档</span>}>
+            <Form.Item label={<span>各类文档（个）</span>}>
               {getFieldDecorator('documents', {
                 initialValue: item.documents,
+                rules: [{
+                  pattern: integerRegexp,
+                  message: '请输入整数',
+                }]
+              })(
+                <Input placeholder="请输入个数"/>
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item label={<span>各类系统培训（次）</span>}>
+              {getFieldDecorator('train', {
+                initialValue: item.train,
                 rules: [{
                   pattern: integerRegexp,
                   message: '请输入整数',
@@ -171,10 +184,24 @@ const modal = ({
               )}
             </Form.Item>
           </Col>
+
           <Col span={11}>
-            <Form.Item label={<span>各类系统培训</span>}>
-              {getFieldDecorator('train', {
-                initialValue: item.train,
+            <Form.Item label={<span>本月系统用户数（个）</span>}>
+              {getFieldDecorator('userCount', {
+                initialValue: item.userCount,
+                rules: [{
+                  pattern: integerRegexp,
+                  message: '请输入整数',
+                }]
+              })(
+                <Input placeholder="请输入个数"/>
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item label={<span>本月系统用户登录次数（次）</span>}>
+              {getFieldDecorator('userLoginCount', {
+                initialValue: item.userLoginCount,
                 rules: [{
                   pattern: integerRegexp,
                   message: '请输入整数',

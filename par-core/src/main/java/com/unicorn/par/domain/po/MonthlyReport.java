@@ -51,6 +51,12 @@ public class MonthlyReport extends DefaultPersistent {
 
     private Integer documents;
 
+    // 本月系统用户数
+    private Integer userCount;
+
+    // 本月系统用户登录次数
+    private Integer userLoginCount;
+
     @Column(columnDefinition = "text")
     private String keyWork;
 
@@ -69,6 +75,9 @@ public class MonthlyReport extends DefaultPersistent {
     private Integer status;
 
     private String auditMessage;
+
+    // 是否延时上传
+    private Integer delay;
 
     @Transient
     List<AttachmentInfo> attachments;
