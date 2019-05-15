@@ -3,6 +3,7 @@ package com.unicorn.par.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
+import com.unicorn.par.domain.enumeration.InspectionResult;
 import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.vo.InspectionInfo;
@@ -22,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -97,11 +95,30 @@ public class InspectionService {
                     detail.setDate(insTime.withTimeAtStartOfDay().toDate());
                     detail.setSegment(ins.getSegment());
                     detail.setInspectionId(ins.getObjectId());
-                    detail.setResult(1);
+
+                    int allResult = 1;      // 所有功能点是否正常
+                    for (InspectionDetail inspectionDetail : ins.getDetailList()) {
+                        if (inspectionDetail.getResult() == 0) {
+                            allResult = 0;
+                            break;
+                        }
+                    }
+                    if (ins.getDelay() == 0 && allResult == 1) {
+                        detail.setValue(InspectionResult.Good);
+                    }
+                    if (ins.getDelay() == 0 && allResult == 0) {
+                        detail.setValue(InspectionResult.Bad);
+                    }
+                    if (ins.getDelay() == 1 && allResult == 1) {
+                        detail.setValue(InspectionResult.GoodAndDelay);
+                    }
+                    if (ins.getDelay() == 1 && allResult == 0) {
+                        detail.setValue(InspectionResult.BadAndDelay);
+                    }
                     result.getDetailList().put(detail.toString(), detail);
                 });
 
-        Integer segment = getInspectionSegment(new Date());
+        int segment = getInspectionSegment(new Date())[0];
         DateTime startTime = new DateTime().withTimeAtStartOfDay();
         boolean exists1 = inspectionRepository.exists(
                 inspection.system.objectId.eq(systemId)
@@ -147,27 +164,37 @@ public class InspectionService {
         return buildInspectionInfo(inspectionRepository.get(objectId));
     }
 
-    private Integer getInspectionSegment(Date date) {
+    private int[] getInspectionSegment(Date date) {
 
+        int segment = 0;
+        int delay = 0;
         int minuteOfDay = new DateTime(date).getMinuteOfDay();
         if (minuteOfDay < 8.5 * 60) {
-            return 0;
+            segment = 0;
         } else if (minuteOfDay <= 10 * 60) {
-            return 1;
+            segment = 1;
+        } else if (minuteOfDay <= 11 * 60) {
+            segment = 1;
+            delay = 1;
         } else if (minuteOfDay < 12.5 * 60) {
-            return 2;
+            segment = 2;
         } else if (minuteOfDay <= 14 * 60) {
-            return 3;
+            segment = 3;
+        } else if (minuteOfDay <= 15 * 60) {
+            segment = 3;
+            delay = 1;
+        } else {
+            segment = 4;
         }
-        return 4;
+        return new int[]{segment, delay};
     }
 
     public void saveInspection(Inspection inspection) {
 
         Inspection current;
         if (StringUtils.isEmpty(inspection.getObjectId())) {
-            Integer inspectionSegment = getInspectionSegment(new Date());
-            if (inspectionSegment % 2 == 0) {
+            int[] segmentInfo = getInspectionSegment(new Date());
+            if (segmentInfo[0] % 2 == 0) {
                 throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
             }
             current = inspectionRepository.save(inspection);
@@ -175,8 +202,8 @@ public class InspectionService {
             // 巡检人可以是系统维护人员也可以是项目管理员
             current.setAccendant(accendantService.getCurrentAccendant());
             current.setSupervisor(supervisorService.getCurrentSupervisor());
-
-            current.setSegment(inspectionSegment);
+            current.setSegment(segmentInfo[0]);
+            current.setDelay(segmentInfo[1]);
             for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
                 InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
                 detail.setInspection(current);
@@ -221,13 +248,13 @@ public class InspectionService {
         for (int i = 0; i < DateUtils.getDaysOfMonth(monthStartDate.toDate()); i++) {
             DateTime dateTime = monthStartDate.plusDays(i);
             if (dateTime.isAfterNow()) {
-                defaultValues.add(null);
+                defaultValues.add(InspectionResult.NotYet);
             } else {
                 boolean workday = holidayService.isWorkday(dateTime.toDate());
                 if (workday && dateTime.isEqual(startOfDay)) {
                     defaultValues.add(100); // 100表示当天
                 } else {
-                    defaultValues.add(workday ? 0 : -1);
+                    defaultValues.add(workday ? InspectionResult.No : InspectionResult.Unnecessary);
                 }
             }
             result.getDateList().add(i + 1 + "号");
@@ -244,33 +271,52 @@ public class InspectionService {
 
         Collections.reverse(systemList);
 
-        List<String> inspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection" +
-                " where inspection_time between ? and ?", String.class, monthStartDate.toDate(), monthStartDate.plusMonths(1).toDate());
+        Date startDate = monthStartDate.toDate();
+        Date endDate = monthStartDate.plusMonths(1).toDate();
+        Map<String, Integer> inspectionResults = new HashMap();
+        List<String> badInspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection a" +
+                " inner join sed_inspectiondetail b on a.objectid = b.inspection_id" +
+                " where a.inspection_time between ? and ? and b.result = 0", String.class, startDate, endDate);
+        jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment inspection_key, delay from sed_inspection a" +
+                " where a.inspection_time between ? and ?", startDate, endDate).forEach(data -> {
+            String inspectionKey = (String) data.get("inspection_key");
+            Integer delay = (Integer) data.get("delay");
+            Integer value;
+            if (badInspections.contains(inspectionKey)) {
+                value = delay == 1 ? InspectionResult.BadAndDelay : InspectionResult.Bad;
+            } else {
+                value = delay == 1 ? InspectionResult.GoodAndDelay : InspectionResult.Good;
+            }
+            inspectionResults.put(inspectionKey, value);
+        });
 
         int systemIndex = 0;
         for (System system : systemList) {
+            Long systemId = system.getObjectId();
             result.getSystemList().add(system.getName());
             int dateIndex = 0;
             for (Integer defaultValue : defaultValues) {
                 Integer segment1DefaultValue = defaultValue;
                 Integer segment3DefaultValue = defaultValue;
                 if (defaultValue != null && defaultValue.equals(100)) {
-                    Integer segment = getInspectionSegment(new Date());
+                    int segment = getInspectionSegment(new Date())[0];
                     if (segment == 0 || segment == 1) {
-                        segment1DefaultValue = null;
-                        segment3DefaultValue = null;
+                        segment1DefaultValue = InspectionResult.NotYet;
+                        segment3DefaultValue = InspectionResult.NotYet;
                     }
                     if (segment == 2 || segment == 3) {
-                        segment1DefaultValue = 0;
-                        segment3DefaultValue = null;
+                        segment1DefaultValue = InspectionResult.No;
+                        segment3DefaultValue = InspectionResult.NotYet;
                     }
                     if (segment == 4) {
-                        segment1DefaultValue = 0;
-                        segment3DefaultValue = 0;
+                        segment1DefaultValue = InspectionResult.No;
+                        segment3DefaultValue = InspectionResult.No;
                     }
                 }
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-1") ? new Integer(1) : segment1DefaultValue});   // 上午
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, inspections.contains(system.getObjectId() + "-" + (dateIndex + 1) + "-3") ? new Integer(1) : segment3DefaultValue});   // 下午
+                Integer segment1Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-1");
+                Integer segment3Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-3");
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, segment1Value == null ? segment1DefaultValue : segment1Value});   // 上午
+                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, segment3Value == null ? segment3DefaultValue : segment3Value});   // 下午
                 dateIndex++;
             }
             systemIndex++;

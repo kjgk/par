@@ -17,7 +17,8 @@ public class InspectionMonthSummary implements Serializable {
     private List<String> systemList = new ArrayList();
 
     // [
-    //  [0, 0, 1, 10] -> [日期索引，系统索引，1=上午|3=下午，值-> null=时间未到，0=未巡检，1=已巡检，-1=休息日]
+    //  [0, 0, 1, 10] -> [日期索引，系统索引，1=上午|3=下午，值 -> （参考：InspectionResult.java）
+    //  ]
     // ]
     private List<Integer[]> values = new ArrayList();
 

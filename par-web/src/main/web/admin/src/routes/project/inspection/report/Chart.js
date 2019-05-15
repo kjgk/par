@@ -7,14 +7,24 @@ Shape.registerShape('polygon', 'doublePoint', {
     const points = this.parsePoints(cfg.points) // 将0-1空间的坐标转换为画布坐标
     let color = '#DDDDDD'
     let width = points[2].x - points[0].x
-    if (value === 1) {
-      color = '#20AA73'
+    if (value === -1) {
+      color = '#ffdddd'
     }
     if (value === 0) {
       color = '#f51e3a'
     }
-    if (value === -1) {
-      color = '#ffdddd'
+    if (value === 1) {
+      color = '#52c41a'
+      // color = '#20AA73'
+    }
+    if (value === 2) {
+      color = '#ffc229'
+    }
+    if (value === 3) {
+      color = '#5598d8'
+    }
+    if (value === 4) {
+      color = '#ff9944'
     }
     return container.addShape('polygon', {
       attrs: {
@@ -30,8 +40,8 @@ Shape.registerShape('polygon', 'doublePoint', {
   }
 })
 
-const segmentNames = {1: '上午', 3: '下午'}
-const stateNames = {1: '已巡检', 0: '未巡检'}
+const segmentNames = {1: '上午', 3: '下午',}
+const stateNames = {0: '未巡检', 1: '已巡检', 2: '已巡检', 3: '已巡检', 4: '已巡检',}
 
 const ReportChart = ({
                        systemList = [],
@@ -111,7 +121,7 @@ const ReportChart = ({
           }
         }
         return {
-          content: systemList[name] + '：' + (day + 1) + '号' + segmentNames[segment] + '：' + stateNames[value],
+          content: systemList[name] + ' / ' + (day + 1) + '号' + segmentNames[segment] + ' / ' + stateNames[value],
         }
       }]}
     >

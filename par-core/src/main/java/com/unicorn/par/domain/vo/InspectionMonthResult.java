@@ -39,7 +39,10 @@ public class InspectionMonthResult implements Serializable {
 
         private Integer segment;
 
-        private Integer result;
+        /**
+         * 巡检结果（参考：InspectionResult.java）
+         */
+        private Integer value;
 
         @Override
         public String toString() {

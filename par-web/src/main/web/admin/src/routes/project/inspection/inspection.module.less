@@ -130,6 +130,7 @@
       text-align: center;
       height: 80px;
       padding-top: 5px;
+
       &.holiday {
         > .inspection-calendar-cell-value {
           color: #ffa39e;
@@ -142,7 +143,7 @@
 
       .inspection-calendar-cell-value {
         text-align: center;
-        font-size: 24px;
+        font-size: 22px;
       }
 
       .inspection-calendar-cell-item {
@@ -152,24 +153,46 @@
         border: 1px solid #CDCDCD;
         font-size: 16px;
 
-        &.item-checked {
-          color: #fff;
-          border-color: #52c41a;
-          background: #52c41a;
-          cursor: pointer;
-        }
-
-        &.item-unchecked {
-          color: #fff;
-          border-color: #f51e3a;
-          background: #f51e3a;
-        }
-
         &.item-input {
           cursor: pointer;
         }
       }
     }
   }
+}
+
+
+.item-status-1 {
+  color: #fff;
+  border-color: #52c41a !important;
+  background: #52c41a;
+  cursor: pointer;
+}
+
+.item-status-2 {
+  color: #fff;
+  border-color: #ffc229 !important;
+  background: #ffc229;
+  cursor: pointer;
+}
+
+.item-status-3 {
+  color: #fff;
+  border-color: #5598d8 !important;
+  background: #5598d8;
+  cursor: pointer;
+}
+
+.item-status-4 {
+  color: #fff;
+  border-color: #ff9944 !important;
+  background: #ff9944;
+  cursor: pointer;
+}
+
+.item-status-0 {
+  color: #fff;
+  border-color: #f51e3a !important;
+  background: #f51e3a;
 }
 

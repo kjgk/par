@@ -7,6 +7,7 @@ import {Page} from '../../../components'
 import queryString from 'query-string'
 import Modal from './Modal'
 import ViewModal from "./ViewModal"
+import InspectionItem from "./InspectionItem"
 import styles from "./inspection.module.less"
 import moment from "moment"
 import classnames from "classnames"
@@ -160,19 +161,11 @@ const Component = ({
                         </div>
                         {
                           (!today || segmentResult1 === 1 || segmentResult1 === 2) &&
-                          <div className={classnames({'inspection-calendar-cell-item': true, 'item-checked': !!ins1, 'item-unchecked': !ins1})}
-                               onClick={() => !!ins1 && handleView(ins1.inspectionId)}
-                          >
-                            {ins1 ? <Icon type="check"/> : <Icon type="close"/>}
-                          </div>
+                          <InspectionItem onClick={() => !!ins1 && handleView(ins1.inspectionId)} {...ins1} />
                         }
                         {
                           (!today || segmentResult2 === 1 || segmentResult2 === 2) &&
-                          <div className={classnames({'inspection-calendar-cell-item': true, 'item-checked': !!ins2, 'item-unchecked': !ins2})}
-                               onClick={() => !!ins2 && handleView(ins2.inspectionId)}
-                          >
-                            {ins2 ? <Icon type="check"/> : <Icon type="close"/>}
-                          </div>
+                          <InspectionItem onClick={() => !!ins2 && handleView(ins2.inspectionId)} {...ins2} />
                         }
                         {
                           today && (segmentResult1 === 0 || segmentResult2 === 0) &&
