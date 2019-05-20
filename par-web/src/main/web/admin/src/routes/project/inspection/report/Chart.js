@@ -1,5 +1,5 @@
 import React from 'react'
-import {Axis, Chart, Geom, Shape, Tooltip} from 'bizcharts'
+import {Axis, Chart, Geom, Shape, Tooltip, Legend} from 'bizcharts'
 
 Shape.registerShape('polygon', 'doublePoint', {
   draw(cfg, container) {
@@ -14,17 +14,17 @@ Shape.registerShape('polygon', 'doublePoint', {
       color = '#f51e3a'
     }
     if (value === 1) {
-      color = '#52c41a'
+      color = '#87d068'
       // color = '#20AA73'
     }
     if (value === 2) {
       color = '#ffc229'
     }
     if (value === 3) {
-      color = '#5598d8'
+      color = '#2db7f5'
     }
     if (value === 4) {
-      color = '#ff9944'
+      color = '#f70'
     }
     return container.addShape('polygon', {
       attrs: {
@@ -107,7 +107,6 @@ const ReportChart = ({
     <Geom
       type="polygon"
       position="day*name"
-      // color={['value', '#FFCCCC-#20AA73']}
       shape="doublePoint"
       tooltip={['day*segment*name*value', (day, segment, name, value) => {
         if (value === null) {

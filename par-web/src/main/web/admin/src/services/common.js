@@ -75,7 +75,7 @@ const uploadFile = function (file) {
 
   let formData = new FormData()
   formData.append("attachment", file)
-  return request(`${contextPath}${api.fileUpload}`, {
+  return request(`${api.fileUpload}`, {
     method: 'POST',
     body: formData,
   })

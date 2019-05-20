@@ -33,11 +33,6 @@ const Component = ({
     })
   }
 
-  const chartStyle = {
-    margin: '0 auto',
-    textAlign: 'center',
-  }
-
   return (
     <Page inner>
       <div className={styles.main}>
@@ -50,7 +45,17 @@ const Component = ({
             {yearMonths.map(month => <Radio.Button key={month.value} disabled={!month.enabled} value={month.value}>{`${month.value}月`}</Radio.Button>)}
           </Radio.Group>
         </div>
-        <div style={chartStyle}>
+        <div>
+          <div className={styles.legend}>
+            图例：
+            <ul>
+              <li style={{backgroundColor: '#87d068'}}>正常</li>
+              <li style={{backgroundColor: '#2db7f5'}}>延时</li>
+              <li style={{backgroundColor: '#ffc229'}}>异常</li>
+              <li style={{backgroundColor: '#ff7700'}}>延时+异常</li>
+              <li style={{backgroundColor: '#f51e3a'}}>未巡检</li>
+            </ul>
+          </div>
           <ReportChart {...inspectionResults}/>
         </div>
       </div>
