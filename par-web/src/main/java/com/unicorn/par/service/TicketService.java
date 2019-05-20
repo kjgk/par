@@ -197,7 +197,7 @@ public class TicketService {
         if (ticketHandle != null) {
             TicketInfo.TicketHandleInfo ticketHandleInfo = new TicketInfo.TicketHandleInfo();
             ticketHandleInfo.setObjectId(ticketHandle.getObjectId());
-            ticketHandleInfo.setAccendant(ticketHandle.getAccendant().getUsername());
+//            ticketHandleInfo.setAccendant(ticketHandle.getAccendant().getUsername());
             ticketHandleInfo.setAcceptTime(ticketHandle.getAcceptTime());
             ticketHandleInfo.setFinishTime(ticketHandle.getFinishTime());
             ticketHandleInfo.setResult(ticketHandle.getResult());

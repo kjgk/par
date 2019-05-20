@@ -184,7 +184,7 @@ public class InspectionService {
             segment = 2;
         } else if (minuteOfDay <= 14 * 60) {
             segment = 3;
-        } else if (minuteOfDay <= 18 * 60) {
+        } else if (minuteOfDay <= 15 * 60) {
             segment = 3;
             delay = 1;
         } else {
@@ -200,11 +200,13 @@ public class InspectionService {
         if (segmentInfo[0] % 2 == 0) {
             throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
         }
+        Accendant currentAccendant = accendantService.getCurrentAccendant();
+        Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
         Inspection current = inspectionRepository.save(inspection);
         current.setInspectionTime(new Date());
         // 巡检人可以是系统维护人员也可以是项目管理员
-        current.setAccendant(accendantService.getCurrentAccendant());
-        current.setSupervisor(supervisorService.getCurrentSupervisor());
+        current.setAccendant(currentAccendant);
+        current.setSupervisor(currentSupervisor);
         current.setSegment(segmentInfo[0]);
         current.setDelay(segmentInfo[1]);
         for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
@@ -233,7 +235,11 @@ public class InspectionService {
             ticket.setSystem(inspection.getSystem());
             ticket.setAttachments(invalidAttachments);
             ticketService.saveTicket(ticket);
-            ticketService.acceptTicket(ticket.getObjectId());
+
+            // 如果是运维人员提交的巡检记录，则自动接单
+            if (currentAccendant != null) {
+                ticketService.acceptTicket(ticket.getObjectId());
+            }
         }
     }
 
