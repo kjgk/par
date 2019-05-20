@@ -1,13 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Button, Checkbox, Divider, Empty, Form, Icon, List, Modal, Steps, Tabs, Upload, message, Row, Col} from 'antd'
+import {Button, Checkbox, Divider, Empty, Form, Icon, List, Modal, Steps, Tabs, Upload, message, Row, Col, Radio, Input, Alert} from 'antd'
 
 import styles from './inspection.module.less'
 import {api, contextPath} from "../../../utils/config"
 import {Formatter} from "../../../components"
 
+const RadioGroup = Radio.Group
 const {Step} = Steps
 const {TabPane} = Tabs
+const formItemLayout = {
+  labelCol: {
+    span: 0,
+  },
+  wrapperCol: {
+    span: 24,
+  },
+}
 
 const modal = ({
                  item = {},
@@ -46,25 +55,34 @@ const modal = ({
     onNextStep()
   }
 
-  const handleSubmit = () => {
-    let data = {
-      detailList: [],
-      system: {objectId: currentSystem.objectId},
-    }
-    for (const fun of currentSystem.functionList) {
-      let screenshots = []
-      for (const file of functionScreenshots[fun.objectId].fileList) {
-        screenshots.push(file.response)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    validateFields((errors, {content}) => {
+      if (errors) {
+        return
       }
-      data.detailList.push({
-        result: functionResults[fun.objectId] ? 1 : 0,
-        screenshots,
-        'function': {
-          objectId: fun.objectId,
-        },
+      let data = {
+        detailList: [],
+        system: {objectId: currentSystem.objectId},
+      }
+      for (const fun of currentSystem.functionList) {
+        let screenshots = []
+        for (const file of functionScreenshots[fun.objectId].fileList) {
+          screenshots.push(file.response)
+        }
+        data.detailList.push({
+          result: functionResults[fun.objectId] ? 1 : 0,
+          screenshots,
+          'function': {
+            objectId: fun.objectId,
+          },
+        })
+      }
+      onOk({
+        ...data,
+        ticketContent: content
       })
-    }
-    onOk(data)
+    })
   }
 
   const uploaderProps = {
@@ -95,7 +113,7 @@ const modal = ({
 
   return (
     <Modal {...modalOpts}>
-      <Form layout="horizontal">
+      <Form layout="horizontal" onSubmit={handleSubmit}>
         <Steps current={currentStep}>
           <Step title="选择运维系统" description=""/>
           <Step title="检查系统功能点" description=""/>
@@ -176,12 +194,30 @@ const modal = ({
                   系统截图：{screenshotsCount}张
                 </Col>
               </Row>
+              {
+                invalidCount > 0 && <Row gutter={16}>
+                  <Col style={{margin: '10px 0'}} span={24}>
+                    <Alert message={`功能点存在${invalidCount}个异常，系统将为您自动创建工单，请在下方输入问题描述`} type="warning" showIcon/>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item label={false} hasFeedback {...formItemLayout}>
+                      {getFieldDecorator('content', {
+                        initialValue: '',
+                        rules: [{
+                          required: true,
+                          message: '请输入问题描述',
+                        }],
+                      })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
+                    </Form.Item>
+                  </Col>
+                </Row>
+              }
             </div>
           </div>}
 
           <div className={styles['step-button']}>
             {currentStep < 2 && <Button htmlType="button" type="primary" disabled={!allowNextStep} onClick={handleNextStep}>下一步</Button>}
-            {currentStep >= 2 && <Button loading={confirmLoading} htmlType="button" type="primary" onClick={handleSubmit}>提交</Button>}
+            {currentStep >= 2 && <Button loading={confirmLoading} htmlType="submit" type="primary">提交</Button>}
           </div>
         </div>
       </Form>

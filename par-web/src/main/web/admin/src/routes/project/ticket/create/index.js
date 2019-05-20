@@ -100,54 +100,54 @@ const Component = ({
       {!showSuccess && <Row>
         <Col md={24} xl={20} xxl={16}>
           <Form layout="horizontal" onSubmit={onSubmit}>
-        <Form.Item label="优先级" {...formItemLayout}>
-          {getFieldDecorator('priority', {
-            initialValue: 2,
-          })(<RadioGroup>
-            <Radio value={1}>重要</Radio>
-            <Radio value={2}>一般</Radio>
-          </RadioGroup>)}
-        </Form.Item>
-        <Form.Item label="问题描述" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('content', {
-            initialValue: '',
-            rules: [{
-              required: true,
-              message: '请输入问题描述',
-            }],
-          })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
-        </Form.Item>
-        <Form.Item label="所属系统" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('system.objectId', {
-            initialValue: undefined,
-            rules: [{
-              required: true,
-              message: '请选择所属系统',
-            }],
-          })(<SystemSelect self={true} placeholder="请选择所属系统"/>)}
-        </Form.Item>
-        <Form.Item label="报修人" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('contacts', {
-            initialValue: '',
-          })(<Input placeholder="请输入报修人"/>)}
-        </Form.Item>
-        <Form.Item label="报修人手机号" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('phoneNo', {
-            initialValue: '',
-          })(<Input placeholder="请输入报修人手机号"/>)}
-        </Form.Item>
-        <Form.Item label="附件" hasFeedback {...formItemLayout}>
-          <Upload {...uploaderProps}>
-            <Button disabled={fileList.length >= fileLimit}>
-              <Icon type="upload"/> 上传附件
-            </Button>
-          </Upload>
-          <span style={{color: '#666'}}> 您可以上传{fileLimit}个附件</span>
-        </Form.Item>
-        <Form.Item {...tailFormItemLayout}>
-          <Button loading={confirmLoading} htmlType="submit" type="primary">提交工单</Button>
-        </Form.Item>
-      </Form>
+            <Form.Item label="优先级" {...formItemLayout}>
+              {getFieldDecorator('priority', {
+                initialValue: 2,
+              })(<RadioGroup>
+                <Radio value={1}>重要</Radio>
+                <Radio value={2}>一般</Radio>
+              </RadioGroup>)}
+            </Form.Item>
+            <Form.Item label="问题描述" hasFeedback {...formItemLayout}>
+              {getFieldDecorator('content', {
+                initialValue: '',
+                rules: [{
+                  required: true,
+                  message: '请输入问题描述',
+                }],
+              })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
+            </Form.Item>
+            <Form.Item label="所属系统" hasFeedback {...formItemLayout}>
+              {getFieldDecorator('system.objectId', {
+                initialValue: undefined,
+                rules: [{
+                  required: true,
+                  message: '请选择所属系统',
+                }],
+              })(<SystemSelect self={true} placeholder="请选择所属系统"/>)}
+            </Form.Item>
+            <Form.Item label="报修人" hasFeedback {...formItemLayout}>
+              {getFieldDecorator('contacts', {
+                initialValue: '',
+              })(<Input placeholder="请输入报修人"/>)}
+            </Form.Item>
+            <Form.Item label="报修人手机号" hasFeedback {...formItemLayout}>
+              {getFieldDecorator('phoneNo', {
+                initialValue: '',
+              })(<Input placeholder="请输入报修人手机号"/>)}
+            </Form.Item>
+            <Form.Item label="附件" hasFeedback {...formItemLayout}>
+              <Upload {...uploaderProps}>
+                <Button disabled={fileList.length >= fileLimit}>
+                  <Icon type="upload"/> 上传附件
+                </Button>
+              </Upload>
+              <span style={{color: '#666'}}> 您可以上传{fileLimit}个附件</span>
+            </Form.Item>
+            <Form.Item {...tailFormItemLayout}>
+              <Button loading={confirmLoading} htmlType="submit" type="primary">提交工单</Button>
+            </Form.Item>
+          </Form>
         </Col>
       </Row>}
     </Page>

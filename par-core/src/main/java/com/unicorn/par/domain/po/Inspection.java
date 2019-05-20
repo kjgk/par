@@ -49,4 +49,9 @@ public class Inspection extends DefaultNomenclator {
 
     // 是否延时上传
     private Integer delay;
+
+
+    // 工单问题描述（用于巡检发生异常时自动创建工单）
+    @Transient
+    private String ticketContent;
 }

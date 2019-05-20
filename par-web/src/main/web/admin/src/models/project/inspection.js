@@ -216,7 +216,7 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
           allowNextStep = false
         }
       }
-      allowNextStep = allowNextStep && currentScreenshots.file.percent === 100
+      allowNextStep = allowNextStep && currentScreenshots.file && currentScreenshots.file.percent === 100
 
       delete currentScreenshots.file
       for (let file of currentScreenshots.fileList) {

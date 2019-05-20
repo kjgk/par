@@ -61,6 +61,9 @@ const List = ({onDeleteItem, onViewItem, onAcceptItem, onProcessItem, location, 
       width: 72,
       render: (value) => <TicketStatus value={value}/>
     },
+    // {
+    //   title: '来源',
+    // },
     {
       title: '提交时间',
       dataIndex: 'submitTime',

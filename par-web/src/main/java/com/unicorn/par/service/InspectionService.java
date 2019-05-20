@@ -4,8 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.par.domain.enumeration.InspectionResult;
-import com.unicorn.par.domain.po.*;
+import com.unicorn.par.domain.enumeration.TicketSource;
 import com.unicorn.par.domain.po.System;
+import com.unicorn.par.domain.po.*;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
 import com.unicorn.par.domain.vo.InspectionMonthSummary;
@@ -40,6 +41,9 @@ public class InspectionService {
 
     @Autowired
     private SystemRepository systemRepository;
+
+    @Autowired
+    private TicketService ticketService;
 
     @Autowired
     private ContentAttachmentService contentAttachmentService;
@@ -191,35 +195,45 @@ public class InspectionService {
 
     public void saveInspection(Inspection inspection) {
 
-        Inspection current;
-        if (StringUtils.isEmpty(inspection.getObjectId())) {
-            int[] segmentInfo = getInspectionSegment(new Date());
-            if (segmentInfo[0] % 2 == 0) {
-                throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
-            }
-            current = inspectionRepository.save(inspection);
-            current.setInspectionTime(new Date());
-            // 巡检人可以是系统维护人员也可以是项目管理员
-            current.setAccendant(accendantService.getCurrentAccendant());
-            current.setSupervisor(supervisorService.getCurrentSupervisor());
-            current.setSegment(segmentInfo[0]);
-            current.setDelay(segmentInfo[1]);
-            for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
-                InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
-                detail.setInspection(current);
-                List<ContentAttachment> contentAttachments = new ArrayList();
-                for (FileUploadInfo fileUploadInfo : inspectionDetail.getScreenshots()) {
-                    ContentAttachment contentAttachment = new ContentAttachment();
-                    contentAttachment.setFileInfo(fileUploadInfo);
-                    contentAttachment.setRelatedType(InspectionDetail.class.getSimpleName());
-                    contentAttachment.setRelatedId(detail.getObjectId());
-                    contentAttachments.add(contentAttachment);
+        List<FileUploadInfo> invalidAttachments = new ArrayList();
+        int[] segmentInfo = getInspectionSegment(new Date());
+        if (segmentInfo[0] % 2 == 0) {
+            throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
+        }
+        Inspection current = inspectionRepository.save(inspection);
+        current.setInspectionTime(new Date());
+        // 巡检人可以是系统维护人员也可以是项目管理员
+        current.setAccendant(accendantService.getCurrentAccendant());
+        current.setSupervisor(supervisorService.getCurrentSupervisor());
+        current.setSegment(segmentInfo[0]);
+        current.setDelay(segmentInfo[1]);
+        for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
+            InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
+            detail.setInspection(current);
+            List<ContentAttachment> contentAttachments = new ArrayList();
+            for (FileUploadInfo fileUploadInfo : inspectionDetail.getScreenshots()) {
+                ContentAttachment contentAttachment = new ContentAttachment();
+                contentAttachment.setFileInfo(fileUploadInfo);
+                contentAttachment.setRelatedType(InspectionDetail.class.getSimpleName());
+                contentAttachment.setRelatedId(detail.getObjectId());
+                contentAttachments.add(contentAttachment);
+                if (inspectionDetail.getResult() == 0) {
+                    invalidAttachments.add(fileUploadInfo);
                 }
-                contentAttachmentService.save(InspectionDetail.class.getSimpleName(), detail.getObjectId(), null, contentAttachments);
             }
-        } else {
-            current = inspectionRepository.getOne(inspection.getObjectId());
-            // todo 修改巡检记录 目前不允许修改
+            contentAttachmentService.save(InspectionDetail.class.getSimpleName(), detail.getObjectId(), null, contentAttachments);
+        }
+
+        // 创建巡检工单
+        if (!StringUtils.isEmpty(inspection.getTicketContent())) {
+            Ticket ticket = new Ticket();
+            ticket.setPriority(1);
+            ticket.setSource(TicketSource.Inspection);
+            ticket.setContent(inspection.getTicketContent());
+            ticket.setSystem(inspection.getSystem());
+            ticket.setAttachments(invalidAttachments);
+            ticketService.saveTicket(ticket);
+            ticketService.acceptTicket(ticket.getObjectId());
         }
     }
 

@@ -5,7 +5,7 @@ export default class Date extends PureComponent {
   render () {
     const { value, pattern = 'Y-MM-DD HH:mm'} = this.props
     if(value === undefined || value === null) {
-      return <span style={this.props.style}> </span>
+      return <span style={this.props.style}> {this.props.emptyText || ''} </span>
     }
     let text = moment(value)
       .format(pattern)

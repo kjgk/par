@@ -33,12 +33,12 @@ const modal = ({
           </Col>
           <Col span={10} offset={2}>
             <Form.Item label="报修人">
-              {item.contacts}
+              {item.contacts || '-'}
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
             <Form.Item label="报修人手机号">
-              {item.phoneNo}
+              {item.phoneNo || '-'}
             </Form.Item>
           </Col>
           <Col span={10} offset={2}>
@@ -77,7 +77,7 @@ const modal = ({
 
               <Col span={10} offset={2}>
                 <Form.Item label="接单时间">
-                  <Formatter.Date value={item.handleInfo.acceptTime}/>
+                  <Formatter.Date value={item.handleInfo.acceptTime} emptyText="-"/>
                 </Form.Item>
               </Col>
 

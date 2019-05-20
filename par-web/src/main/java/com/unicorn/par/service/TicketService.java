@@ -67,7 +67,9 @@ public class TicketService {
             current.setSubmitTime(new Date());
             current.setSubmitter(userService.getCurrentUser());
             current.setStatus(TicketStatus.Pending);
-            current.setSource(TicketSource.Normal);
+            if (current.getSource() == null) {
+                current.setSource(TicketSource.Normal);
+            }
             if (!CollectionUtils.isEmpty(ticket.getAttachments())) {
                 List<ContentAttachment> contentAttachments = new ArrayList();
                 for (FileUploadInfo fileUploadInfo : ticket.getAttachments()) {
