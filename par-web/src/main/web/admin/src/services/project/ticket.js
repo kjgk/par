@@ -18,4 +18,10 @@ export default {
       body: data,
     })
   },
+  recordTicket(params) {
+    return request(`${api}/record`, {
+      method: 'POST',
+      body: params,
+    })
+  },
 }

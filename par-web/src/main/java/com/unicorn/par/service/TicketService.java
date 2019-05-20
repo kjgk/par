@@ -3,6 +3,7 @@ package com.unicorn.par.service;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.core.query.QueryInfo;
+import com.unicorn.par.domain.enumeration.TicketSource;
 import com.unicorn.par.domain.enumeration.TicketStatus;
 import com.unicorn.par.domain.po.Ticket;
 import com.unicorn.par.domain.po.TicketHandle;
@@ -66,6 +67,7 @@ public class TicketService {
             current.setSubmitTime(new Date());
             current.setSubmitter(userService.getCurrentUser());
             current.setStatus(TicketStatus.Pending);
+            current.setSource(TicketSource.Normal);
             if (!CollectionUtils.isEmpty(ticket.getAttachments())) {
                 List<ContentAttachment> contentAttachments = new ArrayList();
                 for (FileUploadInfo fileUploadInfo : ticket.getAttachments()) {
@@ -132,6 +134,46 @@ public class TicketService {
     public void deleteTicket(List<Long> objectIds) {
 
         objectIds.forEach(this::deleteTicket);
+    }
+
+    /**
+     * 记录已完成的工单
+     */
+    public void recordTicket(Ticket ticket, TicketHandle ticketHandle) {
+
+        Ticket current = ticketRepository.save(ticket);
+        current.setSubmitTime(new Date());
+        current.setSubmitter(userService.getCurrentUser());
+        current.setStatus(TicketStatus.Finish);
+        current.setSource(TicketSource.Record);
+        if (!CollectionUtils.isEmpty(ticket.getAttachments())) {
+            List<ContentAttachment> contentAttachments = new ArrayList();
+            for (FileUploadInfo fileUploadInfo : ticket.getAttachments()) {
+                ContentAttachment contentAttachment = new ContentAttachment();
+                contentAttachment.setFileInfo(fileUploadInfo);
+                contentAttachment.setRelatedType(Ticket.class.getSimpleName());
+                contentAttachment.setRelatedId(current.getObjectId());
+                contentAttachments.add(contentAttachment);
+            }
+            contentAttachmentService.save(Ticket.class.getSimpleName(), current.getObjectId(), null, contentAttachments);
+        }
+
+        // 保存工单处理信息
+        ticketHandle.setTicket(current);
+        TicketHandle currentHandle = ticketHandleRepository.save(ticketHandle);
+        currentHandle.setFinishTime(new Date());
+        currentHandle.setAccendant(accendantService.getCurrentAccendant());
+        if (!CollectionUtils.isEmpty(ticketHandle.getAttachments())) {
+            List<ContentAttachment> contentAttachments = new ArrayList();
+            for (FileUploadInfo fileUploadInfo : ticketHandle.getAttachments()) {
+                ContentAttachment contentAttachment = new ContentAttachment();
+                contentAttachment.setFileInfo(fileUploadInfo);
+                contentAttachment.setRelatedType(TicketHandle.class.getSimpleName());
+                contentAttachment.setRelatedId(currentHandle.getObjectId());
+                contentAttachments.add(contentAttachment);
+            }
+            contentAttachmentService.save(TicketHandle.class.getSimpleName(), currentHandle.getObjectId(), null, contentAttachments);
+        }
     }
 
     private TicketInfo buildTicketInfo(Ticket ticket) {

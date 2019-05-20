@@ -35,6 +35,8 @@ public class TicketHandle extends DefaultPersistent {
 
     private Date finishTime;
 
+    // 1=已解决
+    // 2=未解决
     private Integer result;
 
     private String remark;

@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'dva'
-import {Button, Divider, Form, Icon, Input, Radio, Upload} from "antd"
+import {Button, Col, Divider, Form, Icon, Input, Radio, Row, Upload} from "antd"
 import {Page} from "../../../../components"
 import SystemSelect from "../../../../sections/system/SystemSelect"
 import {api, contextPath} from "../../../../utils/config"
-import styles from "./ticket.create.module.less"
+import styles from "../index.module.less"
 import {Link} from "react-router-dom"
 
 const RadioGroup = Radio.Group
@@ -94,10 +94,12 @@ const Component = ({
         <div>
           您可以&nbsp;
           <a onClick={resetForm}>继续提交工单</a><Divider type="vertical"/>
-          <Link to="/ticket">前往工单列表</Link>
+          <Link to="/ticket">返回工单列表</Link>
         </div>
       </div>}
-      {!showSuccess && <Form layout="horizontal" onSubmit={onSubmit}>
+      {!showSuccess && <Row>
+        <Col md={24} xl={20} xxl={16}>
+          <Form layout="horizontal" onSubmit={onSubmit}>
         <Form.Item label="优先级" {...formItemLayout}>
           {getFieldDecorator('priority', {
             initialValue: 2,
@@ -113,7 +115,7 @@ const Component = ({
               required: true,
               message: '请输入问题描述',
             }],
-          })(<Input.TextArea rows={3} placeholder="请输入问题描述"/>)}
+          })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
         </Form.Item>
         <Form.Item label="所属系统" hasFeedback {...formItemLayout}>
           {getFieldDecorator('system.objectId', {
@@ -145,7 +147,9 @@ const Component = ({
         <Form.Item {...tailFormItemLayout}>
           <Button loading={confirmLoading} htmlType="submit" type="primary">提交工单</Button>
         </Form.Item>
-      </Form>}
+      </Form>
+        </Col>
+      </Row>}
     </Page>
   )
 }

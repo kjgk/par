@@ -180,7 +180,7 @@ public class InspectionService {
             segment = 2;
         } else if (minuteOfDay <= 14 * 60) {
             segment = 3;
-        } else if (minuteOfDay <= 15 * 60) {
+        } else if (minuteOfDay <= 18 * 60) {
             segment = 3;
             delay = 1;
         } else {

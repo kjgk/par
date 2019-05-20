@@ -19,6 +19,7 @@ const TwoColProps = {
 
 const Filter = ({
                   onAdd,
+                  onRecord,
                   onFilterChange,
                   filter,
                   form: {
@@ -68,6 +69,7 @@ const Filter = ({
           </div>
           <div className="flex-vertical-center">
             {onAdd && <Button icon="plus" onClick={onAdd}>创建工单</Button>}
+            {onRecord && <Button icon="plus" onClick={onRecord}>创建已完成工单</Button>}
           </div>
         </div>
       </Col>

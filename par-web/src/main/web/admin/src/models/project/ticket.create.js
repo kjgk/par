@@ -1,8 +1,6 @@
 import modelExtend from 'dva-model-extend'
 import {model} from '../common'
 import ticketService from '../../services/project/ticket'
-import {message} from "antd"
-import {routerRedux} from "dva/router"
 
 const namespace = 'ticketCreate'
 

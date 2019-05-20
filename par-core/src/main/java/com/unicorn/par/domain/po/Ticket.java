@@ -49,6 +49,10 @@ public class Ticket extends DefaultPersistent {
 
     private Integer status;
 
+    // 来源
+    // 1：线上流转，2：线下录入，巡检记录
+    private Integer source;
+
     @Transient
     List<FileUploadInfo> attachments;
 }

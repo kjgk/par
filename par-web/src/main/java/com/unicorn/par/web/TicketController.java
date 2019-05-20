@@ -106,4 +106,10 @@ public class TicketController {
 
         ticketService.processTicket(objectId, ticketHandle);
     }
+
+    @RequestMapping(value = "/record", method = RequestMethod.POST)
+    public void recordTicket(@RequestBody TicketHandle ticketHandle) {
+
+        ticketService.recordTicket(ticketHandle.getTicket(), ticketHandle);
+    }
 }

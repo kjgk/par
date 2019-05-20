@@ -75,6 +75,11 @@ const Component = ({
     filter: {
       ...query,
     },
+    onRecord() {
+      dispatch(routerRedux.push({
+        pathname: '/ticket/record',
+      }))
+    },
     onFilterChange(value) {
       handleRefresh({
         ...value,

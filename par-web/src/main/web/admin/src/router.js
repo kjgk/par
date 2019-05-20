@@ -109,6 +109,11 @@ const Routers = function ({history, app}) {
       component: () => import('./routes/project/ticket/handle'),
     },
     {
+      path: '/ticket/record',
+      models: () => [import('./models/project/ticket.record')],
+      component: () => import('./routes/project/ticket/record'),
+    },
+    {
       path: '/monthly/report',
       models: () => [import('./models/project/monthly.report')],
       component: () => import('./routes/project/monthlyreport'),
