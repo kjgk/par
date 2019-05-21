@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'dva'
-import {Button, Col, Divider, Form, Icon, Input, Radio, Row, Upload} from "antd"
+import {Button, Checkbox, Col, Divider, Form, Icon, Input, Radio, Row, Upload} from "antd"
 import {Page} from "../../../../components"
 import SystemSelect from "../../../../sections/system/SystemSelect"
 import {api, contextPath} from "../../../../utils/config"
@@ -75,7 +75,10 @@ const Component = ({
       }
       dispatch({
         type: `${namespace}/save`,
-        payload: values,
+        payload: {
+          ...values,
+          smsNotify: values.smsNotify ? 1 : 0,
+        },
       })
     })
   }
@@ -143,6 +146,12 @@ const Component = ({
                 </Button>
               </Upload>
               <span style={{color: '#666'}}> 您可以上传{fileLimit}个附件</span>
+            </Form.Item>
+            <Form.Item {...tailFormItemLayout}>
+              {getFieldDecorator('smsNotify', {
+                initialValue: true,
+                valuePropName: 'checked',
+              })(<Checkbox>短信通知系统运维人员</Checkbox>)}
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button loading={confirmLoading} htmlType="submit" type="primary">提交工单</Button>

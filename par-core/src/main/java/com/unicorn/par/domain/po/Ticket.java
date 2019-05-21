@@ -55,4 +55,7 @@ public class Ticket extends DefaultPersistent {
 
     @Transient
     List<FileUploadInfo> attachments;
+
+    @Transient
+    private Integer smsNotify;
 }
