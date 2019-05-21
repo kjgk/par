@@ -51,8 +51,8 @@ const Component = ({
             <ul>
               <li style={{backgroundColor: '#87d068'}}>正常</li>
               <li style={{backgroundColor: '#2db7f5'}}>延时</li>
-              <li style={{backgroundColor: '#ffc229'}}>异常</li>
-              <li style={{backgroundColor: '#ff7700'}}>延时+异常</li>
+              <li style={{backgroundColor: '#ffE269'}}>异常</li>
+              <li style={{backgroundColor: '#9527ff'}}>延时+异常</li>
               <li style={{backgroundColor: '#f51e3a'}}>未巡检</li>
             </ul>
           </div>

@@ -9,7 +9,10 @@ const pathname = '/monthly/report/manage'
 
 export default modelExtend(pageModel, {
   namespace,
-  state: {},
+  state: {
+    summaryStatus: [],
+    selectedSystems: [],
+  },
   subscriptions: {
 
     setup({dispatch, history}) {
@@ -58,6 +61,27 @@ export default modelExtend(pageModel, {
         type: 'hideModal',
       })
     },
+
+    * summary({payload}, {call, put}) {
+      yield put({
+        type: 'updateState',
+        payload: {
+          summaryStatus: [],
+          selectedSystems: [],
+        },
+      })
+      const summaryStatus = yield call(service.getMonthReportStatus)
+      const selectedSystems = summaryStatus.filter(status => status.status !== undefined).map(status => status.systemId)
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: true,
+          modalType: 'summary',
+          summaryStatus,
+          selectedSystems,
+        },
+      })
+    },
   },
   reducers: {
     showModal(state, {payload}) {
@@ -70,6 +94,13 @@ export default modelExtend(pageModel, {
       return {
         ...state,
         modalVisible: false,
+      }
+    },
+
+    selectSystem(state, {payload}) {
+      return {
+        ...state,
+        selectedSystems: payload,
       }
     },
   },

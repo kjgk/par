@@ -24,7 +24,7 @@ const TwoColProps = {
 const Option = Select.Option
 
 const Filter = ({
-                  onAdd,
+                  onSummary,
                   onFilterChange,
                   filter,
                   monthlyReportStatus,
@@ -62,19 +62,19 @@ const Filter = ({
 
   return (
     <Row gutter={24}>
-      <Col {...ColProps} xl={{span: 6}} md={{span: 8}}>
+      <Col {...ColProps} xl={{span: 6}} md={{span: 6}}>
         {getFieldDecorator('systemId', {initialValue: systemId})(
           <SystemSelect allowClear
                         placeholder="请选择所属系统"
                         self={true}
                         onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
-      <Col {...ColProps} xl={{span: 3}} md={{span: 8}}>
+      <Col {...ColProps} xl={{span: 4}} md={{span: 6}}>
         {getFieldDecorator('month', {initialValue: month && moment(month)})(
           <MonthPicker style={{width: '100%'}} onChange={() => setTimeout(handleSubmit)} placeholder="请选择月份"
           />)}
       </Col>
-      <Col {...ColProps} xl={{span: 3}} md={{span: 8}}>
+      <Col {...ColProps} xl={{span: 4}} md={{span: 6}}>
         {getFieldDecorator('status', {initialValue: status})(
           <Select optionFilterProp="children"
                   allowClear
@@ -85,7 +85,7 @@ const Filter = ({
           </Select>
         )}
       </Col>
-      <Col {...TwoColProps} xl={{span: 8}} md={{span: 8}}>
+      <Col {...TwoColProps} xl={{span: 10}} md={{span: 24}}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -94,6 +94,9 @@ const Filter = ({
           <div>
             <Button type="primary" className="margin-right" onClick={handleSubmit}>查询</Button>
             <Button onClick={handleReset}>重置</Button>
+          </div>
+          <div className="flex-vertical-center">
+            <Button icon="plus" onClick={onSummary}>月报汇总</Button>
           </div>
         </div>
       </Col>

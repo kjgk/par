@@ -18,13 +18,13 @@ Shape.registerShape('polygon', 'doublePoint', {
       // color = '#20AA73'
     }
     if (value === 2) {
-      color = '#ffc229'
+      color = '#ffe269'
     }
     if (value === 3) {
       color = '#2db7f5'
     }
     if (value === 4) {
-      color = '#f70'
+      color = '#9527ff'
     }
     return container.addShape('polygon', {
       attrs: {

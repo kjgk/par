@@ -234,6 +234,10 @@ public class InspectionService {
             ticket.setContent(inspection.getTicketContent());
             ticket.setSystem(inspection.getSystem());
             ticket.setAttachments(invalidAttachments);
+            if (currentSupervisor != null) {
+                ticket.setContacts(currentSupervisor.getUsername());
+                ticket.setPhoneNo(currentSupervisor.getPhoneNo());
+            }
             ticketService.saveTicket(ticket);
 
             // 如果是运维人员提交的巡检记录，则自动接单

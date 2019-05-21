@@ -8,9 +8,9 @@ import Filter from './Filter'
 import {monthlyReportStatus} from '../../../models/dict'
 import ViewModal from "../monthlyreport/ViewModal"
 import AuditModal from "./AuditModal"
+import SummaryModal from "./SummaryModal"
 
 const namespace = 'monthlyReportManage'
-const name = '月报管理'
 
 const Component = ({
                      location, dispatch, model, loading,
@@ -18,7 +18,7 @@ const Component = ({
   location.query = queryString.parse(location.search)
   const {query, pathname} = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
+    list, pagination, currentItem, modalVisible, modalType, summaryStatus, selectedSystems,
   } = model
 
   const handleRefresh = (newQuery) => {
@@ -29,26 +29,6 @@ const Component = ({
         ...newQuery,
       }),
     }))
-  }
-
-  const modalProps = {
-    item: modalType === 'create' ? {} : currentItem,
-    visible: modalVisible,
-    maskClosable: false,
-    confirmLoading: loading.effects[`${namespace}/${modalType}`],
-    title: modalType === 'create' ? `添加${name}` : `编辑${name}`,
-    onOk(data) {
-      dispatch({
-        type: `${namespace}/${modalType}`,
-        payload: data,
-      })
-        .then(() => handleRefresh())
-    },
-    onCancel() {
-      dispatch({
-        type: `${namespace}/hideModal`,
-      })
-    },
   }
 
   const listProps = {
@@ -94,12 +74,9 @@ const Component = ({
         page: 1,
       })
     },
-    onAdd() {
+    onSummary() {
       dispatch({
-        type: `${namespace}/showModal`,
-        payload: {
-          modalType: 'create',
-        },
+        type: `${namespace}/summary`,
       })
     },
   }
@@ -115,6 +92,25 @@ const Component = ({
         payload: data,
       })
         .then(() => handleRefresh())
+    },
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
+  const summaryModalProps = {
+    visible: modalVisible,
+    maskClosable: false,
+    width: 800,
+    summaryStatus,
+    selectedSystems,
+    onSelectSystem(data) {
+      dispatch({
+        type: `${namespace}/selectSystem`,
+        payload: data,
+      })
     },
     onCancel() {
       dispatch({
@@ -146,6 +142,7 @@ const Component = ({
       <List {...listProps} />
       {modalVisible && modalType === 'audit' && <AuditModal {...auditModalProps} />}
       {modalVisible && modalType === 'view' && <ViewModal {...viewModalProps} />}
+      {modalVisible && modalType === 'summary' && <SummaryModal {...summaryModalProps} />}
     </Page>
   )
 }

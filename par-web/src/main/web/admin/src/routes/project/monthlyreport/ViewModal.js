@@ -21,43 +21,53 @@ const modal = ({
       <Form className={styles.modal_form}>
         <Row gutter={0}>
           <Col span={11}>
-            <Form.Item label={<span>组织或参加各类项目会议</span>}>
+            <Form.Item label={<span>组织或参加各类项目会议（次）</span>}>
               {item.meeting}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>系统日常巡检</span>}>
+            <Form.Item label={<span>系统日常巡检（次）</span>}>
               {item.daily}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>咨询类服务</span>}>
+            <Form.Item label={<span>咨询类服务（次）</span>}>
               {item.consultation}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>网络协助类</span>}>
+            <Form.Item label={<span>网络协助类（次）</span>}>
               {item.networkAssistance}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>上门技术支持</span>}>
+            <Form.Item label={<span>上门技术支持（次）</span>}>
               {item.doorToDoor}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>数据处理及功能完善</span>}>
+            <Form.Item label={<span>数据处理及功能完善（次）</span>}>
               {item.dataAndFunction}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>各类文档</span>}>
+            <Form.Item label={<span>各类文档（个）</span>}>
               {item.documents}
             </Form.Item>
           </Col>
           <Col span={11}>
-            <Form.Item label={<span>各类系统培训</span>}>
+            <Form.Item label={<span>各类系统培训（次）</span>}>
               {item.train}
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item label={<span>本月系统用户数（个）</span>}>
+              {item.userCount}
+            </Form.Item>
+          </Col>
+          <Col span={11}>
+            <Form.Item label={<span>本月系统用户登录次数（次）</span>}>
+              {item.userLoginCount}
             </Form.Item>
           </Col>
         </Row>

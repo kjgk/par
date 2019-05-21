@@ -147,4 +147,26 @@ public class MonthlyReportController extends BaseController {
         response.getOutputStream().close();
         template.close();
     }
+
+    @RequestMapping(value = "/summary/export", method = RequestMethod.GET)
+    public void exportMonthlyReportSummary(HttpServletResponse response, @RequestParam(value = "system") List<Long> systemList) throws IOException {
+
+        DateTime dateTime = new DateTime(monthlyReportService.getCurrentMonth());
+        String filename = "应用科" + dateTime.getYear() + "年" + dateTime.getMonthOfYear() + "月份月报.docx";
+        XWPFTemplate template = monthlyReportService.getMonthlyReportSummaryTemplate(systemList);
+        response.setContentType("application/msword");
+        response.setHeader("Content-Disposition", "filename="
+                + new String(filename.getBytes("GBK"), StandardCharsets.ISO_8859_1)
+        );
+        template.write(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+        template.close();
+    }
+
+    @RequestMapping(value = "/summary/status", method = RequestMethod.GET)
+    public List<Map> getMonthlyReportStatus()  {
+
+        return monthlyReportService.getMonthlyReportStatus();
+    }
 }

@@ -19,4 +19,9 @@ export default {
       body: params,
     })
   },
+  getMonthReportStatus() {
+    return request(`${api}/summary/status`, {
+      method: 'GET',
+    })
+  },
 }
