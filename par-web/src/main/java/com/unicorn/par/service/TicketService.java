@@ -209,18 +209,20 @@ public class TicketService {
         ticketInfo.setSubmitTime(ticket.getSubmitTime());
         ticketInfo.setSystemName(ticket.getSystem().getName());
         ticketInfo.setSystemId(ticket.getSystem().getObjectId());
-        ticketInfo.setAttachments(contentAttachmentService.getAttachmentLinks(ticket.getObjectId()));
+        ticketInfo.setAttachments(contentAttachmentService.getAttachmentInfos(ticket.getObjectId()));
 
         TicketHandle ticketHandle = ticketHandleRepository.findByTicketId(ticket.getObjectId());
         if (ticketHandle != null) {
             TicketInfo.TicketHandleInfo ticketHandleInfo = new TicketInfo.TicketHandleInfo();
             ticketHandleInfo.setObjectId(ticketHandle.getObjectId());
-//            ticketHandleInfo.setAccendant(ticketHandle.getAccendant().getUsername());
+            if (ticketHandle.getAccendant() != null) {
+                ticketHandleInfo.setAccendant(ticketHandle.getAccendant().getUsername());
+            }
             ticketHandleInfo.setAcceptTime(ticketHandle.getAcceptTime());
             ticketHandleInfo.setFinishTime(ticketHandle.getFinishTime());
             ticketHandleInfo.setResult(ticketHandle.getResult());
             ticketHandleInfo.setRemark(ticketHandle.getRemark());
-            ticketHandleInfo.setAttachments(contentAttachmentService.getAttachmentLinks(ticketHandle.getObjectId()));
+            ticketHandleInfo.setAttachments(contentAttachmentService.getAttachmentInfos(ticketHandle.getObjectId()));
             ticketInfo.setHandleInfo(ticketHandleInfo);
         }
         return ticketInfo;

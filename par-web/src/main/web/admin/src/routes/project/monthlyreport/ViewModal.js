@@ -4,6 +4,7 @@ import {Button, Col, Divider, Form, Input, Modal, Row} from 'antd'
 import moment from "moment"
 import styles from "./index.module.less"
 import {contextPath} from "../../../utils/config"
+import {ImageList} from "../../../components"
 
 const modal = ({
                  item = {},
@@ -86,11 +87,15 @@ const modal = ({
           <Fragment>
             <Divider>【附件】</Divider>
             <div className={styles.display_field}>
-              {item.attachments.map((attachment) =>
-                <div key={attachment.url}>
-                  <a href={`${contextPath}${attachment.imageUrl || attachment.url}`} target="_blank">{attachment.filename}</a>
-                </div>
-              )}
+              <ImageList list={item.attachments
+                .filter(attachment => attachment.url && attachment.imageUrl)
+                .map((attachment) => ({url: contextPath + attachment.imageUrl}))}/>
+              {item.attachments
+                .filter(attachment => attachment.url && !attachment.imageUrl)
+                .map((attachment) => <div>
+                    <a href={`${contextPath}${attachment.url}`} target="_blank">{attachment.filename}</a>
+                  </div>
+                )}
             </div>
           </Fragment>
         }

@@ -203,6 +203,7 @@ public class InspectionService {
         Accendant currentAccendant = accendantService.getCurrentAccendant();
         Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
         Inspection current = inspectionRepository.save(inspection);
+        boolean exception = false;
         current.setInspectionTime(new Date());
         // 巡检人可以是系统维护人员也可以是项目管理员
         current.setAccendant(currentAccendant);
@@ -210,6 +211,7 @@ public class InspectionService {
         current.setSegment(segmentInfo[0]);
         current.setDelay(segmentInfo[1]);
         for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
+            boolean error = inspectionDetail.getResult() == 0;
             InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
             detail.setInspection(current);
             List<ContentAttachment> contentAttachments = new ArrayList();
@@ -219,19 +221,20 @@ public class InspectionService {
                 contentAttachment.setRelatedType(InspectionDetail.class.getSimpleName());
                 contentAttachment.setRelatedId(detail.getObjectId());
                 contentAttachments.add(contentAttachment);
-                if (inspectionDetail.getResult() == 0) {
+                if (error) {
                     invalidAttachments.add(fileUploadInfo);
                 }
             }
+            exception = exception || error;
             contentAttachmentService.save(InspectionDetail.class.getSimpleName(), detail.getObjectId(), null, contentAttachments);
         }
 
-        // 创建巡检工单
-        if (!StringUtils.isEmpty(inspection.getTicketContent())) {
+        // 如有异常功能点，则创建巡检工单
+        if (exception && !StringUtils.isEmpty(inspection.getMessage())) {
             Ticket ticket = new Ticket();
             ticket.setPriority(1);
             ticket.setSource(TicketSource.Inspection);
-            ticket.setContent(inspection.getTicketContent());
+            ticket.setContent(inspection.getMessage());
             ticket.setSystem(inspection.getSystem());
             ticket.setAttachments(invalidAttachments);
             if (currentSupervisor != null) {
@@ -361,6 +364,7 @@ public class InspectionService {
         inspectionInfo.setInspectionTime(inspection.getInspectionTime());
         inspectionInfo.setSystemId(inspection.getSystem().getObjectId());
         inspectionInfo.setSystemName(inspection.getSystem().getName());
+        inspectionInfo.setMessage(inspection.getMessage());
         inspectionInfo.setDetailList(new ArrayList());
 
         for (InspectionDetail inspectionDetail : inspection.getDetailList()) {

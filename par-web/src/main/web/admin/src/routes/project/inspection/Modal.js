@@ -80,7 +80,7 @@ const modal = ({
       }
       onOk({
         ...data,
-        ticketContent: content
+        message: content
       })
     })
   }

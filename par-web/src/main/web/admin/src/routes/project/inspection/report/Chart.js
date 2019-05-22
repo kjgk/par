@@ -18,7 +18,7 @@ Shape.registerShape('polygon', 'doublePoint', {
       // color = '#20AA73'
     }
     if (value === 2) {
-      color = '#ffe269'
+      color = '#f6d059'
     }
     if (value === 3) {
       color = '#2db7f5'

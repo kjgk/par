@@ -19,6 +19,8 @@ public class InspectionInfo implements Serializable {
 
     private String username;
 
+    private String message;
+
     private Date inspectionTime;
 
     private List<Detail> detailList;

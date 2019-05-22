@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Button, Card, Divider, Form, Icon, Input, List, Modal, Skeleton} from 'antd'
+import {Alert, Button, Card, Divider, Form, Icon, List, Modal} from 'antd'
 import {Formatter} from "../../../components"
 import {contextPath} from '../../../utils/config'
 
@@ -37,6 +37,9 @@ const modal = ({
             </small>
           </div>
         </Divider>
+        {
+          item.message && <Alert style={{marginBottom: 10}} message="问题描述" description={<span style={{whiteSpace: 'pre'}}>{item.message}</span>} type="error"/>
+        }
         <List
           grid={{
             gutter: 16, xs: 3,

@@ -35,6 +35,7 @@ public class Inspection extends DefaultNomenclator {
     private Supervisor supervisor;
 
     @OneToMany(mappedBy = "inspection")
+    @OrderBy(value = "function_id")
     private List<InspectionDetail> detailList;
 
     private Date inspectionTime;
@@ -50,8 +51,7 @@ public class Inspection extends DefaultNomenclator {
     // 是否延时上传
     private Integer delay;
 
-
-    // 工单问题描述（用于巡检发生异常时自动创建工单）
-    @Transient
-    private String ticketContent;
+    // 异常描述
+    @Column(columnDefinition = "text")
+    private String message;
 }
