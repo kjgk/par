@@ -53,7 +53,9 @@ const modal = ({
         const data = {
           ...getFieldsValue(),
           objectId: item.objectId,
-          system: item.system,
+          system: {
+            objectId: item.system.objectId,
+          },
           attachments,
         }
         onOk(data)
