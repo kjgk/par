@@ -214,9 +214,10 @@ public class MonthlyReportService {
                     List<ContentAttachment> attachmentList = contentAttachmentService.getAttachmentList(objectId);
                     int index = 0;
                     for (ContentAttachment contentAttachment : attachmentList) {
-                        if ("jpg".equals(contentAttachment.getAttachment().getFileType())) {
+                        String fileType = contentAttachment.getAttachment().getFileType();
+                        if ("jpg".equals(fileType) || "png".equals(fileType)) {
                             byte[] localByteArray = BytePictureUtils.getLocalByteArray(new File(environmentService.getUploadPath() + contentAttachment.getAttachment().getFilename()));
-                            put("picture" + ++index, new PictureRenderData(480, 320, ".jpg", localByteArray));
+                            put("picture" + ++index, new PictureRenderData(480, 320, "." + fileType, localByteArray));
                         }
                     }
                 }});
