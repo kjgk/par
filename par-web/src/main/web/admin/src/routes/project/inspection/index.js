@@ -137,6 +137,7 @@ const Component = ({
       <Spin spinning={loading.effects[`${namespace}/query`]}>
         <Tabs activeKey={systemId} onChange={(systemId) => handleRefresh({systemId})}>
           {systemList
+            .filter(system => system.functionList && system.functionList.length > 0)
             .map(system => <TabPane tab={system.name} key={system.objectId}>
               {
                 system.objectId === systemId && <Fragment>

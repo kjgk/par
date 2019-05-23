@@ -55,6 +55,9 @@ public class InspectionService {
     private SupervisorService supervisorService;
 
     @Autowired
+    private SystemService systemService;
+
+    @Autowired
     private HolidayService holidayService;
 
     @Autowired
@@ -319,6 +322,11 @@ public class InspectionService {
 
         int systemIndex = 0;
         for (System system : systemList) {
+            long functionCount = systemService.functionCount(system.getObjectId());
+            if (functionCount == 0) {
+                // 如果系统下没有功能点，则不需要统计巡检
+                continue;
+            }
             Long systemId = system.getObjectId();
             result.getSystemList().add(system.getName());
             int dateIndex = 0;

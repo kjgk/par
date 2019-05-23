@@ -9,6 +9,7 @@ import com.unicorn.par.repository.FunctionRepository;
 import com.unicorn.par.repository.SystemRepository;
 import com.unicorn.par.repository.SystemSupervisorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -106,5 +107,11 @@ public class SystemService {
     public void deleteSystem(List<Long> objectIds) {
 
         objectIds.forEach(this::deleteSystem);
+    }
+
+    @Cacheable(value = "functionCount")
+    public long functionCount(Long objectId) {
+
+        return functionRepository.count(QFunction.function.system.objectId.eq(objectId));
     }
 }
