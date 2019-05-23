@@ -3,7 +3,7 @@ const api = '/api/v1'
 module.exports = {
   name: '巡检平台',
   prefix: 'par',
-  title: '绿化市容系统巡检平台',
+  title: '绿化市容信息化系统巡检平台',
   footerText: '上海市绿化和市容管理信息中心 © 2019',
   openPages: ['/login', '/'],
   apiPrefix: api,

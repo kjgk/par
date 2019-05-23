@@ -115,7 +115,7 @@ const App = ({
     <Fragment>
       <Loader fullScreen spinning={loading.effects['app/query']}/>
       <Helmet>
-        <title>巡检平台</title>
+        <title>绿化市容信息化系统巡检平台</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       </Helmet>
 
