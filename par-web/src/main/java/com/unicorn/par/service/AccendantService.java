@@ -78,7 +78,7 @@ public class AccendantService {
 
             // 保存到帐号表
             Account account = new Account();
-            account.setPassword(phoneNo.substring(5));
+            account.setPassword("111111");
             account.setUser(user);
             account.setName(phoneNo);
             accountService.saveAccount(account);
