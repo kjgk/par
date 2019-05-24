@@ -101,6 +101,7 @@ public class SystemService {
 
     public void deleteSystem(Long objectId) {
 
+        systemSupervisorRepository.deleteBySystemId(objectId);
         systemRepository.deleteById(objectId);
     }
 

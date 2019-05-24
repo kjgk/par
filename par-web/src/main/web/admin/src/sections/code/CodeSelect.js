@@ -17,9 +17,7 @@ export default class Component extends React.Component {
   }
 
   componentDidMount() {
-    if (list === undefined || list.length === 0) {
-      this.initStatus()
-    }
+    this.initStatus()
   }
 
   async initStatus() {

@@ -123,6 +123,11 @@ const Routers = function ({history, app}) {
       models: () => [import('./models/project/monthly.report.manage')],
       component: () => import('./routes/project/monthlyreportmanage'),
     },
+    {
+      path: '/document/*',
+      models: () => [import('./models/project/document')],
+      component: () => import('./routes/project/document'),
+    },
   ]
 
   return (
