@@ -268,6 +268,11 @@ public class InspectionService {
             throw new ServiceException("系统ID不正确！");
         }
 
+        boolean workday = holidayService.isWorkday(new DateTime().withTimeAtStartOfDay().toDate());
+        if (!workday) {
+            throw new ServiceException("休息日不需要巡检！");
+        }
+
         int[] segmentInfo = getInspectionSegment(new Date());
         if (segmentInfo[0] % 2 == 0) {
             throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");

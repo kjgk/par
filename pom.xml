@@ -13,6 +13,7 @@
     <modules>
         <module>par-core</module>
         <module>par-web</module>
+        <module>par-ins</module>
     </modules>
 
     <properties>
