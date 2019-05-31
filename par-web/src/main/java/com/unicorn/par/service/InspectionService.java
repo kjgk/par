@@ -3,27 +3,37 @@ package com.unicorn.par.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.exception.ServiceException;
+import com.unicorn.core.service.EnvironmentService;
 import com.unicorn.par.domain.enumeration.InspectionResult;
 import com.unicorn.par.domain.enumeration.TicketSource;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.po.*;
+import com.unicorn.par.domain.vo.AutoInspection;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
 import com.unicorn.par.domain.vo.InspectionMonthSummary;
+import com.unicorn.par.repository.FunctionRepository;
 import com.unicorn.par.repository.InspectionDetailRepository;
 import com.unicorn.par.repository.InspectionRepository;
 import com.unicorn.par.repository.SystemRepository;
 import com.unicorn.std.domain.po.ContentAttachment;
 import com.unicorn.std.service.ContentAttachmentService;
 import com.unicorn.utils.DateUtils;
+import com.unicorn.utils.SnowflakeIdWorker;
+import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import sun.misc.BASE64Decoder;
 
+import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -41,6 +51,9 @@ public class InspectionService {
 
     @Autowired
     private SystemRepository systemRepository;
+
+    @Autowired
+    private FunctionRepository functionRepository;
 
     @Autowired
     private TicketService ticketService;
@@ -62,6 +75,12 @@ public class InspectionService {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private EnvironmentService environmentService;
+
+    @Autowired
+    private SnowflakeIdWorker idWorker;
 
     public InspectionMonthResult getInspectionMonthResult(String month, Long systemId) {
 
@@ -171,31 +190,6 @@ public class InspectionService {
         return buildInspectionInfo(inspectionRepository.get(objectId));
     }
 
-    private int[] getInspectionSegment(Date date) {
-
-        int segment = 0;
-        int delay = 0;
-        int minuteOfDay = new DateTime(date).getMinuteOfDay();
-        if (minuteOfDay < 8.5 * 60) {
-            segment = 0;
-        } else if (minuteOfDay <= 10 * 60) {
-            segment = 1;
-        } else if (minuteOfDay <= 11 * 60) {
-            segment = 1;
-            delay = 1;
-        } else if (minuteOfDay < 12.5 * 60) {
-            segment = 2;
-        } else if (minuteOfDay <= 14 * 60) {
-            segment = 3;
-        } else if (minuteOfDay <= 15 * 60) {
-            segment = 3;
-            delay = 1;
-        } else {
-            segment = 4;
-        }
-        return new int[]{segment, delay};
-    }
-
     public void saveInspection(Inspection inspection) {
 
         List<FileUploadInfo> invalidAttachments = new ArrayList();
@@ -213,6 +207,7 @@ public class InspectionService {
         current.setSupervisor(currentSupervisor);
         current.setSegment(segmentInfo[0]);
         current.setDelay(segmentInfo[1]);
+        current.setAuto(0);
         for (InspectionDetail inspectionDetail : inspection.getDetailList()) {
             boolean error = inspectionDetail.getResult() == 0;
             InspectionDetail detail = inspectionDetailRepository.save(inspectionDetail);
@@ -263,6 +258,79 @@ public class InspectionService {
         objectIds.forEach(this::deleteInspection);
     }
 
+
+    /**
+     * 保存自动巡检
+     */
+    public void saveAutoInspection(AutoInspection autoInspection) {
+
+        System system = systemRepository.get(autoInspection.getSystemId());
+        if (system == null) {
+            throw new ServiceException("系统ID不正确！");
+        }
+
+        int[] segmentInfo = getInspectionSegment(new Date());
+        if (segmentInfo[0] % 2 == 0) {
+            throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
+        }
+
+        Inspection inspection = new Inspection();
+        inspection.setSystem(system);
+        inspection = inspectionRepository.save(inspection);
+        inspection.setInspectionTime(new Date());
+        inspection.setSegment(segmentInfo[0]);
+        inspection.setDelay(segmentInfo[1]);
+        inspection.setAuto(1);
+
+        List<Function> functionList = functionRepository.findAll(
+                QFunction.function.system.objectId.eq(system.getObjectId()), new Sort(Sort.Direction.ASC, "orderNo"));
+
+        if (CollectionUtils.isEmpty(autoInspection.getDetailList())) {
+            throw new ServiceException("巡检明细不能为空！");
+        }
+
+        if (functionList.size() != autoInspection.getDetailList().size()) {
+            throw new ServiceException("功能点个数不一致！");
+        }
+
+        BASE64Decoder decoder = new sun.misc.BASE64Decoder();
+
+        for (int i = 0; i < functionList.size(); i++) {
+            AutoInspection.Detail detail = autoInspection.getDetailList().get(i);
+            Function function = functionList.get(i);
+            InspectionDetail inspectionDetail = new InspectionDetail();
+            inspectionDetail.setFunction(function);
+            inspectionDetail.setInspection(inspection);
+            inspectionDetail.setResult(detail.getResult());
+            inspectionDetail = inspectionDetailRepository.save(inspectionDetail);
+            List<ContentAttachment> contentAttachments = new ArrayList();
+            for (String image : detail.getScreenshots()) {
+                image = image.replaceAll("data:image/jpeg;base64,", "")
+                        .replaceAll("data:image/png;base64,", "");
+                long tempFilename = idWorker.nextId();
+                try {
+                    byte[] bytes = decoder.decodeBuffer(image);
+                    BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+                    File file = new File(environmentService.getTempPath() + "/" + tempFilename);
+                    ImageIO.write(bufferedImage, "jpg", file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new ServiceException("巡检图片格式错误！");
+                }
+
+                ContentAttachment contentAttachment = new ContentAttachment();
+                contentAttachment.setFileInfo(FileUploadInfo.valueOf(tempFilename + "", "screenshots_auto.jpg"));
+                contentAttachment.setRelatedType(InspectionDetail.class.getSimpleName());
+                contentAttachment.setRelatedId(inspectionDetail.getObjectId());
+                contentAttachments.add(contentAttachment);
+            }
+            contentAttachmentService.save(InspectionDetail.class.getSimpleName(), inspectionDetail.getObjectId(), null, contentAttachments);
+        }
+    }
+
+    /**
+     * 获取巡检统计信息
+     */
     public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
 
         InspectionMonthSummary result = new InspectionMonthSummary();
@@ -359,6 +427,31 @@ public class InspectionService {
         return result;
     }
 
+    private int[] getInspectionSegment(Date date) {
+
+        int segment;
+        int delay = 0;
+        int minuteOfDay = new DateTime(date).getMinuteOfDay();
+        if (minuteOfDay < 8.5 * 60) {
+            segment = 0;
+        } else if (minuteOfDay <= 10 * 60) {
+            segment = 1;
+        } else if (minuteOfDay <= 12 * 60) {
+            segment = 1;
+            delay = 1;
+        } else if (minuteOfDay < 12.5 * 60) {
+            segment = 2;
+        } else if (minuteOfDay <= 14 * 60) {
+            segment = 3;
+        } else if (minuteOfDay <= 15 * 60) {
+            segment = 3;
+            delay = 1;
+        } else {
+            segment = 4;
+        }
+        return new int[]{segment, delay};
+    }
+
     private InspectionInfo buildInspectionInfo(Inspection inspection) {
 
         InspectionInfo inspectionInfo = new InspectionInfo();
@@ -367,6 +460,8 @@ public class InspectionService {
             inspectionInfo.setUsername(inspection.getAccendant().getUsername());
         } else if (inspection.getSupervisor() != null) {
             inspectionInfo.setUsername(inspection.getSupervisor().getUsername());
+        } else {
+            inspectionInfo.setUsername(inspection.getCreatedBy().getName());
         }
 
         inspectionInfo.setInspectionTime(inspection.getInspectionTime());

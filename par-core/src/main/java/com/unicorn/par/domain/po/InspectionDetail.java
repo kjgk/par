@@ -30,6 +30,10 @@ public class InspectionDetail extends DefaultIdentifiable {
     @JoinColumn(name = "function_id")
     private Function function;
 
+    /**
+     * 0=异常
+     * 1=正常
+     */
     private Integer result;
 
     @Transient

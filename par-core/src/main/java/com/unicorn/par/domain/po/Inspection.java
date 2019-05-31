@@ -51,6 +51,8 @@ public class Inspection extends DefaultNomenclator {
     // 是否延时上传
     private Integer delay;
 
+    private Integer auto;
+
     // 异常描述
     @Column(columnDefinition = "text")
     private String message;

@@ -1,6 +1,7 @@
 package com.unicorn.par.web;
 
 import com.unicorn.par.domain.po.Inspection;
+import com.unicorn.par.domain.vo.AutoInspection;
 import com.unicorn.par.domain.vo.InspectionInfo;
 import com.unicorn.par.domain.vo.InspectionMonthResult;
 import com.unicorn.par.domain.vo.InspectionMonthSummary;
@@ -60,5 +61,11 @@ public class InspectionController {
     public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
 
         return inspectionService.getInspectionReport(year, month);
+    }
+
+    @RequestMapping(value = "/auto", method = RequestMethod.POST)
+    public void saveAutoInspection(@RequestBody AutoInspection autoInspection) {
+
+        inspectionService.saveAutoInspection(autoInspection);
     }
 }
