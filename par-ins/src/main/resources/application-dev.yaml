@@ -1,1 +1,2 @@
+chrome-driver-path: /kjgk/Project/SeleniumTest/res/chromedriver
 auto-inspection-url: http://localhost:8086/par/api/v1/inspection/auto

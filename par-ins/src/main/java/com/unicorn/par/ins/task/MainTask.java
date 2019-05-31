@@ -25,8 +25,6 @@ public class MainTask {
 
         log.info("开始启动自动巡检，系统名称【{}】，系统id【{}】，网址【{}】", systemName, systemId, url);
 
-        System.setProperty("webdriver.chrome.driver", "/kjgk/Project/SeleniumTest/res/chromedriver");
-
         AutoInspection.Detail loginSegment = new AutoInspection.Detail();
         AutoInspection.Detail searchSegment = new AutoInspection.Detail();
 
