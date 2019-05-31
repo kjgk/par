@@ -29,11 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import sun.misc.BASE64Decoder;
 
-import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 @Service
@@ -308,14 +307,31 @@ public class InspectionService {
                 image = image.replaceAll("data:image/jpeg;base64,", "")
                         .replaceAll("data:image/png;base64,", "");
                 long tempFilename = idWorker.nextId();
+
+                // 解码图片，并保存到临时目录
+                OutputStream out = null;
                 try {
                     byte[] bytes = decoder.decodeBuffer(image);
-                    BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
-                    File file = new File(environmentService.getTempPath() + "/" + tempFilename);
-                    ImageIO.write(bufferedImage, "jpg", file);
+                    for (int index = 0; index < bytes.length; ++index) {
+                        if (bytes[index] < 0) {
+                            bytes[index] += 256;
+                        }
+                    }
+                    out = new FileOutputStream(environmentService.getTempPath() + "/" + tempFilename);
+                    out.write(bytes);
+                    out.flush();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new ServiceException("巡检图片格式错误！");
+                } finally {
+                    if (out != null) {
+                        try {
+                            out.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 ContentAttachment contentAttachment = new ContentAttachment();
