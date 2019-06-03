@@ -36,7 +36,7 @@ const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableP
     },
     {
       title: '提交时间',
-      dataIndex: 'createdDate',
+      dataIndex: 'submitTime',
       width: 160,
       render: (value) => <Formatter.Date value={value}/>,
     },
