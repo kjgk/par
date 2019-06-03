@@ -117,7 +117,7 @@ public class MonthlyReportController extends BaseController {
             expression = expression.and(monthlyReport.status.eq(status));
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
-                new Sort(Sort.Direction.DESC, "month").and(new Sort(Sort.Direction.ASC, "system.objectId"))
+                new Sort(Sort.Direction.DESC, "submitTime")
         );
         return monthlyReportService.getMonthlyReport(queryInfo);
     }

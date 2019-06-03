@@ -45,12 +45,14 @@ const modal = ({
             </CheckboxGroup>
           )
         }
-        <div style={{fontSize: 16, textAlign: 'center'}}>
-          <a style={{fontSize: 16, border: ''}} target="_blank"
-             href={`${contextPath}${apiPrefix}/monthlyReport/summary/export?${stringify({system: selectedSystems}, {indices: false})}`}>
-            下载
-          </a>
-        </div>
+        {
+          selectedSystems.length > 0 && <div style={{fontSize: 16, textAlign: 'center'}}>
+            <a style={{fontSize: 16, border: ''}} target="_blank"
+               href={`${contextPath}${apiPrefix}/monthlyReport/summary/export?${stringify({system: selectedSystems}, {indices: false})}`}>
+              下载
+            </a>
+          </div>
+        }
       </Form>
     </Modal>
   )

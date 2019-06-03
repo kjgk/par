@@ -71,7 +71,7 @@ export default modelExtend(pageModel, {
         },
       })
       const summaryStatus = yield call(service.getMonthReportStatus)
-      const selectedSystems = summaryStatus.filter(status => status.status !== undefined).map(status => status.systemId)
+      const selectedSystems = summaryStatus.filter(status => status.status === 1).map(status => status.systemId)
       yield put({
         type: 'updateState',
         payload: {

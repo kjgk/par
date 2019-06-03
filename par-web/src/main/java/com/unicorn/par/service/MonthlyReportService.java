@@ -2,9 +2,7 @@ package com.unicorn.par.service;
 
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.data.DocxRenderData;
-import com.deepoove.poi.data.NumbericRenderData;
 import com.deepoove.poi.data.PictureRenderData;
-import com.deepoove.poi.data.TextRenderData;
 import com.deepoove.poi.data.style.Style;
 import com.deepoove.poi.util.BytePictureUtils;
 import com.unicorn.core.domain.vo.AttachmentInfo;
@@ -253,14 +251,20 @@ public class MonthlyReportService {
             data.put("no", no++);
             data.put("systemName", monthlyReport.getSystem().getName());
             data.put("dataAndFunction", monthlyReport.getDataAndFunction());
-            data.put("items", new DocxRenderData(new File(path + "templates/MonthlyReportSummaryDetailItem.docx"), items.stream().map(item -> new HashMap() {{
+            List<HashMap> dataList = items.stream().map(item -> new HashMap() {{
                 if (!StringUtils.isEmpty(item[1])) {
                     put("title", item[0]);
-                    put("list", new NumbericRenderData(NumbericRenderData.FMT_DECIMAL
-                            , Arrays.stream(monthlyReport.getKeyWork().split("\n")).map(text -> new TextRenderData(text, style)).collect(Collectors.toList())));
+                    put("content", item[1]);
 
                 }
-            }}).filter(item -> !item.isEmpty()).collect(Collectors.toList())));
+            }}).filter(item -> !item.isEmpty()).collect(Collectors.toList());
+            if (dataList.size() == 0) {
+                dataList.add(new HashMap() {{
+                    put("title", "无");
+                    put("content", "");
+                }});
+            }
+            data.put("items", new DocxRenderData(new File(path + "templates/MonthlyReportSummaryDetailItem.docx"), dataList));
             detailList.add(data);
 
             daily += monthlyReport.getDaily() == null ? 0 : monthlyReport.getDaily();
