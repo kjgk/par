@@ -28,7 +28,7 @@ public class MainTask {
     public void autoInspection() {
 
         new ArrayList<InspectionScript>() {{
-//            add(lhsrkjInspectionScript);
+            add(lhsrkjInspectionScript);
             add(cwpInspectionScript);
         }}.forEach(inspectionScript -> {
             log.info("【{}】开始巡检", inspectionScript.getSystemName());

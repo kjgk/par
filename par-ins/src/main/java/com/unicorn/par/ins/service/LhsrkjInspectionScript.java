@@ -54,7 +54,7 @@ public class LhsrkjInspectionScript implements InspectionScript {
                 // 登录
                 driver.findElement(By.cssSelector(".ngdialog button.submit")).click();
 
-                Thread.sleep(2000l);
+                Thread.sleep(1000l);
 
                 // 验证功能点是否正常
                 driver.findElement(By.xpath("/html/body/div/div[1]/div/div[2]/div/a[4]/i"));
@@ -81,7 +81,7 @@ public class LhsrkjInspectionScript implements InspectionScript {
                 // 打开搜索页面
                 driver.navigate().to(url + "/#/search/垃圾");
 
-                Thread.sleep(2000l);
+                Thread.sleep(1000l);
 
                 // 验证功能点是否正常
                 driver.findElement(By.xpath("/html/body/div/div[2]/div/div/div/div[2]/div/div/div[2]/div[1]/span"));

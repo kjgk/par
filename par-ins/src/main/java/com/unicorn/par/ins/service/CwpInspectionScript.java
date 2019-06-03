@@ -44,10 +44,10 @@ public class CwpInspectionScript implements InspectionScript {
                 loginSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));
 
                 // 填写用户名密码并登录
-                driver.findElement(By.cssSelector("//*[@id=\"wrapper\"]/div[2]/div/div/div[1]/div/div/div[2]/form/div[2]/div/input"))
+                driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[1]/div/div/div[2]/form/div[2]/div/input"))
                         .sendKeys("admin", Keys.TAB, "123456", Keys.TAB, "_**_", Keys.ENTER);
 
-                Thread.sleep(2000l);
+                Thread.sleep(1000l);
 
                 // 验证功能点是否正常
                 driver.findElement(By.xpath("//*[@id=\"header-wrapper\"]/div[2]/div[3]/ul/li[2]/div/a"));
@@ -74,13 +74,11 @@ public class CwpInspectionScript implements InspectionScript {
                 // 打开搜索页面
                 driver.navigate().to(url);
 
-                Thread.sleep(2000l);
-
                 // 搜索
                 driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[2]/div/div/div[2]/div/section[3]/form/div[1]/input"))
                         .sendKeys("轮胎", Keys.ENTER);
 
-                Thread.sleep(2000l);
+                Thread.sleep(1000l);
 
                 // 滚动页面
                 JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
