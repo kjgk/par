@@ -23,7 +23,7 @@ public class AutoInspection implements Serializable {
          * 0=异常
          * 1=正常
          */
-        private Integer result = 1;
+        private Integer result = 0;
 
         private List<String> screenshots = new ArrayList();
     }

@@ -457,7 +457,7 @@ public class InspectionService {
             segment = 0;
         } else if (minuteOfDay <= 10 * 60) {
             segment = 1;
-        } else if (minuteOfDay <= 12 * 60) {
+        } else if (minuteOfDay <= 11 * 60) {
             segment = 1;
             delay = 1;
         } else if (minuteOfDay < 12.5 * 60) {
