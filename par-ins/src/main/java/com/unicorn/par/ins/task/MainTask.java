@@ -1,10 +1,7 @@
 package com.unicorn.par.ins.task;
 
 import com.unicorn.par.ins.model.AutoInspection;
-import com.unicorn.par.ins.service.CwpInspectionScript;
-import com.unicorn.par.ins.service.InspectionScript;
-import com.unicorn.par.ins.service.InspectionService;
-import com.unicorn.par.ins.service.LhsrkjInspectionScript;
+import com.unicorn.par.ins.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,11 +20,14 @@ public class MainTask {
 
     private CwpInspectionScript cwpInspectionScript;
 
-    //    @Scheduled(cron = "0 45 8,12 * * ?")
-    @Scheduled(fixedDelay = 1000000)
+    private LhsrInspectionScript lhsrInspectionScript;
+
+        @Scheduled(cron = "0 45 8,12 * * ?")
+//    @Scheduled(fixedDelay = 1000000)
     public void autoInspection() {
 
         new ArrayList<InspectionScript>() {{
+            add(lhsrInspectionScript);
             add(lhsrkjInspectionScript);
             add(cwpInspectionScript);
         }}.forEach(inspectionScript -> {
