@@ -1,30 +1,32 @@
 package com.unicorn.par.ins.service;
 
+import com.unicorn.par.ins.config.InspectionConfigurationProperties;
 import com.unicorn.par.ins.model.AutoInspection;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
 @Component
+@AllArgsConstructor
 @Slf4j(topic = "绿化市容信息共享平台")
 public class LhsrInspectionScript implements InspectionScript {
 
-    @Value("${auto-inspection-config.lhsr.system-id}")
-    private Long systemId;
-
-    @Value("${auto-inspection-config.lhsr.url}")
-    private String url;
+    private InspectionConfigurationProperties inspectionConfigurationProperties;
 
     public String getSystemName() {
         return "绿化市容信息共享平台";
     }
 
     public AutoInspection doInspection() throws Exception {
+
+        Long systemId = inspectionConfigurationProperties.getSystemConfig().get("lhsr").getSystemId();
+        String url = inspectionConfigurationProperties.getSystemConfig().get("lhsr").getUrl();
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);
@@ -38,7 +40,12 @@ public class LhsrInspectionScript implements InspectionScript {
         WebDriver driver = null;
         try {
             log.info("初始化chrome浏览器");
-            driver = new ChromeDriver(new ChromeOptions().setHeadless(false));
+            ChromeOptions chromeOptions = new ChromeOptions()
+                    .setHeadless(true);
+            if (!StringUtils.isEmpty(inspectionConfigurationProperties.getChromeBinaryPath())) {
+                chromeOptions.setBinary(inspectionConfigurationProperties.getChromeBinaryPath());
+            }
+            driver = new ChromeDriver(chromeOptions);
             driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
             driver.manage().window().setSize(new Dimension(1280, 960));
 
@@ -113,7 +120,7 @@ public class LhsrInspectionScript implements InspectionScript {
                 // 依次展开左侧树节点
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div/div[2]/div[1]/div/ol/li/div/a"))
                         .click();
-                Thread.sleep(8000l);
+                Thread.sleep(3000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div/div[2]/div[1]/div/ol/li/ol/li[1]/div/a"))
                         .click();
                 Thread.sleep(2000l);
@@ -122,18 +129,18 @@ public class LhsrInspectionScript implements InspectionScript {
 
 
                 // 设置查询条件并点击查询
-                Thread.sleep(5000l);
+                Thread.sleep(3000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/form/div[1]/div/a/div")).click();
                 Thread.sleep(1000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/form/div[1]/div/ul/li[12]")).click();
-                Thread.sleep(5000l);
+                Thread.sleep(3000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/form/div[2]/div[6]/div[1]/a/div")).click();
                 Thread.sleep(1000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/form/div[2]/div[6]/div[1]/ul/li[1]")).click();
                 Thread.sleep(1000l);
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/form/div[3]/button")).click();
 
-                Thread.sleep(8000l);
+                Thread.sleep(3000l);
 
                 // 验证功能点是否正常
                 driver.findElement(By.xpath("/html/body/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div/div[2]/div"));
@@ -148,11 +155,10 @@ public class LhsrInspectionScript implements InspectionScript {
                 categorySearchSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));
                 log.error("【{}】功能异常！{}", funcName, e.getMessage());
             }
-
             return autoInspection;
         } finally {
             if (driver != null) {
-                driver.close();
+                driver.quit();
             }
         }
     }

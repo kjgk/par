@@ -22,8 +22,7 @@ public class MainTask {
 
     private LhsrInspectionScript lhsrInspectionScript;
 
-        @Scheduled(cron = "0 45 8,12 * * ?")
-//    @Scheduled(fixedDelay = 1000000)
+    @Scheduled(cron = "0 45 8,12 * * ?")
     public void autoInspection() {
 
         new ArrayList<InspectionScript>() {{
@@ -39,6 +38,7 @@ public class MainTask {
                 log.info("【{}】巡检记录提交成功！", inspectionScript.getSystemName());
             } catch (Exception e) {
                 log.error("【{}】巡检出错！{}", inspectionScript.getSystemName(), e.toString());
+                e.printStackTrace();
             }
             log.info("【{}】巡检完成", inspectionScript.getSystemName());
         });

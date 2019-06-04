@@ -1,7 +1,8 @@
 package com.unicorn.par.ins;
 
+import com.unicorn.par.ins.config.InspectionConfigurationProperties;
+import com.unicorn.par.ins.task.MainTask;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +12,15 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class Runner {
 
-    @Value("${chrome-driver-path}")
-    private String chromeDriverPath;
+    @Bean
+    CommandLineRunner initChromeDriverPath(
+            InspectionConfigurationProperties inspectionConfigurationProperties
+    ) {
+        return args -> System.setProperty("webdriver.chrome.driver", inspectionConfigurationProperties.getChromeDriverPath());
+    }
 
     @Bean
-    CommandLineRunner initChromeDriverPath() {
-        return args -> System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+    CommandLineRunner autoInspection(MainTask mainTask) {
+        return args -> mainTask.autoInspection();
     }
 }
