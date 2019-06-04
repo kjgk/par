@@ -4,20 +4,30 @@ import com.unicorn.par.ins.model.AutoInspection;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j(topic = "车辆清洗备案网")
 public class CwpInspectionScript implements InspectionScript {
+
+    @Value("${auto-inspection-config.cwp.system-id}")
+    private Long systemId;
+
+    @Value("${auto-inspection-config.cwp.url}")
+    private String url;
 
     public String getSystemName() {
         return "车辆清洗备案网";
     }
 
     public AutoInspection doInspection() throws Exception {
-
-        final Long systemId = 540220231499382784L;
-        final String url = "http://101.227.180.58/cwp";
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);
@@ -29,7 +39,8 @@ public class CwpInspectionScript implements InspectionScript {
         WebDriver driver = null;
         try {
             log.info("初始化chrome浏览器");
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(new ChromeOptions().setHeadless(true));
+            driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
             driver.manage().window().setSize(new Dimension(1280, 960));
 
             // 打开首页
@@ -45,7 +56,7 @@ public class CwpInspectionScript implements InspectionScript {
 
                 // 填写用户名密码并登录
                 driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[1]/div/div/div[2]/form/div[2]/div/input"))
-                        .sendKeys("admin", Keys.TAB, "123456", Keys.TAB, "_**_", Keys.ENTER);
+                        .sendKeys("admin", Keys.TAB, "123456", Keys.TAB, "*__*", Keys.ENTER);
 
                 Thread.sleep(1000l);
 
@@ -71,12 +82,14 @@ public class CwpInspectionScript implements InspectionScript {
             try {
                 log.info("【{}】正在测试...", funcName);
 
+                List<String> keywords = Arrays.asList("轮胎", "美容", "松江");
+
                 // 打开搜索页面
                 driver.navigate().to(url);
 
                 // 搜索
                 driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[2]/div/div/div[2]/div/section[3]/form/div[1]/input"))
-                        .sendKeys("轮胎", Keys.ENTER);
+                        .sendKeys(keywords.get(new Random().nextInt(keywords.size())), Keys.ENTER);
 
                 Thread.sleep(1000l);
 

@@ -4,21 +4,27 @@ import com.unicorn.par.ins.model.AutoInspection;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j(topic = "绿化市容信息共享平台")
 public class LhsrInspectionScript implements InspectionScript {
+
+    @Value("${auto-inspection-config.lhsr.system-id}")
+    private Long systemId;
+
+    @Value("${auto-inspection-config.lhsr.url}")
+    private String url;
 
     public String getSystemName() {
         return "绿化市容信息共享平台";
     }
 
     public AutoInspection doInspection() throws Exception {
-
-        final Long systemId = 540106046727782400L;
-//        final String url = "http://10.85.20.116/lhsr";
-        final String url = "http://lhsr.demo.kjgk.xyz:8000/lhsr";
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);
@@ -32,7 +38,8 @@ public class LhsrInspectionScript implements InspectionScript {
         WebDriver driver = null;
         try {
             log.info("初始化chrome浏览器");
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(new ChromeOptions().setHeadless(false));
+            driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
             driver.manage().window().setSize(new Dimension(1280, 960));
 
             // 打开首页

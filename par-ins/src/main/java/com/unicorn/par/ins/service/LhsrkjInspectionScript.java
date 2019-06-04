@@ -4,20 +4,30 @@ import com.unicorn.par.ins.model.AutoInspection;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j(topic = "科技创新共享平台")
 public class LhsrkjInspectionScript implements InspectionScript {
+
+    @Value("${auto-inspection-config.lhsrkj.system-id}")
+    private Long systemId;
+
+    @Value("${auto-inspection-config.lhsrkj.url}")
+    private String url;
 
     public String getSystemName() {
         return "科技创新共享平台";
     }
 
     public AutoInspection doInspection() throws Exception {
-
-        final Long systemId = 540220344225497088L;
-        final String url = "https://lhsrkj.com";
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);
@@ -29,7 +39,8 @@ public class LhsrkjInspectionScript implements InspectionScript {
         WebDriver driver = null;
         try {
             log.info("初始化chrome浏览器");
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(new ChromeOptions().setHeadless(true));
+            driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
             driver.manage().window().setSize(new Dimension(1280, 960));
 
             // 打开首页
@@ -78,8 +89,10 @@ public class LhsrkjInspectionScript implements InspectionScript {
             try {
                 log.info("【{}】正在测试...", funcName);
 
+                List<String> keywords = Arrays.asList("绿化", "垃圾", "行道树", "超市");
+
                 // 打开搜索页面
-                driver.navigate().to(url + "/#/search/垃圾");
+                driver.navigate().to(url + "/#/search/" + keywords.get(new Random().nextInt(keywords.size())));
 
                 Thread.sleep(1000l);
 
