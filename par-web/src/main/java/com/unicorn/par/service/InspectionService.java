@@ -94,8 +94,8 @@ public class InspectionService {
                 .withDayOfMonth(1)
                 .withMonthOfYear(Integer.valueOf(month.substring(4)))
                 .withYear(Integer.valueOf(month.substring(0, 4)))
-                .minusMonths(1);
-        DateTime endTime = dateTime.plusMonths(2);
+                .minusWeeks(1);
+        DateTime endTime = dateTime.plusMonths(1).plusWeeks(2);
 
         expression = expression
                 .and(inspection.inspectionTime.goe(dateTime.toDate()))
@@ -256,7 +256,6 @@ public class InspectionService {
 
         objectIds.forEach(this::deleteInspection);
     }
-
 
     /**
      * 保存自动巡检
