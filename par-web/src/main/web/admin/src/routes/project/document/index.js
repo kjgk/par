@@ -99,13 +99,6 @@ const Component = ({
         }))
     },
     onEditItem(item) {
-      dispatch({
-        type: `${namespace}/showModal`,
-        payload: {
-          modalType: 'update',
-          currentItem: item,
-        },
-      })
     },
     rowSelection: {
       selectedRowKeys,
@@ -135,6 +128,7 @@ const Component = ({
         type: `${namespace}/showModal`,
         payload: {
           modalType: 'create',
+          fileList: [],
         },
       })
     },

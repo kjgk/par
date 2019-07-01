@@ -95,7 +95,7 @@ public class InspectionService {
                 .withMonthOfYear(Integer.valueOf(month.substring(4)))
                 .withYear(Integer.valueOf(month.substring(0, 4)))
                 .minusWeeks(1);
-        DateTime endTime = dateTime.plusMonths(1).plusWeeks(2);
+        DateTime endTime = dateTime.plusMonths(1).plusWeeks(3);
 
         expression = expression
                 .and(inspection.inspectionTime.goe(dateTime.toDate()))

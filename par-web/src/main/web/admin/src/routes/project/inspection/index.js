@@ -127,6 +127,7 @@ const Component = ({
     },
   }
 
+  const querying = loading.effects[`${namespace}/query`]
   let {systemId, month} = query
   systemId = systemId || (systemList[0] && systemList[0].objectId)
   let currentMonth = moment(now).startOf('M')
@@ -134,7 +135,7 @@ const Component = ({
   let todayMills = moment(now).startOf('D').toDate().getTime()
   return (
     <Page inner>
-      <Spin spinning={loading.effects[`${namespace}/query`]}>
+      <Spin spinning={querying}>
         <Tabs activeKey={systemId} onChange={(systemId) => handleRefresh({systemId})}>
           {systemList
             .filter(system => system.functionList && system.functionList.length > 0)
@@ -143,6 +144,7 @@ const Component = ({
                 system.objectId === systemId && <Fragment>
                   <div className={styles["inspection-alert"]}>请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！</div>
                   <Calendar
+                    style={{visibility: querying ? 'hidden' : 'visible'}}
                     className={styles['inspection-calendar']}
                     validRange={[calendarStartDate, moment(now)]}
                     onChange={(d) => {

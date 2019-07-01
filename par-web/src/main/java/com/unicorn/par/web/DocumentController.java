@@ -4,9 +4,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
-import com.unicorn.par.domain.po.QDocument;
+import com.unicorn.par.domain.po.Accendant;
 import com.unicorn.par.domain.po.Document;
+import com.unicorn.par.domain.po.QDocument;
+import com.unicorn.par.domain.po.Supervisor;
+import com.unicorn.par.service.AccendantService;
 import com.unicorn.par.service.DocumentService;
+import com.unicorn.par.service.SupervisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -24,9 +28,15 @@ public class DocumentController {
     @Autowired
     private DocumentService documentService;
 
+    @Autowired
+    private AccendantService accendantService;
+
+    @Autowired
+    private SupervisorService supervisorService;
+
 
     @RequestMapping(method = RequestMethod.GET)
-    public Page<Document> list(PageInfo pageInfo, String keyword, String category) {
+    public Page<Document> list(PageInfo pageInfo, String keyword, Long systemId, String category) {
 
         QDocument document = QDocument.document;
 
@@ -41,6 +51,18 @@ public class DocumentController {
         }
         if (!StringUtils.isEmpty(category)) {
             expression = expression.and(document.category.tag.eq(category));
+        }
+        if (systemId != null) {
+            expression = expression.and(document.system.objectId.eq(systemId));
+        } else {
+            Accendant currentAccendant = accendantService.getCurrentAccendant();
+            Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
+            if (currentSupervisor != null) {
+                expression = expression.and(document.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId()));
+            }
+            if (currentAccendant != null) {
+                expression = expression.and(document.system.company.objectId.eq(currentAccendant.getCompany().getObjectId()));
+            }
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.DESC, "createdDate")

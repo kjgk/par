@@ -54,7 +54,7 @@ const Filter = ({
   return (
     <Row gutter={24}>
       <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }}>
-        {getFieldDecorator('system', { initialValue: systemId })(<SystemSelect allowClear self
+        {getFieldDecorator('systemId', { initialValue: systemId })(<SystemSelect allowClear self
                                                                                placeholder="请选择所属系统"
                                                                                onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
