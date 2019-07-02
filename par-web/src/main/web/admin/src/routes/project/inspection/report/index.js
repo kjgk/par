@@ -2,10 +2,11 @@ import React from 'react'
 import {connect} from 'dva'
 import styles from './index.module.less'
 import {Page} from "../../../../components"
-import {Divider, Radio, Select} from "antd"
+import {Button, Divider, Radio, Select} from "antd"
 import {routerRedux} from "dva/router"
 import queryString from "query-string"
 import ReportChart from "./Chart"
+import SummaryModal from "./SummaryModal"
 
 const namespace = 'inspectionReport'
 const Component = ({
@@ -15,7 +16,7 @@ const Component = ({
   const {pathname} = location
   const query = queryString.parse(location.search)
   const {year, month} = query
-  const {yearMonths, inspectionResults} = model
+  const {yearMonths, inspectionResults, inspectionSummary, modalVisible,} = model
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -33,6 +34,26 @@ const Component = ({
     })
   }
 
+  const handleSummary = () => {
+    dispatch({
+      type: `${namespace}/showSummary`,
+      payload: query,
+    })
+  }
+
+  const summaryModalProps = {
+    visible: modalVisible,
+    inspectionSummary,
+    loading: loading.effects[`${namespace}/showSummary`],
+    maskClosable: false,
+    title: `${year}年${month}月各运维公司巡检统计表`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   return (
     <Page inner>
       <div className={styles.main}>
@@ -45,20 +66,24 @@ const Component = ({
             {yearMonths.map(month => <Radio.Button key={month.value} disabled={!month.enabled} value={month.value}>{`${month.value}月`}</Radio.Button>)}
           </Radio.Group>
         </div>
-        <div>
+        <div className={styles.header}>
+          <div className={styles.buttons}>
+            <Button onClick={handleSummary}>查看当月汇总</Button>
+          </div>
           <div className={styles.legend}>
             图例：
             <ul>
               <li style={{backgroundColor: '#87d068'}}>正常</li>
               <li style={{backgroundColor: '#2db7f5'}}>延时</li>
-              <li style={{backgroundColor: '#ffE269'}}>异常</li>
+              <li style={{backgroundColor: '#f6d059'}}>异常</li>
               <li style={{backgroundColor: '#9527ff'}}>延时+异常</li>
               <li style={{backgroundColor: '#f51e3a'}}>未巡检</li>
             </ul>
           </div>
-          <ReportChart {...inspectionResults}/>
         </div>
+        <ReportChart {...inspectionResults}/>
       </div>
+      <SummaryModal {...summaryModalProps}/>
     </Page>
   )
 }

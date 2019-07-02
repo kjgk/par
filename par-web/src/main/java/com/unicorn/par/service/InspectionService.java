@@ -8,10 +8,7 @@ import com.unicorn.par.domain.enumeration.InspectionResult;
 import com.unicorn.par.domain.enumeration.TicketSource;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.domain.po.*;
-import com.unicorn.par.domain.vo.AutoInspection;
-import com.unicorn.par.domain.vo.InspectionInfo;
-import com.unicorn.par.domain.vo.InspectionMonthResult;
-import com.unicorn.par.domain.vo.InspectionMonthSummary;
+import com.unicorn.par.domain.vo.*;
 import com.unicorn.par.repository.FunctionRepository;
 import com.unicorn.par.repository.InspectionDetailRepository;
 import com.unicorn.par.repository.InspectionRepository;
@@ -179,7 +176,6 @@ public class InspectionService {
                 result.setSegmentResult2(2);
             }
         }
-
 
         return result;
     }
@@ -351,9 +347,9 @@ public class InspectionService {
     /**
      * 获取巡检统计信息
      */
-    public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
+    public InspectionMonthReport getInspectionMonthReport(Integer year, Integer month) {
 
-        InspectionMonthSummary result = new InspectionMonthSummary();
+        InspectionMonthReport result = new InspectionMonthReport();
 
         DateTime monthStartDate = new DateTime()
                 .withYear(year)
@@ -444,6 +440,68 @@ public class InspectionService {
             }
             systemIndex++;
         }
+        return result;
+    }
+
+    public InspectionMonthSummary getInspectionMonthSummary(Integer year, Integer month) {
+
+        InspectionMonthSummary result = new InspectionMonthSummary();
+        DateTime startTime = new DateTime()
+                .withTimeAtStartOfDay()
+                .withDayOfMonth(1)
+                .withMonthOfYear(month)
+                .withYear(year);
+        DateTime endTime = startTime.plusMonths(1);
+        String sql = "select system_id, delay, b.result, count(1) from sed_inspection a, \n" +
+                "(select inspection_id, min(result) result from sed_inspectiondetail group by inspection_id) b\n" +
+                "where a.objectid = b.inspection_id and a.inspection_time > ? and a.inspection_time < ?\n" +
+                "group by a.system_id, a.delay, b.result\n";
+        List<Map<String, Object>> dataList = jdbcTemplate.queryForList(sql, startTime.toDate(), endTime.toDate());
+        Map<String, Integer> inspectionInfo = new HashMap();
+        for (Map<String, Object> data : dataList) {
+            inspectionInfo.put(data.get("system_id").toString() + data.get("delay") + data.get("result"), ((Long) data.get("count")).intValue());
+        }
+
+        int total = holidayService.workdaysOfMonth(year, month) * 2;
+        // 如果是当月
+        if (startTime.isEqual(new DateTime().withTimeAtStartOfDay().withDayOfMonth(1))) {
+            total = (holidayService.workdayOfMonth(new Date()) - 1) * 2;
+            int[] inspectionSegment = getInspectionSegment(new Date());
+            if (inspectionSegment[0] > 0) {
+                total++;
+            }
+            if (inspectionSegment[0] > 2) {
+                total++;
+            }
+        }
+        result.setTotal(total);
+
+        Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
+        List<System> systemList = systemRepository.findAll(sort);
+        for (System system : systemList) {
+            long functionCount = systemService.functionCount(system.getObjectId());
+            if (functionCount == 0) {
+                // 如果系统下没有功能点，则不需要统计巡检
+                continue;
+            }
+            Integer good = inspectionInfo.get(system.getObjectId() + "01");
+            Integer bad = inspectionInfo.get(system.getObjectId() + "00");
+            Integer goodAndDelay = inspectionInfo.get(system.getObjectId() + "11");
+            Integer badAndDelay = inspectionInfo.get(system.getObjectId() + "10");
+            good = good == null ? 0 : good;
+            bad = bad == null ? 0 : bad;
+            goodAndDelay = goodAndDelay == null ? 0 : goodAndDelay;
+            badAndDelay = badAndDelay == null ? 0 : badAndDelay;
+            Integer no = total - good - bad - goodAndDelay - badAndDelay;
+            if (no < 0) {
+                // bug
+                no = 0;
+            }
+            result.getDetailList().add(new InspectionMonthSummary.Detail(
+                    system.getName(), good, bad, goodAndDelay, badAndDelay, no
+            ));
+        }
+
         return result;
     }
 

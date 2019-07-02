@@ -1,10 +1,7 @@
 package com.unicorn.par.web;
 
 import com.unicorn.par.domain.po.Inspection;
-import com.unicorn.par.domain.vo.AutoInspection;
-import com.unicorn.par.domain.vo.InspectionInfo;
-import com.unicorn.par.domain.vo.InspectionMonthResult;
-import com.unicorn.par.domain.vo.InspectionMonthSummary;
+import com.unicorn.par.domain.vo.*;
 import com.unicorn.par.service.InspectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -58,9 +55,15 @@ public class InspectionController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public InspectionMonthSummary getInspectionReport(Integer year, Integer month) {
+    public InspectionMonthReport getInspectionMonthReport(Integer year, Integer month) {
 
-        return inspectionService.getInspectionReport(year, month);
+        return inspectionService.getInspectionMonthReport(year, month);
+    }
+
+    @RequestMapping(value = "/summary", method = RequestMethod.GET)
+    public InspectionMonthSummary getInspectionMonthSummary(Integer year, Integer month) {
+
+        return inspectionService.getInspectionMonthSummary(year, month);
     }
 
     @RequestMapping(value = "/auto", method = RequestMethod.POST)

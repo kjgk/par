@@ -1,27 +1,39 @@
 package com.unicorn.par.domain.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 public class InspectionMonthSummary implements Serializable {
 
-    // ['1号', '2号', ..., '31号']
-    private List<String> dateList = new ArrayList();
+    private List<Detail> detailList = new ArrayList();
 
-    // ['系统-1', '系统-2', ...]
-    private List<String> systemList = new ArrayList();
+    private Integer total;
 
-    // [
-    //  [0, 0, 1, 10] -> [日期索引，系统索引，1=上午|3=下午，值 -> （参考：InspectionResult.java）
-    //  ]
-    // ]
-    private List<Integer[]> values = new ArrayList();
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class Detail implements Serializable {
 
+        private String systemName;
+
+        private Integer good;
+
+        private Integer bad;
+
+        private Integer goodAndDelay;
+
+        private Integer badAndDelay;
+
+        private Integer no;
+
+    }
 }
 
 

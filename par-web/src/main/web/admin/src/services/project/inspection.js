@@ -10,4 +10,7 @@ export default {
   getInspectionReport (params) {
     return request(`${api}/report?${stringify(params)}`)
   },
+  getInspectionSummary (params) {
+    return request(`${api}/summary?${stringify(params)}`)
+  },
 }

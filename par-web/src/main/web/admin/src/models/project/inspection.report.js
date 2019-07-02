@@ -12,6 +12,8 @@ export default modelExtend(model, {
   state: {
     yearMonths: [],
     inspectionResults: [],
+    inspectionSummary: {},
+    modalVisible: false,
   },
   subscriptions: {
 
@@ -30,6 +32,8 @@ export default modelExtend(model, {
             payload: {
               yearMonths: [],
               inspectionResults: [],
+              inspectionSummary: {},
+              modalVisible: false,
             }
           })
         }
@@ -83,7 +87,32 @@ export default modelExtend(model, {
         }
       })
     },
+
+    * showSummary({payload = {}}, {call, put, select}) {
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: true,
+          inspectionSummary: {},
+        }
+      })
+      let inspectionSummary = yield call(service.getInspectionSummary, payload)
+      yield put({
+        type: 'updateState',
+        payload: {
+          inspectionSummary,
+        }
+      })
+    },
   },
 
-  reducers: {},
+  reducers: {
+    hideModal(state) {
+      return {
+        ...state,
+        modalVisible: false,
+      }
+    },
+  },
 })
