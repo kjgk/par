@@ -28,13 +28,14 @@ Shape.registerShape('polygon', 'doublePoint', {
     }
     return container.addShape('polygon', {
       attrs: {
+        cursor: value > 0 ? 'pointer' : 'not-allowed',
         points: [
           [points[0].x + (segment === 3 ? width / 2 : 4), points[0].y - 4],
           [points[1].x + (segment === 3 ? width / 2 : 4), points[1].y + 4],
           [points[2].x - (segment === 1 ? width / 2 : 4), points[2].y + 4],
           [points[3].x - (segment === 1 ? width / 2 : 4), points[3].y - 4],
         ],
-        fill: color
+        fill: color,
       }
     })
   }
@@ -47,6 +48,7 @@ const ReportChart = ({
                        systemList = [],
                        dateList = [],
                        values = [],
+                       onChartClick,
                      }) => {
 
   const dataList = []
@@ -57,6 +59,7 @@ const ReportChart = ({
       name: item[1],
       segment: item[2],
       value: item[3],
+      inspectionId: item[4],
     })
   }
 
@@ -71,6 +74,15 @@ const ReportChart = ({
     },
   }
 
+  const handleClick = ({data} = {}) => {
+    if (data) {
+      const {_origin: {inspectionId, value}} = data
+      if (value > 0 && inspectionId) {
+        onChartClick(inspectionId)
+      }
+    }
+  }
+
   return <Chart
     height={22 * systemList.length + 60}
     data={dataList}
@@ -78,6 +90,7 @@ const ReportChart = ({
     padding={[40, 20, 20, 250]}
     forceFit
     animate={false}
+    onClick={handleClick}
   >
     <Axis
       name="name"

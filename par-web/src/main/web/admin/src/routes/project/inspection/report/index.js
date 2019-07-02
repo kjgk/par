@@ -7,6 +7,7 @@ import {routerRedux} from "dva/router"
 import queryString from "query-string"
 import ReportChart from "./Chart"
 import SummaryModal from "./SummaryModal"
+import ViewModal from "../ViewModal"
 
 const namespace = 'inspectionReport'
 const Component = ({
@@ -16,7 +17,7 @@ const Component = ({
   const {pathname} = location
   const query = queryString.parse(location.search)
   const {year, month} = query
-  const {yearMonths, inspectionResults, inspectionSummary, modalVisible,} = model
+  const {yearMonths, inspectionResults, inspectionSummary, currentItem, modalType, modalVisible,} = model
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -41,6 +42,25 @@ const Component = ({
     })
   }
 
+  const handleChartClick = (inspectionId) => {
+    dispatch({
+      type: `${namespace}/viewInspection`,
+      payload: inspectionId,
+    })
+  }
+
+  const viewModalProps = {
+    item: currentItem,
+    visible: modalVisible,
+    maskClosable: false,
+    title: `巡检详情`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+  }
+
   const summaryModalProps = {
     visible: modalVisible,
     inspectionSummary,
@@ -58,7 +78,7 @@ const Component = ({
     <Page inner>
       <div className={styles.main}>
         <div className={styles.filter}>
-          <Select defaultValue="2019" style={{ width: 100 }}>
+          <Select defaultValue="2019" style={{width: 100}}>
             <Select.Option value="2019">2019</Select.Option>
           </Select>
           &nbsp;
@@ -81,9 +101,10 @@ const Component = ({
             </ul>
           </div>
         </div>
-        <ReportChart {...inspectionResults}/>
+        <ReportChart {...inspectionResults} onChartClick={handleChartClick}/>
       </div>
-      <SummaryModal {...summaryModalProps}/>
+      {modalVisible && modalType === 'view' && <ViewModal  {...viewModalProps}/>}
+      {modalVisible && modalType === 'summary' && <SummaryModal {...summaryModalProps}/>}
     </Page>
   )
 }

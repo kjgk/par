@@ -21,7 +21,7 @@ public class InspectionMonthReport implements Serializable {
     //  [0, 0, 1, 10] -> [日期索引，系统索引，1=上午|3=下午，值 -> （参考：InspectionResult.java）
     //  ]
     // ]
-    private List<Integer[]> values = new ArrayList();
+    private List<Object[]> values = new ArrayList();
 
 }
 

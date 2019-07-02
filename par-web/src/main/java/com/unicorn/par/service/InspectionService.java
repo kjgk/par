@@ -387,13 +387,14 @@ public class InspectionService {
 
         Date startDate = monthStartDate.toDate();
         Date endDate = monthStartDate.plusMonths(1).toDate();
-        Map<String, Integer> inspectionResults = new HashMap();
+        Map<String, Object[]> inspectionResults = new HashMap();
         List<String> badInspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection a" +
                 " inner join sed_inspectiondetail b on a.objectid = b.inspection_id" +
                 " where a.inspection_time between ? and ? and b.result = 0", String.class, startDate, endDate);
-        jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment inspection_key, delay from sed_inspection a" +
+        jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment inspection_key, objectid, delay from sed_inspection a" +
                 " where a.inspection_time between ? and ?", startDate, endDate).forEach(data -> {
             String inspectionKey = (String) data.get("inspection_key");
+            Long inspectionId = (Long) data.get("objectid");
             Integer delay = (Integer) data.get("delay");
             Integer value;
             if (badInspections.contains(inspectionKey)) {
@@ -401,7 +402,7 @@ public class InspectionService {
             } else {
                 value = delay == 1 ? InspectionResult.GoodAndDelay : InspectionResult.Good;
             }
-            inspectionResults.put(inspectionKey, value);
+            inspectionResults.put(inspectionKey, new Object[]{value, inspectionId});
         });
 
         int systemIndex = 0;
@@ -432,10 +433,20 @@ public class InspectionService {
                         segment3DefaultValue = InspectionResult.No;
                     }
                 }
-                Integer segment1Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-1");
-                Integer segment3Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-3");
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 1, segment1Value == null ? segment1DefaultValue : segment1Value});   // 上午
-                result.getValues().add(new Integer[]{dateIndex, systemIndex, 3, segment3Value == null ? segment3DefaultValue : segment3Value});   // 下午
+                Object[] segment1Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-1");
+                Object[] segment3Value = inspectionResults.get(systemId + "-" + (dateIndex + 1) + "-3");
+                // 上午
+                if (segment1Value == null) {
+                    result.getValues().add(new Object[]{dateIndex, systemIndex, 1, segment1DefaultValue, null});
+                } else {
+                    result.getValues().add(new Object[]{dateIndex, systemIndex, 1, segment1Value[0], segment1Value[1]});
+                }
+                // 下午
+                if (segment3Value == null) {
+                    result.getValues().add(new Object[]{dateIndex, systemIndex, 3, segment3DefaultValue, null});
+                } else {
+                    result.getValues().add(new Object[]{dateIndex, systemIndex, 3, segment3Value[0], segment3Value[1]});
+                }
                 dateIndex++;
             }
             systemIndex++;

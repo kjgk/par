@@ -14,6 +14,7 @@ export default modelExtend(model, {
     inspectionResults: [],
     inspectionSummary: {},
     modalVisible: false,
+    currentItem: {},
   },
   subscriptions: {
 
@@ -34,6 +35,7 @@ export default modelExtend(model, {
               inspectionResults: [],
               inspectionSummary: {},
               modalVisible: false,
+              currentItem: {},
             }
           })
         }
@@ -94,6 +96,7 @@ export default modelExtend(model, {
         type: 'updateState',
         payload: {
           modalVisible: true,
+          modalType: 'summary',
           inspectionSummary: {},
         }
       })
@@ -105,6 +108,19 @@ export default modelExtend(model, {
         }
       })
     },
+
+    * viewInspection({payload = {}}, {call, put, select}) {
+
+      const currentItem = yield call(service.get, payload)
+      yield put({
+        type: 'updateState',
+        payload: {
+          modalVisible: true,
+          modalType: 'view',
+          currentItem,
+        },
+      })
+    }
   },
 
   reducers: {
