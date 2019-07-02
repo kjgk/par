@@ -19,7 +19,7 @@ public class Runner {
         return args -> System.setProperty("webdriver.chrome.driver", inspectionConfigurationProperties.getChromeDriverPath());
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner autoInspection(MainTask mainTask) {
         return args -> mainTask.autoInspection();
     }
