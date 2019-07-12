@@ -63,9 +63,10 @@ public class CwpInspectionScript implements InspectionScript {
 
                 // 填写用户名密码并登录
                 driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[1]/div/div/div[2]/form/div[2]/div/input"))
-                        .sendKeys("admin", Keys.TAB, "123456", Keys.TAB, "*__*", Keys.ENTER);
+                        .sendKeys("admin", Keys.TAB, "Admin123", Keys.TAB, "*__*", Keys.ENTER);
 
                 Thread.sleep(5000l);
+
 
                 // 验证功能点是否正常
                 driver.findElement(By.xpath("//*[@id=\"header-wrapper\"]/div[2]/div[3]/ul/li[2]/div/a"));
