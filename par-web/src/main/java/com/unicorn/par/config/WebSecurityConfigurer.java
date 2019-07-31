@@ -75,7 +75,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .permitAll()
                 .and()
-                .headers().frameOptions().disable()
+                .headers().frameOptions().sameOrigin()
                 .and()
                 .csrf().disable()
         ;

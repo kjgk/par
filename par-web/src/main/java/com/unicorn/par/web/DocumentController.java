@@ -1,6 +1,7 @@
 package com.unicorn.par.web;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.unicorn.base.web.BaseController;
 import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
@@ -17,13 +18,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.unicorn.base.web.ApiNamespace.API_V1;
 
 @RestController
 @RequestMapping(API_V1 + "/document")
-public class DocumentController {
+public class DocumentController extends BaseController {
 
     @Autowired
     private DocumentService documentService;
@@ -100,4 +102,11 @@ public class DocumentController {
 
         documentService.deleteDocument(objectIds);
     }
+
+    @RequestMapping(value = "/summary", method = RequestMethod.GET)
+    public List summaryDocument(Date startDate, Date endDate, String category) {
+
+        return documentService.summaryDocument(startDate, endDate, category);
+    }
+
 }

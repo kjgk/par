@@ -8,6 +8,7 @@ import queryString from 'query-string'
 import List from './List'
 import Filter from './Filter'
 import Modal from './Modal'
+import SummaryModal from './SummaryModal'
 
 const namespace = 'document'
 const categories = {
@@ -19,13 +20,17 @@ const categories = {
 }
 
 const Component = ({
-                     location, dispatch, model, loading,
+                     location, dispatch, model, loading, app,
                    }) => {
   location.query = queryString.parse(location.search)
   const {query, pathname} = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys, fileList,
+    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys, fileList, defaultDateRange, summaryList,
   } = model
+
+  const {
+    user
+  } = app
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -78,6 +83,29 @@ const Component = ({
     },
   }
 
+  const summaryModalProps = {
+    visible: modalVisible,
+    maskClosable: false,
+    defaultDateRange,
+    summaryList,
+    loading: loading.effects[`${namespace}/querySummary`],
+    title: `查看汇总`,
+    onCancel() {
+      dispatch({
+        type: `${namespace}/hideModal`,
+      })
+    },
+    onSummary(data) {
+      dispatch({
+        type: `${namespace}/querySummary`,
+        payload: {
+          ...data,
+          category,
+        }
+      })
+    },
+  }
+
   const listProps = {
     dataSource: list,
     loading: loading.effects[`${namespace}/query`],
@@ -114,6 +142,7 @@ const Component = ({
   }
 
   const filterProps = {
+    summary: user.role === 'Supervisor',
     filter: {
       ...query,
     },
@@ -129,6 +158,14 @@ const Component = ({
         payload: {
           modalType: 'create',
           fileList: [],
+        },
+      })
+    },
+    onSummary() {
+      dispatch({
+        type: `${namespace}/showSummary`,
+        payload: {
+          category,
         },
       })
     },
@@ -152,7 +189,8 @@ const Component = ({
         </Row>
       }
       <List {...listProps} />
-      {modalVisible && <Modal {...modalProps} />}
+      {modalVisible && modalType !== 'summary' && <Modal {...modalProps} />}
+      {modalVisible && modalType === 'summary' && <SummaryModal {...summaryModalProps} />}
     </Page>
   )
 }
@@ -166,6 +204,7 @@ Component.propTypes = {
 export default connect((models) => {
   return {
     model: models[namespace],
+    app: models['app'],
     loading: models.loading,
   }
 })(Component)

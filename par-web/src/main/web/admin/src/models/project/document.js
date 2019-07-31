@@ -3,6 +3,7 @@ import {createCrudModel} from '../common'
 import modelExtend from "dva-model-extend"
 import queryString from "query-string"
 import {message} from "antd"
+import moment from "moment"
 
 const namespace = 'document'
 const pathname = '/document'
@@ -26,10 +27,54 @@ crudModel.effects.create = function* ({payload}, {call, put, select}) {
   message.success('保存成功！')
 }
 
+crudModel.effects.showSummary = function* ({payload}, {call, put, select}) {
+
+  const {defaultDateRange: [startDate, endDate]} = yield select(_ => _[namespace])
+  yield put({
+    type: 'showModal',
+    payload: {
+      modalType: 'summary',
+    },
+  })
+  yield put({
+    type: 'querySummary',
+    payload: {
+      ...payload,
+      startDate,
+      endDate,
+    },
+  })
+}
+
+crudModel.effects.querySummary = function* ({payload}, {call, put, select}) {
+
+  const {
+    category,
+    startDate,
+    endDate
+  } = payload
+
+  const summaryList = yield call(service.querySummary, {
+    category,
+    startDate: startDate.startOf("d").format("YYYY-MM-DD HH:mm:ss"),
+    endDate: endDate.endOf("d").format("YYYY-MM-DD HH:mm:ss"),
+  })
+  yield put({
+    type: 'updateState',
+    payload: {
+      summaryList,
+    },
+  })
+}
+
+
 export default modelExtend(
   crudModel,
   {
     namespace: namespace,
+    state: {
+      defaultDateRange: [moment().startOf('M').add(-1, 'M'), moment()]
+    },
     subscriptions: {
       setup({dispatch, history}) {
         history.listen((location) => {
@@ -56,6 +101,7 @@ export default modelExtend(
                 modalType: 'create',
                 selectedRowKeys: [],
                 fileList: [],
+                summaryList: [],
               },
             })
           }

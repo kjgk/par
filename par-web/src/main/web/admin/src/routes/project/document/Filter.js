@@ -1,9 +1,9 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
-import { Button, Col, Form, Input, Row } from 'antd'
+import {Button, Col, Form, Input, Row} from 'antd'
 import SystemSelect from "../../../sections/system/SystemSelect"
 
-const { Search } = Input
+const {Search} = Input
 
 const ColProps = {
   xs: 24,
@@ -20,7 +20,9 @@ const TwoColProps = {
 
 const Filter = ({
                   onAdd,
+                  onSummary,
                   onFilterChange,
+                  summary,
                   filter,
                   form: {
                     getFieldDecorator,
@@ -49,20 +51,20 @@ const Filter = ({
     handleSubmit()
   }
 
-  const { keyword, systemId } = filter
+  const {keyword, systemId} = filter
 
   return (
     <Row gutter={24}>
-      <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }}>
-        {getFieldDecorator('systemId', { initialValue: systemId })(<SystemSelect allowClear self
+      <Col {...ColProps} xl={{span: 6}} md={{span: 8}}>
+        {getFieldDecorator('systemId', {initialValue: systemId})(<SystemSelect allowClear self
                                                                                placeholder="请选择所属系统"
                                                                                onChange={() => setTimeout(handleSubmit)}/>)}
       </Col>
-      <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }}>
-        {getFieldDecorator('keyword', { initialValue: keyword })(<Search placeholder="请输入关键字"
-                                                                         onSearch={handleSubmit}/>)}
+      <Col {...ColProps} xl={{span: 6}} md={{span: 8}}>
+        {getFieldDecorator('keyword', {initialValue: keyword})(<Search placeholder="请输入关键字"
+                                                                       onSearch={handleSubmit}/>)}
       </Col>
-      <Col {...TwoColProps} xl={{ span: 12 }} md={{ span: 24 }}>
+      <Col {...TwoColProps} xl={{span: 12}} md={{span: 24}}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -73,6 +75,7 @@ const Filter = ({
             <Button onClick={handleReset}>重置</Button>
           </div>
           <div className="flex-vertical-center">
+            {summary && <Fragment><Button icon="unordered-list" onClick={onSummary}>查看汇总</Button>&nbsp;</Fragment>}
             <Button icon="plus" onClick={onAdd}>上传</Button>
           </div>
         </div>
