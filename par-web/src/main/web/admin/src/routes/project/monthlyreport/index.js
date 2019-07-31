@@ -129,6 +129,7 @@ const Component = ({
       return <Fragment>
         {moment(item.month).format("YYYY年 M月")}
         <div style={{float: 'right'}}>
+          {item.status === -1 && <Tag color="gray">暂存</Tag>}
           {item.status === 0 && <Tag color="blue">已提交</Tag>}
           {item.status === 1 && <Tag color="green">已通过</Tag>}
           {item.status === 2 && <Tag color="red">已退回，请修改</Tag>}
@@ -161,7 +162,7 @@ const Component = ({
                           onClick={() => handleView(item)}
                           actions={[
                             <Icon type="file-text"/>,
-                            item.objectId === currentMonthlyReport && (item.status === 0 || item.status === 2) ?
+                            item.objectId === currentMonthlyReport && (item.status === -1 || item.status === 0  || item.status === 2) ?
                               <Icon type="form"
                                     onClick={(event) => {
                                       event.stopPropagation()

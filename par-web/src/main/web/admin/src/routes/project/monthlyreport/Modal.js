@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-import {Button, Col, Divider, Form, Icon, Input, Modal, Row, Tabs, Upload} from 'antd'
+import {Button, Col, Form, Icon, Input, Modal, Row, Tabs, Upload} from 'antd'
 import styles from "./index.module.less"
 import {api, contextPath} from "../../../utils/config"
 
@@ -36,31 +36,38 @@ const modal = ({
                  ...modalProps
                }) => {
 
+  const handleSubmit = (draft) => {
+    validateFields((errors) => {
+      if (errors) {
+        return
+      }
+      const attachments = []
+      for (const file of fileList) {
+        attachments.push(
+          file.attachmentId ? {attachmentId: file.attachmentId} : file.response
+        )
+      }
+      const data = {
+        ...getFieldsValue(),
+        objectId: item.objectId,
+        system: {
+          objectId: item.system.objectId,
+        },
+        draft: !!draft,
+        attachments,
+      }
+      onOk(data)
+    })
+  }
+
   const modalOpts = {
     ...modalProps,
     title: `${item.system.name} - ${moment(item.month || currentMonth).format('YYYY年M月')} - 月报`,
-    onOk: () => {
-      validateFields((errors) => {
-        if (errors) {
-          return
-        }
-        const attachments = []
-        for (const file of fileList) {
-          attachments.push(
-            file.attachmentId ? {attachmentId: file.attachmentId} : file.response
-          )
-        }
-        const data = {
-          ...getFieldsValue(),
-          objectId: item.objectId,
-          system: {
-            objectId: item.system.objectId,
-          },
-          attachments,
-        }
-        onOk(data)
-      })
-    },
+    footer: [
+      <Button type="default" onClick={modalProps.onCancel}>取消</Button>,
+      <Button type="default" hidden={item.status === 0} onClick={() => handleSubmit(true)}>暂存</Button>,
+      <Button type="primary" onClick={() => handleSubmit(false)}>提交</Button>,
+    ]
   }
 
   const uploaderProps = {

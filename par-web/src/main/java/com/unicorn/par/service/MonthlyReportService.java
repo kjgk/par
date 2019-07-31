@@ -96,10 +96,6 @@ public class MonthlyReportService {
             }
             current = monthlyReportRepository.save(monthlyReport);
             current.setMonth(currentMonth);
-
-            // 判断是否延时
-            int workdayOfMonth = holidayService.workdayOfMonth(new Date());
-            current.setDelay(workdayOfMonth > DATE_RULES[1] ? 1 : 0);
         } else {
             current = monthlyReportRepository.getOne(monthlyReport.getObjectId());
             current.setMeeting(monthlyReport.getMeeting());
@@ -118,8 +114,17 @@ public class MonthlyReportService {
             current.setFault(monthlyReport.getFault());
             current.setProblem(monthlyReport.getProblem());
         }
-        current.setSubmitTime(new Date());
-        current.setStatus(MonthlyReportStatus.Submit);
+
+        if (monthlyReport.getDraft()) {
+            current.setStatus(MonthlyReportStatus.Draft);
+        } else {
+            // 判断是否延时
+            int workdayOfMonth = holidayService.workdayOfMonth(new Date());
+            current.setDelay(workdayOfMonth > DATE_RULES[1] ? 1 : 0);
+
+            current.setSubmitTime(new Date());
+            current.setStatus(MonthlyReportStatus.Submit);
+        }
 
         List<ContentAttachment> contentAttachments = new ArrayList();
         if (!CollectionUtils.isEmpty(monthlyReport.getAttachments())) {

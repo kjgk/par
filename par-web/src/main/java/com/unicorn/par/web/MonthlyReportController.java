@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.unicorn.base.web.BaseController;
 import com.unicorn.core.query.PageInfo;
 import com.unicorn.core.query.QueryInfo;
+import com.unicorn.par.domain.enumeration.MonthlyReportStatus;
 import com.unicorn.par.domain.po.MonthlyReport;
 import com.unicorn.par.domain.po.MonthlyReportAudit;
 import com.unicorn.par.domain.po.QMonthlyReport;
@@ -115,6 +116,8 @@ public class MonthlyReportController extends BaseController {
         }
         if (status != null) {
             expression = expression.and(monthlyReport.status.eq(status));
+        } else {
+            expression = expression.and(monthlyReport.status.ne(MonthlyReportStatus.Draft));
         }
         QueryInfo queryInfo = new QueryInfo(expression, pageInfo,
                 new Sort(Sort.Direction.DESC, "submitTime")

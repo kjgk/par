@@ -81,4 +81,7 @@ public class MonthlyReport extends DefaultPersistent {
 
     @Transient
     List<AttachmentInfo> attachments;
+
+    @Transient
+    private Boolean draft;
 }

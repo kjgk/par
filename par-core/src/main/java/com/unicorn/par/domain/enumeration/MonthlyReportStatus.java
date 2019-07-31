@@ -2,6 +2,8 @@ package com.unicorn.par.domain.enumeration;
 
 public class MonthlyReportStatus {
 
+    public static final Integer Draft = -1;
+
     public static final Integer Submit = 0;
 
     public static final Integer Resolve = 1;
