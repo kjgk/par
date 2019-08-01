@@ -19,7 +19,7 @@ const Component = ({
     <div className={classnames(...classes)} onClick={onClick}>
       {!inspectionId && <Icon type="close"/>}
       {inspectionId && [1, 3].includes(value) && <Icon type="check"/>}
-      {inspectionId && [2, 4].includes(value) && <Icon type="exclamation"/>}
+      {inspectionId && [2, 4, 5].includes(value) && <Icon type="exclamation"/>}
     </div>
   )
 }

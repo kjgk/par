@@ -163,11 +163,11 @@ const Component = ({
                           <span>{date.format('D')}</span>
                         </div>
                         {
-                          (!today || segmentResult1 === 1 || segmentResult1 === 2) &&
+                          (!today || segmentResult1 === 1 || segmentResult1 === 2 || segmentResult1 === 5) &&
                           <InspectionItem onClick={() => !!ins1 && handleView(ins1.inspectionId)} {...ins1} />
                         }
                         {
-                          (!today || segmentResult2 === 1 || segmentResult2 === 2) &&
+                          (!today || segmentResult2 === 1 || segmentResult2 === 2 || segmentResult2 === 5) &&
                           <InspectionItem onClick={() => !!ins2 && handleView(ins2.inspectionId)} {...ins2} />
                         }
                         {

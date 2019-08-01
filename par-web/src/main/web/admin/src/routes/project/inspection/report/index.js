@@ -98,6 +98,7 @@ const Component = ({
               <li style={{backgroundColor: '#f6d059'}}>异常</li>
               <li style={{backgroundColor: '#9527ff'}}>延时+异常</li>
               <li style={{backgroundColor: '#f51e3a'}}>未巡检</li>
+              <li style={{backgroundColor: '#8e4e2f'}}>外部原因</li>
             </ul>
           </div>
         </div>

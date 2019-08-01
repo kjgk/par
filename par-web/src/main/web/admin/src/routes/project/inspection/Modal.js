@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {Button, Checkbox, Divider, Empty, Form, Icon, List, Modal, Steps, Tabs, Upload, message, Row, Col, Radio, Input, Alert} from 'antd'
+import {Alert, Button, Checkbox, Col, Divider, Empty, Form, Icon, Input, List, Modal, Radio, Row, Steps, Tabs, Upload} from 'antd'
 
 import styles from './inspection.module.less'
 import {api, contextPath} from "../../../utils/config"
@@ -57,7 +57,7 @@ const modal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    validateFields((errors, {content}) => {
+    validateFields((errors, {content, externalCauses}) => {
       if (errors) {
         return
       }
@@ -78,10 +78,27 @@ const modal = ({
           },
         })
       }
-      onOk({
-        ...data,
-        message: content
-      })
+      if (invalidCount > 0 && !externalCauses) {
+        Modal.confirm({
+          title: '确认提交?',
+          content: `功能点存在${invalidCount}个异常，系统将为您自动创建工单，是否确认提交？`,
+          onOk() {
+            onOk({
+              ...data,
+              message: content,
+              externalCauses: externalCauses ? 1 : 0,
+            })
+          },
+          onCancel() {
+          },
+        });
+      } else {
+        onOk({
+          ...data,
+          message: content,
+          externalCauses: externalCauses ? 1 : 0,
+        })
+      }
     })
   }
 
@@ -197,10 +214,10 @@ const modal = ({
               {
                 invalidCount > 0 && <Row gutter={16}>
                   <Col style={{margin: '10px 0'}} span={24}>
-                    <Alert message={`功能点存在${invalidCount}个异常，系统将为您自动创建工单，请在下方输入问题描述`} type="warning" showIcon/>
+                    <Alert message={`功能点存在${invalidCount}个异常，请在下方输入问题描述`} type="warning" showIcon/>
                   </Col>
                   <Col span={24}>
-                    <Form.Item label={false} hasFeedback {...formItemLayout}>
+                    <Form.Item label={false} {...formItemLayout}>
                       {getFieldDecorator('content', {
                         initialValue: '',
                         rules: [{
@@ -208,6 +225,12 @@ const modal = ({
                           message: '请输入问题描述',
                         }],
                       })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
+                    </Form.Item>
+                    <Form.Item label={false} {...formItemLayout} style={{marginTop: -25}}>
+                      {getFieldDecorator('externalCauses', {
+                        initialValue: false,
+                        valuePropName: "checked",
+                      })(<Checkbox>外部原因导致系统无法访问</Checkbox>)}
                     </Form.Item>
                   </Col>
                 </Row>

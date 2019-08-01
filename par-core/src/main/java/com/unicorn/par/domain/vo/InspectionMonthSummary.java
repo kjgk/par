@@ -31,6 +31,8 @@ public class InspectionMonthSummary implements Serializable {
 
         private Integer badAndDelay;
 
+        private Integer externalCauses;
+
         private Integer no;
 
     }

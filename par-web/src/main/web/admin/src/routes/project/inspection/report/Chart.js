@@ -26,6 +26,9 @@ Shape.registerShape('polygon', 'doublePoint', {
     if (value === 4) {
       color = '#9527ff'
     }
+    if (value === 5) {
+      color = '#8e4e2f'
+    }
     return container.addShape('polygon', {
       attrs: {
         cursor: value > 0 ? 'pointer' : 'not-allowed',

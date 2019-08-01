@@ -56,4 +56,6 @@ public class Inspection extends DefaultNomenclator {
     // 异常描述
     @Column(columnDefinition = "text")
     private String message;
+
+    private Integer externalCauses;
 }

@@ -137,6 +137,9 @@ public class InspectionService {
                     if (ins.getDelay() == 1 && allResult == 0) {
                         detail.setValue(InspectionResult.BadAndDelay);
                     }
+                    if (ins.getExternalCauses() != null && ins.getExternalCauses() == 1) {
+                        detail.setValue(InspectionResult.ExternalCauses);
+                    }
                     result.getDetailList().put(detail.toString(), detail);
                 });
 
@@ -222,8 +225,8 @@ public class InspectionService {
             contentAttachmentService.save(InspectionDetail.class.getSimpleName(), detail.getObjectId(), null, contentAttachments);
         }
 
-        // 如有异常功能点，则创建巡检工单
-        if (exception && !StringUtils.isEmpty(inspection.getMessage())) {
+        // 如有异常功能点，则创建巡检工单，外部原因除外
+        if (exception && !StringUtils.isEmpty(inspection.getMessage()) && inspection.getExternalCauses() == 0) {
             Ticket ticket = new Ticket();
             ticket.setPriority(1);
             ticket.setSource(TicketSource.Inspection);
@@ -391,16 +394,20 @@ public class InspectionService {
         List<String> badInspections = jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment from sed_inspection a" +
                 " inner join sed_inspectiondetail b on a.objectid = b.inspection_id" +
                 " where a.inspection_time between ? and ? and b.result = 0", String.class, startDate, endDate);
-        jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment inspection_key, objectid, delay from sed_inspection a" +
+        jdbcTemplate.queryForList("select system_id || '-' || date_part('D', inspection_time) || '-' || segment inspection_key, objectid, delay, external_causes from sed_inspection a" +
                 " where a.inspection_time between ? and ?", startDate, endDate).forEach(data -> {
             String inspectionKey = (String) data.get("inspection_key");
             Long inspectionId = (Long) data.get("objectid");
             Integer delay = (Integer) data.get("delay");
+            Integer externalCauses = (Integer) data.get("external_causes");
             Integer value;
             if (badInspections.contains(inspectionKey)) {
                 value = delay == 1 ? InspectionResult.BadAndDelay : InspectionResult.Bad;
             } else {
                 value = delay == 1 ? InspectionResult.GoodAndDelay : InspectionResult.Good;
+            }
+            if (externalCauses != null && externalCauses == 1) {
+                value = InspectionResult.ExternalCauses;
             }
             inspectionResults.put(inspectionKey, new Object[]{value, inspectionId});
         });
@@ -465,12 +472,21 @@ public class InspectionService {
         DateTime endTime = startTime.plusMonths(1);
         String sql = "select system_id, delay, b.result, count(1) from sed_inspection a, \n" +
                 "(select inspection_id, min(result) result from sed_inspectiondetail group by inspection_id) b\n" +
-                "where a.objectid = b.inspection_id and a.inspection_time > ? and a.inspection_time < ?\n" +
+                "where a.objectid = b.inspection_id and a.inspection_time > ? and a.inspection_time < ? and a.external_causes != 1\n" +
                 "group by a.system_id, a.delay, b.result\n";
         List<Map<String, Object>> dataList = jdbcTemplate.queryForList(sql, startTime.toDate(), endTime.toDate());
         Map<String, Integer> inspectionInfo = new HashMap();
         for (Map<String, Object> data : dataList) {
             inspectionInfo.put(data.get("system_id").toString() + data.get("delay") + data.get("result"), ((Long) data.get("count")).intValue());
+        }
+
+        // 获取“外部原因”的数据
+        sql = "select system_id, count(1) from sed_inspection a \n" +
+                "where a.inspection_time > ? and a.inspection_time < ? and a.external_causes = 1\n" +
+                "group by a.system_id \n";
+        dataList = jdbcTemplate.queryForList(sql, startTime.toDate(), endTime.toDate());
+        for (Map<String, Object> data : dataList) {
+            inspectionInfo.put(data.get("system_id").toString() + "55", ((Long) data.get("count")).intValue());
         }
 
         int total = holidayService.workdaysOfMonth(year, month) * 2;
@@ -499,17 +515,19 @@ public class InspectionService {
             Integer bad = inspectionInfo.get(system.getObjectId() + "00");
             Integer goodAndDelay = inspectionInfo.get(system.getObjectId() + "11");
             Integer badAndDelay = inspectionInfo.get(system.getObjectId() + "10");
+            Integer externalCauses = inspectionInfo.get(system.getObjectId() + "55");
             good = good == null ? 0 : good;
             bad = bad == null ? 0 : bad;
             goodAndDelay = goodAndDelay == null ? 0 : goodAndDelay;
             badAndDelay = badAndDelay == null ? 0 : badAndDelay;
-            Integer no = total - good - bad - goodAndDelay - badAndDelay;
+            externalCauses = externalCauses == null ? 0 : externalCauses;
+            Integer no = total - good - bad - goodAndDelay - badAndDelay - externalCauses;
             if (no < 0) {
                 // bug
                 no = 0;
             }
             result.getDetailList().add(new InspectionMonthSummary.Detail(
-                    system.getName(), good, bad, goodAndDelay, badAndDelay, no
+                    system.getName(), good, bad, goodAndDelay, badAndDelay, externalCauses, no
             ));
         }
 
@@ -532,7 +550,7 @@ public class InspectionService {
             segment = 2;
         } else if (minuteOfDay <= 14 * 60) {
             segment = 3;
-        } else if (minuteOfDay <= 15 * 60) {
+        } else if (minuteOfDay <= 18 * 60) {
             segment = 3;
             delay = 1;
         } else {

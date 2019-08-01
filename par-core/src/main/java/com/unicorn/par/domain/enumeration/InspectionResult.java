@@ -15,4 +15,6 @@ public class InspectionResult {
     public static final Integer GoodAndDelay = 3;       // 延时巡检，功能正常
 
     public static final Integer BadAndDelay = 4;        // 延时巡检，发现异常
+
+    public static final Integer ExternalCauses = 5;     // 已巡检，发现异常（外部原因）
 }
