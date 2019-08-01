@@ -287,6 +287,7 @@ public class InspectionService {
         inspection.setSegment(segmentInfo[0]);
         inspection.setDelay(segmentInfo[1]);
         inspection.setAuto(1);
+        inspection.setExternalCauses(0);
 
         List<Function> functionList = functionRepository.findAll(
                 QFunction.function.system.objectId.eq(system.getObjectId()), new Sort(Sort.Direction.ASC, "orderNo"));
@@ -589,7 +590,7 @@ public class InspectionService {
             segment = 2;
         } else if (minuteOfDay <= 14 * 60) {
             segment = 3;
-        } else if (minuteOfDay <= 18 * 60) {
+        } else if (minuteOfDay <= 15 * 60) {
             segment = 3;
             delay = 1;
         } else {
