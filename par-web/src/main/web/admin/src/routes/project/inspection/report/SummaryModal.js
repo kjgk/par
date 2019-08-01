@@ -1,8 +1,9 @@
 import React from 'react'
-import {Alert, Button, Card, Divider, Form, Icon, List, Modal, Table} from 'antd'
+import {Button, Modal, Table} from 'antd'
 
 const modal = ({
                  inspectionSummary = {},
+                 exportLink,
                  loading,
                  onOk,
                  ...modalProps
@@ -11,7 +12,10 @@ const modal = ({
   const modalOpts = {
     ...modalProps,
     width: 960,
-    footer: <Button type="primary" onClick={modalProps.onCancel}>确定</Button>,
+    footer: [
+      <Button type="primary" style={{marginRight: 5}} href={exportLink} target="_blank">导出</Button>,
+      <Button type="default" onClick={modalProps.onCancel}>关闭</Button>,
+    ],
   }
 
   const columns = [

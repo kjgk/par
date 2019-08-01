@@ -2,12 +2,13 @@ import React from 'react'
 import {connect} from 'dva'
 import styles from './index.module.less'
 import {Page} from "../../../../components"
-import {Button, Divider, Radio, Select} from "antd"
+import {Button, Radio, Select} from "antd"
 import {routerRedux} from "dva/router"
 import queryString from "query-string"
 import ReportChart from "./Chart"
 import SummaryModal from "./SummaryModal"
 import ViewModal from "../ViewModal"
+import {contextPath} from "../../../../utils/config"
 
 const namespace = 'inspectionReport'
 const Component = ({
@@ -64,6 +65,7 @@ const Component = ({
   const summaryModalProps = {
     visible: modalVisible,
     inspectionSummary,
+    exportLink: `${contextPath}/api/v1/inspection/summary/export?${queryString.stringify(query)}`,
     loading: loading.effects[`${namespace}/showSummary`],
     maskClosable: false,
     title: `${year}年${month}月各运维公司巡检统计表`,

@@ -18,6 +18,9 @@ import com.unicorn.std.service.ContentAttachmentService;
 import com.unicorn.utils.DateUtils;
 import com.unicorn.utils.SnowflakeIdWorker;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,6 +30,7 @@ import org.springframework.util.StringUtils;
 import sun.misc.BASE64Decoder;
 
 import javax.transaction.Transactional;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -532,6 +536,41 @@ public class InspectionService {
         }
 
         return result;
+    }
+
+    public XSSFWorkbook exportInspectionMonthSummary(Integer year, Integer month) throws IOException {
+
+        InspectionMonthSummary inspectionMonthSummary = getInspectionMonthSummary(year, month);
+
+        String templateFileName = this.getClass().getResource("/").getPath() + "templates/InspectionSummary.xlsx";
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(templateFileName);
+            XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            int rowIndex = 1;//行下标
+            int cellIndex = 0;//列下标
+            XSSFRow row;
+
+            for (InspectionMonthSummary.Detail detail : inspectionMonthSummary.getDetailList()) {
+                row = sheet.createRow(rowIndex++);
+                cellIndex = 0;
+                row.createCell(cellIndex++).setCellValue(rowIndex - 1);
+                row.createCell(cellIndex++).setCellValue(detail.getSystemName());
+                row.createCell(cellIndex++).setCellValue(detail.getGood());
+                row.createCell(cellIndex++).setCellValue(detail.getGoodAndDelay());
+                row.createCell(cellIndex++).setCellValue(detail.getBad());
+                row.createCell(cellIndex++).setCellValue(detail.getBadAndDelay());
+                row.createCell(cellIndex++).setCellValue(detail.getExternalCauses());
+                row.createCell(cellIndex++).setCellValue(detail.getNo());
+            }
+
+            return workbook;
+        } finally {
+            if (fileInputStream != null) {
+                fileInputStream.close();
+            }
+        }
     }
 
     private int[] getInspectionSegment(Date date) {

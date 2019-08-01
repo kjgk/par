@@ -3,9 +3,13 @@ package com.unicorn.par.web;
 import com.unicorn.par.domain.po.Inspection;
 import com.unicorn.par.domain.vo.*;
 import com.unicorn.par.service.InspectionService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.unicorn.base.web.ApiNamespace.API_V1;
@@ -64,6 +68,21 @@ public class InspectionController {
     public InspectionMonthSummary getInspectionMonthSummary(Integer year, Integer month) {
 
         return inspectionService.getInspectionMonthSummary(year, month);
+    }
+
+    @RequestMapping(value = "/summary/export", method = RequestMethod.GET)
+    public void exportInspectionMonthSummary(Integer year, Integer month, HttpServletResponse response) throws IOException {
+
+        XSSFWorkbook xssfWorkbook = inspectionService.exportInspectionMonthSummary(year, month);
+
+        response.setHeader("Content-Disposition", "filename=" +
+                new String((year + "年" + month + "月各运维公司巡检统计表.xlsx").getBytes("GBK"), StandardCharsets.ISO_8859_1));
+        response.setContentType("application/octet-stream");
+
+        xssfWorkbook.write(response.getOutputStream());
+        xssfWorkbook.close();
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
     @RequestMapping(value = "/auto", method = RequestMethod.POST)

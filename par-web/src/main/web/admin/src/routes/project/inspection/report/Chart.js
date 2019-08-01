@@ -45,7 +45,7 @@ Shape.registerShape('polygon', 'doublePoint', {
 })
 
 const segmentNames = {1: '上午', 3: '下午',}
-const stateNames = {0: '未巡检', 1: '已巡检', 2: '已巡检', 3: '已巡检', 4: '已巡检',}
+const stateNames = {0: '未巡检', 1: '已巡检', 2: '已巡检', 3: '已巡检', 4: '已巡检', 5: '外部原因',}
 
 const ReportChart = ({
                        systemList = [],
