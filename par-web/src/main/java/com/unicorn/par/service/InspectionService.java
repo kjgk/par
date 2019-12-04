@@ -194,16 +194,39 @@ public class InspectionService {
 
     public void saveInspection(Inspection inspection) {
 
+        Accendant currentAccendant = accendantService.getCurrentAccendant();
         List<FileUploadInfo> invalidAttachments = new ArrayList();
         int[] segmentInfo = getInspectionSegment(new Date());
-        if (segmentInfo[0] % 2 == 0) {
-            throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
+
+        // 这个人可以补录巡检记录
+        boolean xman = currentAccendant.getUser().getObjectId().equals(540105919833309184L)
+                && inspection.getInspectionTime() != null;
+
+        if (xman) {
+            segmentInfo = new int[]{inspection.getSegment(), 0};
+        } else {
+            DateTime startTime = new DateTime().withTimeAtStartOfDay();
+            DateTime endTime = startTime.plusDays(1);
+            // 判断提交时间
+            if (segmentInfo[0] % 2 == 0) {
+                throw new ServiceException("请在每天【8:30-10:00】和【12:30-14:00】提交巡检记录！");
+            }
+            // 判断是否已经提交了巡检记录
+            boolean exists = inspectionRepository.exists(QInspection.inspection.system.objectId.eq(inspection.getSystem().getObjectId())
+                    .and(QInspection.inspection.inspectionTime.between(startTime.toDate(), endTime.toDate()))
+                    .and(QInspection.inspection.segment.eq(segmentInfo[0]))
+            );
+            if (exists) {
+                throw new ServiceException("您已经提交了巡检记录，不能重复提交！");
+            }
         }
-        Accendant currentAccendant = accendantService.getCurrentAccendant();
+
         Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
         Inspection current = inspectionRepository.save(inspection);
         boolean exception = false;
-        current.setInspectionTime(new Date());
+        if (!xman) {
+            current.setInspectionTime(new Date());
+        }
         // 巡检人可以是系统维护人员也可以是项目管理员
         current.setAccendant(currentAccendant);
         current.setSupervisor(currentSupervisor);

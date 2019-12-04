@@ -42,9 +42,6 @@ public class Inspection extends DefaultNomenclator {
 
     /**
      * 巡检时间段
-     * 1=上午 (8:30-10:00 )
-     * 2=中午 (12:30-14:00)
-     * 允许延后1小时
      */
     private Integer segment;
 

@@ -33,6 +33,7 @@ const modal = ({
                  functionResults,
                  toggleResult,
                  user,
+                 repair = {},
                  form: {
                    getFieldDecorator,
                    validateFields,
@@ -97,6 +98,7 @@ const modal = ({
           ...data,
           message: content,
           externalCauses: externalCauses ? 1 : 0,
+          ...repair,
         })
       }
     })

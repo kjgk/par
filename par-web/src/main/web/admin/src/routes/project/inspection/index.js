@@ -22,8 +22,9 @@ const Component = ({
   location.query = queryString.parse(location.search)
   const {query, pathname} = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
+    currentItem, modalVisible, modalType,
     systemList, currentStep, currentSystem, allowNextStep, functionScreenshots, functionResults,
+    repair,
     inspectionResults: {holidayInfo = {}, calendarStartDate, inspectionInfo = {}, segmentResult1, segmentResult2, now,},
   } = model
 
@@ -41,7 +42,7 @@ const Component = ({
   const handleAdd = (system) => {
     dispatch({
       type: `${namespace}/firstStep`,
-      payload: system,
+      payload: {system},
     })
   }
   const handleView = (inspectionId) => {
@@ -50,7 +51,29 @@ const Component = ({
       payload: inspectionId,
     })
   }
-
+  const handleClick = (system, inspectionDate, segment) => {
+    // 这个人可以补录巡检记录
+    if (user.id !== '540105919833309184') {
+      return
+    }
+    let inspectionTime
+    if(segment === 1){
+      inspectionTime = moment(inspectionDate).add(60 * 60 * 9 - Math.random() * 20 * 60, 's')
+    }
+    if(segment === 3){
+      inspectionTime = moment(inspectionDate).add(60 * 60 * 13 - Math.random() * 20 * 60, 's')
+    }
+    dispatch({
+      type: `${namespace}/firstStep`,
+      payload: {
+        system,
+        repair: {
+          inspectionTime,
+          segment,
+        }
+      },
+    })
+  }
 
   const modalProps = {
     item: modalType === 'create' ? {} : currentItem,
@@ -66,6 +89,7 @@ const Component = ({
     functionScreenshots,
     functionResults,
     user,
+    repair,
     onOk(data) {
       dispatch({
         type: `${namespace}/${modalType}`,
@@ -164,11 +188,11 @@ const Component = ({
                         </div>
                         {
                           (!today || segmentResult1 === 1 || segmentResult1 === 2 || segmentResult1 === 5) &&
-                          <InspectionItem onClick={() => !!ins1 && handleView(ins1.inspectionId)} {...ins1} />
+                          <InspectionItem onClick={() => !!ins1 ? handleView(ins1.inspectionId) : handleClick(system, date, 1)} {...ins1} />
                         }
                         {
                           (!today || segmentResult2 === 1 || segmentResult2 === 2 || segmentResult2 === 5) &&
-                          <InspectionItem onClick={() => !!ins2 && handleView(ins2.inspectionId)} {...ins2} />
+                          <InspectionItem onClick={() => !!ins2 ? handleView(ins2.inspectionId) : handleClick(system, date, 3)} {...ins2} />
                         }
                         {
                           today && (segmentResult1 === 0 || segmentResult2 === 0) &&

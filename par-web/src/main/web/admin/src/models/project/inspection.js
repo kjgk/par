@@ -84,8 +84,7 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
     },
 
 
-    * firstStep({payload = {}}, {call, put, select}) {
-      const {systemList} = yield select(_ => _[namespace])
+    * firstStep({payload: {system, repair = {}}}, {call, put, select}) {
       // 掉过第一步，直接到第二步
       yield put({
         type: 'updateState',
@@ -93,10 +92,11 @@ export default modelExtend(createCrudModel(namespace, pathname, service), {
           modalVisible: true,
           modalType: 'create',
           currentStep: 0,
-          currentSystem: payload,
+          currentSystem: system,
           allowNextStep: false,
           functionScreenshots: {},
           functionResults: {},
+          repair,
         },
       })
 

@@ -99,7 +99,6 @@ const modal = ({
                     .filter(attachment => attachment.url && attachment.imageUrl)
                     .map((attachment) => ({url: contextPath + attachment.imageUrl}))}/>
                   {item.handleInfo.attachments
-                    .filter(attachment => attachment.url && !attachment.imageUrl)
                     .map((attachment) => <div>
                         <a href={`${contextPath}${attachment.url}`} target="_blank">{attachment.filename}</a>
                       </div>
