@@ -25,8 +25,12 @@ public class LhsrInspectionScript implements InspectionScript {
 
     public AutoInspection doInspection() throws Exception {
 
-        Long systemId = inspectionConfigurationProperties.getSystemConfig().get("lhsr").getSystemId();
-        String url = inspectionConfigurationProperties.getSystemConfig().get("lhsr").getUrl();
+        InspectionConfigurationProperties.SystemConfig config = inspectionConfigurationProperties.getSystemConfig().get("lhsr");
+        if (config == null) {
+            return null;
+        }
+        Long systemId = config.getSystemId();
+        String url = config.getUrl();
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);

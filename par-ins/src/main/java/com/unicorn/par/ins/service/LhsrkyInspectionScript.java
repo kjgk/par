@@ -10,25 +10,22 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Component
 @AllArgsConstructor
-@Slf4j(topic = "车辆清洗备案网")
-public class CwpInspectionScript implements InspectionScript {
+@Slf4j(topic = "科研管理平台")
+public class LhsrkyInspectionScript implements InspectionScript {
 
     private InspectionConfigurationProperties inspectionConfigurationProperties;
 
     public String getSystemName() {
-        return "车辆清洗备案网";
+        return "科研管理平台";
     }
 
     public AutoInspection doInspection() throws Exception {
 
-        InspectionConfigurationProperties.SystemConfig config = inspectionConfigurationProperties.getSystemConfig().get("cwp");
+        InspectionConfigurationProperties.SystemConfig config = inspectionConfigurationProperties.getSystemConfig().get("lhsrky");
         if (config == null) {
             return null;
         }
@@ -62,18 +59,24 @@ public class CwpInspectionScript implements InspectionScript {
             try {
                 log.info("【{}】正在测试...", funcName);
 
+                // 登录页
+                driver.navigate().to(url + "/admin/login");
+
+                Thread.sleep(2000);
+
+                // 填写用户名密码
+                driver.findElement(By.id("username")).sendKeys("admin", Keys.TAB, "Admin123");
+
                 // 截图
                 loginSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));
 
-                // 填写用户名密码并登录
-                driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[1]/div/div/div[2]/form/div[2]/div/input"))
-                        .sendKeys("admin", Keys.TAB, "Admin123", Keys.TAB, "*__*", Keys.ENTER);
+                // 登录
+                driver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div/form/div[3]/button")).click();
 
-                Thread.sleep(5000l);
-
+                Thread.sleep(2000);
 
                 // 验证功能点是否正常
-                driver.findElement(By.xpath("//*[@id=\"header-wrapper\"]/div[2]/div[3]/ul/li[2]/div/a"));
+                driver.findElement(By.xpath("//*[@id=\"mainContainer\"]/header/div[2]/ul/li[2]/div"));
 
                 // 截图
                 loginSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));
@@ -89,28 +92,18 @@ public class CwpInspectionScript implements InspectionScript {
                 driver.navigate().refresh();
             }
 
-            /*===================================== 清洗点搜索 =====================================*/
-            funcName = "清洗点搜索";
+            /*===================================== 项目列表 =====================================*/
+            funcName = "项目列表";
             try {
                 log.info("【{}】正在测试...", funcName);
 
-                List<String> keywords = Arrays.asList("轮胎", "美容", "松江");
+                // 打开项目列表
+                driver.navigate().to(url + "/admin/research");
 
-                // 打开搜索页面
-                driver.navigate().to(url);
-
-                // 搜索
-                driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[2]/div/div/div[2]/div/section[3]/form/div[1]/input"))
-                        .sendKeys(keywords.get(new Random().nextInt(keywords.size())), Keys.ENTER);
-
-                Thread.sleep(1000l);
-
-                // 滚动页面
-                JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-                jsExecutor.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[2]/div/div/div[1]/h3")));
+                Thread.sleep(2000);
 
                 // 验证功能点是否正常
-                driver.findElement(By.xpath("//*[@id=\"wrapper\"]/div[2]/div/div/div[2]/div/div/div[3]/table"));
+                driver.findElement(By.xpath("//*[@id=\"mainContainer\"]/main/div[2]/div[2]/div/div/div/div/div/div/table"));
 
                 // 截图
                 searchSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));

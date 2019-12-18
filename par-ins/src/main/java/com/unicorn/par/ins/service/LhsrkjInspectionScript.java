@@ -28,8 +28,12 @@ public class LhsrkjInspectionScript implements InspectionScript {
 
     public AutoInspection doInspection() throws Exception {
 
-        Long systemId = inspectionConfigurationProperties.getSystemConfig().get("lhsrkj").getSystemId();
-        String url = inspectionConfigurationProperties.getSystemConfig().get("lhsrkj").getUrl();
+        InspectionConfigurationProperties.SystemConfig config = inspectionConfigurationProperties.getSystemConfig().get("lhsrkj");
+        if (config == null) {
+            return null;
+        }
+        Long systemId = config.getSystemId();
+        String url = config.getUrl();
 
         AutoInspection autoInspection = new AutoInspection();
         autoInspection.setSystemId(systemId);

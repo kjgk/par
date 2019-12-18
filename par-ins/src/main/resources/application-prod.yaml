@@ -1,0 +1,17 @@
+inspection-config:
+  chrome-driver-path: /kjgk/Project/SeleniumTest/res/chromedriver
+  chrome-binary-path:
+  post-url: http://localhost:8086/par/api/v1/inspection/auto
+  systemConfig:
+    cwp:
+      system-id: 540220231499382784
+      url: http://101.227.180.58/cwp
+    lhsr:
+      system-id: 540106046727782400
+      url: http://10.85.20.116/lhsr
+    lhsrkj:
+      system-id: 540220344225497088
+      url: https://kj.lhsr.sh.gov.cn
+    lhsrky:
+      system-id: 656845709332447232
+      url: https://ky.lhsr.sh.gov.cn
