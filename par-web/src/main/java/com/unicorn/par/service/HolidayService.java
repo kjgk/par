@@ -1,23 +1,20 @@
 package com.unicorn.par.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.unicorn.core.exception.ServiceException;
 import com.unicorn.par.domain.po.Holiday;
 import com.unicorn.par.domain.po.QHoliday;
 import com.unicorn.par.repository.HolidayRepository;
+import com.unicorn.utils.DateUtils;
+import com.unicorn.utils.SnowflakeIdWorker;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 @Service
 @Transactional
@@ -28,57 +25,74 @@ public class HolidayService {
     private HolidayRepository holidayRepository;
 
     /**
-     * 获取api接口获取节假日信息
+     * 初始化节假日信息
      */
     public void initHoliday(Integer year) {
 
+        // 2020年放假安排
+        HashMap dateConfigs = new HashMap() {{
+            // 元旦
+            put("2020-01-01", 1);
+            // 春节
+            put("2020-01-19", 2);
+            put("2020-01-24", 1);
+            put("2020-01-25", 1);
+            put("2020-01-26", 1);
+            put("2020-01-27", 1);
+            put("2020-01-28", 1);
+            put("2020-01-29", 1);
+            put("2020-01-30", 1);
+            put("2020-02-01", 2);
+            // 清明节
+            put("2020-04-04", 1);
+            put("2020-04-05", 1);
+            put("2020-04-06", 1);
+            // 劳动节
+            put("2020-04-26", 2);
+            put("2020-05-01", 1);
+            put("2020-05-02", 1);
+            put("2020-05-03", 1);
+            put("2020-05-04", 1);
+            put("2020-05-05", 1);
+            put("2020-05-09", 2);
+            // 端午节
+            put("2020-06-25", 1);
+            put("2020-06-26", 1);
+            put("2020-06-27", 1);
+            put("2020-06-28", 2);
+            // 中秋节/国庆节
+            put("2020-09-27", 2);
+            put("2020-10-01", 1);
+            put("2020-10-02", 1);
+            put("2020-10-03", 1);
+            put("2020-10-04", 1);
+            put("2020-10-05", 1);
+            put("2020-10-06", 1);
+            put("2020-10-07", 1);
+            put("2020-10-08", 1);
+            put("2020-10-10", 2);
+        }};
+
+        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
+
         DateTime dateTime = new DateTime().withYear(year).withDayOfYear(1).withTimeAtStartOfDay();
         while (dateTime.getYear() == year) {
-            Integer value = checkDate(dateTime.toDate());
-            Holiday holiday = new Holiday();
-            holiday.setDate(dateTime.toDate());
-            holiday.setValue(value);
-            holidayRepository.save(holiday);
+
+//            log.info("{} => 周{}", dateTime.toDate(), dateTime.dayOfWeek().get());
+
+            String date = DateUtils.format(dateTime.toDate(), DateUtils.FORMAT_SHORT);
+            int dayOfWeek = dateTime.dayOfWeek().get();
+            // 0=工作日，1=法定节假日（五一、十一、春节等），2=节假日调休（上班），3=休息日（周末）
+            int value = 0;
+            if (dayOfWeek == 6 || dayOfWeek == 7) {
+                value = 3;
+            }
+            value = (int) dateConfigs.getOrDefault(date, value);
+            System.out.println("insert into sed_holiday values (" + idWorker.nextId() + ", '" + date + "', " + value + ");");
+
             dateTime = dateTime.plusDays(1);
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
-    }
-
-    /**
-     * 重新获取失败的数据
-     */
-    public void initHoliday2() {
-
-        holidayRepository.findAll(QHoliday.holiday.value.isNull())
-                .forEach(holiday -> {
-                    holiday.setValue(checkDate(holiday.getDate()));
-                });
-    }
-
-
-    private Integer checkDate(Date date) {
-
-        log.info("开始获取{}", date);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        String dateString = new SimpleDateFormat("yyyyMMdd").format(date);
-        Request request = new Request.Builder()
-                .url("http://api.goseek.cn/Tools/holiday?date=" + dateString)
-                .get()
-                .build();
-        try {
-            Response response = okHttpClient.newCall(request).execute();
-            JSONObject result = JSON.parseObject(response.body().string());
-            return result.getInteger("data");
-        } catch (Exception e) {
-            String message = "获取节假日信息失败：" + e.getMessage();
-            log.error(message);
-        }
-        return null;
     }
 
     /**
