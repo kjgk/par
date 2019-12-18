@@ -7,6 +7,9 @@ Shape.registerShape('polygon', 'doublePoint', {
     const points = this.parsePoints(cfg.points) // 将0-1空间的坐标转换为画布坐标
     let color = '#DDDDDD'
     let width = points[2].x - points[0].x
+    if (value === -2) {
+      color = '#efefef'
+    }
     if (value === -1) {
       color = '#ffdddd'
     }
@@ -15,7 +18,6 @@ Shape.registerShape('polygon', 'doublePoint', {
     }
     if (value === 1) {
       color = '#87d068'
-      // color = '#20AA73'
     }
     if (value === 2) {
       color = '#f6d059'
@@ -133,6 +135,11 @@ const ReportChart = ({
         if (value === -1) {
           return {
             content: '休息日',
+          }
+        }
+        if (value === -2) {
+          return {
+            content: '未开始巡检',
           }
         }
         return {

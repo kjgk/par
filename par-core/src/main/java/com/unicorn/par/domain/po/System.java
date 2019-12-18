@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -29,4 +30,7 @@ public class System extends DefaultNomenclator {
     private List<SystemSupervisor> supervisors;
 
     private String url;
+
+    @Column(columnDefinition = "date")
+    private Date inspectionBeginDate;
 }

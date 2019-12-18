@@ -451,8 +451,13 @@ public class InspectionService {
             result.getSystemList().add(system.getName());
             int dateIndex = 0;
             for (Integer defaultValue : defaultValues) {
+                boolean isBefore = monthStartDate.plusDays(dateIndex).isBefore(system.getInspectionBeginDate().getTime());
+                if (isBefore) {
+                    defaultValue = InspectionResult.Nonexistent;
+                }
                 Integer segment1DefaultValue = defaultValue;
                 Integer segment3DefaultValue = defaultValue;
+
                 if (defaultValue != null && defaultValue.equals(100)) {
                     int segment = getInspectionSegment(new Date())[0];
                     if (segment == 0 || segment == 1) {

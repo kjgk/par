@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,6 +85,7 @@ public class SystemService {
         System current;
         if (StringUtils.isEmpty(system.getObjectId())) {
             current = systemRepository.save(system);
+            current.setInspectionBeginDate(new Date());
         } else {
             current = systemRepository.getOne(system.getObjectId());
             current.setName(system.getName());

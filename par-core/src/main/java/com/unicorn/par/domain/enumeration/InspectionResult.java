@@ -4,7 +4,9 @@ public class InspectionResult {
 
     public static final Integer NotYet = null;          // 时间未到
 
-    public static final Integer Unnecessary = -1;       // 不需要巡检（如：休息日）
+    public static final Integer Nonexistent = -2;       // 不需要巡检（系统在当前日期还未开始参与巡检）
+
+    public static final Integer Unnecessary = -1;       // 不需要巡检（休息日）
 
     public static final Integer No = 0;                 // 未巡检
 
