@@ -50,7 +50,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="所属单位" hasFeedback {...formItemLayout}>
+        <Form.Item label="所属单位" {...formItemLayout}>
           {getFieldDecorator('company.objectId', {
             initialValue: item.company && item.company.objectId,
             rules: [{
@@ -59,7 +59,7 @@ const modal = ({
             }],
           })(<CompanySelect placeholder="请选择所属单位"/>)}
         </Form.Item>
-        <Form.Item label="名称" hasFeedback {...formItemLayout}>
+        <Form.Item label="名称" {...formItemLayout}>
           {getFieldDecorator('name', {
             initialValue: item.name,
             rules: [{
@@ -68,17 +68,17 @@ const modal = ({
             }],
           })(<Input placeholder="请输入名称"/>)}
         </Form.Item>
-        <Form.Item label="系统网址" hasFeedback {...formItemLayout}>
+        <Form.Item label="系统网址" {...formItemLayout}>
           {getFieldDecorator('url', {
             initialValue: item.url,
           })(<Input.TextArea rows={3} placeholder="请输入系统网址"/>)}
         </Form.Item>
-        <Form.Item label="描述" hasFeedback {...formItemLayout}>
+        <Form.Item label="描述" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: item.description,
           })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}
         </Form.Item>
-        <Form.Item label="项目负责人" hasFeedback {...formItemLayout}>
+        <Form.Item label="项目负责人" {...formItemLayout}>
           {getFieldDecorator('supervisors', {
             initialValue: supervisors,
           })(<SupervisorSelect placeholder="请选择项目负责人" mode="tags"/>)}

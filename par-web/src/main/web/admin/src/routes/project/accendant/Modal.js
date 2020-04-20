@@ -42,7 +42,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="所属单位" hasFeedback {...formItemLayout}>
+        <Form.Item label="所属单位" {...formItemLayout}>
           {getFieldDecorator('company.objectId', {
             initialValue: item.company && item.company.objectId,
             rules: [{
@@ -51,7 +51,7 @@ const modal = ({
             }],
           })(<CompanySelect placeholder="请选择所属单位"/>)}
         </Form.Item>
-        <Form.Item label="姓名" hasFeedback {...formItemLayout}>
+        <Form.Item label="姓名" {...formItemLayout}>
           {getFieldDecorator('username', {
             initialValue: item.username,
             rules: [{
@@ -60,7 +60,7 @@ const modal = ({
             }],
           })(<Input placeholder="请输入姓名"/>)}
         </Form.Item>
-        <Form.Item label="手机号" hasFeedback {...formItemLayout}>
+        <Form.Item label="手机号" {...formItemLayout}>
           {getFieldDecorator('phoneNo', {
             initialValue: item.phoneNo,
             rules: [{

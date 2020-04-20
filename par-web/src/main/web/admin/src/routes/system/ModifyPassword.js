@@ -37,7 +37,7 @@ const ModifyPassword = ({
   return (
     <Modal  {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="原始密码" hasFeedback {...formItemLayout}>
+        <Form.Item label="原始密码" {...formItemLayout}>
           {getFieldDecorator('originPassword', {
             rules: [{
               required: true,
@@ -45,7 +45,7 @@ const ModifyPassword = ({
             }],
           })(<Input type="password" placeholder="请输入原始密码"/>)}
         </Form.Item>
-        <Form.Item label="新密码" hasFeedback {...formItemLayout} >
+        <Form.Item label="新密码" {...formItemLayout} >
           {getFieldDecorator('newPassword', {
             rules: [{
               required: true,
@@ -54,7 +54,7 @@ const ModifyPassword = ({
           })(<Input type="password" placeholder="请输入新密码"/>)}
         </Form.Item>
 
-        <Form.Item label="确认密码" hasFeedback {...formItemLayout} >
+        <Form.Item label="确认密码" {...formItemLayout} >
           {getFieldDecorator('confirmNewPassword', {
             rules: [{
               required: true,

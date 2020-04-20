@@ -64,7 +64,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="帐号" hasFeedback {...formItemLayout}>
+        <Form.Item label="帐号" {...formItemLayout}>
           {getFieldDecorator('name', {
             initialValue: item.account ? item.account.name : '',
             rules: [{
@@ -73,7 +73,7 @@ const modal = ({
             }],
           })(<Input placeholder="请输入帐号"/>)}
         </Form.Item>
-        <Form.Item label="密码" hasFeedback {...formItemLayout}>
+        <Form.Item label="密码" {...formItemLayout}>
           {getFieldDecorator('password', {
             rules: [{
               required: true,
@@ -83,7 +83,7 @@ const modal = ({
             }],
           })(<Input type="password" placeholder="请输入密码"/>)}
         </Form.Item>
-        <Form.Item label="确认密码" hasFeedback {...formItemLayout}>
+        <Form.Item label="确认密码" {...formItemLayout}>
           {getFieldDecorator('confirm', {
             rules: [{
               required: true,

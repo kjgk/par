@@ -70,12 +70,12 @@ const modal = ({
             <Radio value={2}>未解决</Radio>
           </RadioGroup>)}
         </Form.Item>
-        <Form.Item label="备注" hasFeedback {...formItemLayout}>
+        <Form.Item label="备注" {...formItemLayout}>
           {getFieldDecorator('remark', {
             initialValue: item.remark,
           })(<Input.TextArea rows={3} placeholder="请输入备注"/>)}
         </Form.Item>
-        <Form.Item label="附件" hasFeedback {...formItemLayout}>
+        <Form.Item label="附件" {...formItemLayout}>
           <Upload {...uploaderProps}>
             <Button disabled={fileList.length >= fileLimit}>
               <Icon type="upload"/> 上传附件

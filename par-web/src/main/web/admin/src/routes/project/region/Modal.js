@@ -41,7 +41,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="名称" hasFeedback {...formItemLayout}>
+        <Form.Item label="名称" {...formItemLayout}>
           {getFieldDecorator('name', {
             initialValue: item.name,
             rules: [{
@@ -50,17 +50,17 @@ const modal = ({
             }],
           })(<Input placeholder="请输入名称"/>)}
         </Form.Item>
-        <Form.Item label="标识" hasFeedback {...formItemLayout}>
+        <Form.Item label="标识" {...formItemLayout}>
           {getFieldDecorator('tag', {
             initialValue: item.tag,
           })(<Input placeholder="请输入标识"/>)}
         </Form.Item>
-        <Form.Item label="简称" hasFeedback {...formItemLayout}>
+        <Form.Item label="简称" {...formItemLayout}>
           {getFieldDecorator('shortName', {
             initialValue: item.shortName,
           })(<Input placeholder="请输入简称"/>)}
         </Form.Item>
-        <Form.Item label="描述" hasFeedback {...formItemLayout}>
+        <Form.Item label="描述" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: item.description,
           })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}

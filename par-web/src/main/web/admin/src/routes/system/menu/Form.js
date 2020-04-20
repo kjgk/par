@@ -56,7 +56,7 @@ const form = ({
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormItem label="名称" hasFeedback {...formItemLayout}>
+      <FormItem label="名称" {...formItemLayout}>
         {getFieldDecorator('name', {
           initialValue: item.name,
           rules: [{
@@ -65,17 +65,17 @@ const form = ({
           }],
         })(<Input placeholder="请输入名称"/>)}
       </FormItem>
-      <FormItem label="标识" hasFeedback {...formItemLayout}>
+      <FormItem label="标识" {...formItemLayout}>
         {getFieldDecorator('tag', {
           initialValue: item.tag,
         })(<Input placeholder="请输入标识"/>)}
       </FormItem>
-      <FormItem label="图标" hasFeedback {...formItemLayout}>
+      <FormItem label="图标" {...formItemLayout}>
         {getFieldDecorator('icon', {
           initialValue: item.icon,
         })(<Input placeholder="请输入图标"/>)}
       </FormItem>
-      <FormItem label="URL" hasFeedback {...formItemLayout}>
+      <FormItem label="URL" {...formItemLayout}>
         {getFieldDecorator('url', {
           initialValue: item.url,
         })(<Input placeholder="请输入URL"/>)}
@@ -96,7 +96,7 @@ const form = ({
           <Radio value={0}>否</Radio>
         </RadioGroup>)}
       </FormItem>
-      <FormItem label="描述" hasFeedback {...formItemLayout}>
+      <FormItem label="描述" {...formItemLayout}>
         {getFieldDecorator('description', {
           initialValue: item.description,
         })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}

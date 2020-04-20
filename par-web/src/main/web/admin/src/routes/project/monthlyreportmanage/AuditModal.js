@@ -55,7 +55,7 @@ const modal = ({
             <Radio value={0}>退回</Radio>
           </RadioGroup>)}
         </Form.Item>
-        <Form.Item label="退回意见" hasFeedback {...formItemLayout}>
+        <Form.Item label="退回意见" {...formItemLayout}>
           {getFieldDecorator('message', {
             initialValue: '',
           })(<Input placeholder="请输入退回意见"/>)}

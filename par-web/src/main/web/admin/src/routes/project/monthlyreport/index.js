@@ -155,14 +155,14 @@ const Component = ({
                   <Icon type="plus"/> 提交月报
                 </Button>
               </div>
-              <Row gutter={16} style={{marginTop: 15}}>
+              <Row gutter={[16, 16]} style={{marginTop: 15}}>
                 {
                   list.map(item => <Col key={item.objectId} md={12} xl={8} xxl={6}>
                     <Card className={styles.report_item} title={getReportTitle(item)} hoverable
                           onClick={() => handleView(item)}
                           actions={[
                             <Icon type="file-text"/>,
-                            item.objectId === currentMonthlyReport && (item.status === -1 || item.status === 0  || item.status === 2) ?
+                            (item.status === -1 || item.status === 0  || item.status === 2) ?
                               <Icon type="form"
                                     onClick={(event) => {
                                       event.stopPropagation()

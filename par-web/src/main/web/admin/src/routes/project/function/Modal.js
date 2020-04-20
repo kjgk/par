@@ -42,7 +42,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="所属系统" hasFeedback {...formItemLayout}>
+        <Form.Item label="所属系统" {...formItemLayout}>
           {getFieldDecorator('system.objectId', {
             initialValue: item.system && item.system.objectId,
             rules: [{
@@ -51,7 +51,7 @@ const modal = ({
             }],
           })(<SystemSelect placeholder="请选择所属系统"/>)}
         </Form.Item>
-        <Form.Item label="功能点" hasFeedback {...formItemLayout}>
+        <Form.Item label="功能点" {...formItemLayout}>
           {getFieldDecorator('name', {
             initialValue: item.name,
             rules: [{
@@ -60,7 +60,7 @@ const modal = ({
             }],
           })(<Input placeholder="请输入名称"/>)}
         </Form.Item>
-        <Form.Item label="排序号" hasFeedback {...formItemLayout}>
+        <Form.Item label="排序号" {...formItemLayout}>
           {getFieldDecorator('orderNo', {
             initialValue: item.orderNo,
             rules: [{
@@ -69,7 +69,7 @@ const modal = ({
             }],
           })(<Input placeholder="请输入排序号"/>)}
         </Form.Item>
-        <Form.Item label="描述" hasFeedback {...formItemLayout}>
+        <Form.Item label="描述" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: item.description,
           })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}

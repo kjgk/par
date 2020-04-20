@@ -54,7 +54,7 @@ const form = ({
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormItem label="名称" hasFeedback {...formItemLayout}>
+      <FormItem label="名称" {...formItemLayout}>
         {getFieldDecorator('name', {
           initialValue: item.name,
           rules: [{
@@ -63,12 +63,12 @@ const form = ({
           }],
         })(<Input placeholder="请输入名称"/>)}
       </FormItem>
-      <FormItem label="标识" hasFeedback {...formItemLayout}>
+      <FormItem label="标识" {...formItemLayout}>
         {getFieldDecorator('tag', {
           initialValue: item.tag,
         })(<Input placeholder="请输入标识"/>)}
       </FormItem>
-      <FormItem label="描述" hasFeedback {...formItemLayout}>
+      <FormItem label="描述" {...formItemLayout}>
         {getFieldDecorator('description', {
           initialValue: item.description,
         })(<Input.TextArea rows={3} placeholder="请输入描述"/>)}

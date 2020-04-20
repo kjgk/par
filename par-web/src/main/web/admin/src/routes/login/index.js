@@ -46,7 +46,7 @@ const Login = ({
           </div>
           <form>
             {login.errorMessage && !loading.effects.login && renderMessage(login.errorMessage)}
-            <FormItem hasFeedback>
+            <FormItem>
               {getFieldDecorator('username', {
                 rules: [
                   {
@@ -56,7 +56,7 @@ const Login = ({
                 ],
               })(<Input onPressEnter={handleOk} autoFocus placeholder="用户名"/>)}
             </FormItem>
-            <FormItem hasFeedback>
+            <FormItem>
               {getFieldDecorator('password', {
                 rules: [
                   {

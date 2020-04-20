@@ -23,9 +23,9 @@ const List = ({onViewItem, onAuditItem, location, monthlyReportStatus, ...tableP
       render: (value, record) => <span><Formatter.Date value={record.month} pattern="YYYY年M月"/> - {value}</span>,
     },
     {
-      title: '重点工作',
+      title: '运行维护',
       align: 'left',
-      dataIndex: 'keyWork',
+      dataIndex: 'maintenance',
       render: (value) => value && value.substring(0, 40),
     },
     {

@@ -127,7 +127,7 @@ const Component = ({
                 <Radio value={2}>一般</Radio>
               </RadioGroup>)}
             </Form.Item>
-            <Form.Item label="问题描述" hasFeedback {...formItemLayout}>
+            <Form.Item label="问题描述" {...formItemLayout}>
               {getFieldDecorator('ticket.content', {
                 initialValue: '',
                 rules: [{
@@ -136,7 +136,7 @@ const Component = ({
                 }],
               })(<Input.TextArea autoFocus rows={3} placeholder="请输入问题描述"/>)}
             </Form.Item>
-            <Form.Item label="所属系统" hasFeedback {...formItemLayout}>
+            <Form.Item label="所属系统" {...formItemLayout}>
               {getFieldDecorator('ticket.system.objectId', {
                 initialValue: undefined,
                 rules: [{
@@ -145,17 +145,17 @@ const Component = ({
                 }],
               })(<SystemSelect self={true} placeholder="请选择所属系统"/>)}
             </Form.Item>
-            <Form.Item label="报修人" hasFeedback {...formItemLayout}>
+            <Form.Item label="报修人" {...formItemLayout}>
               {getFieldDecorator('ticket.contacts', {
                 initialValue: '',
               })(<Input placeholder="请输入报修人"/>)}
             </Form.Item>
-            <Form.Item label="报修人手机号" hasFeedback {...formItemLayout}>
+            <Form.Item label="报修人手机号" {...formItemLayout}>
               {getFieldDecorator('ticket.phoneNo', {
                 initialValue: '',
               })(<Input placeholder="请输入报修人手机号"/>)}
             </Form.Item>
-            <Form.Item label="附件" hasFeedback {...formItemLayout}>
+            <Form.Item label="附件" {...formItemLayout}>
               <Upload {...uploaderProps1}>
                 <Button disabled={fileList1.length >= fileLimit}>
                   <Icon type="upload"/> 上传附件
@@ -173,12 +173,12 @@ const Component = ({
                 <Radio value={2}>未解决</Radio>
               </RadioGroup>)}
             </Form.Item>
-            <Form.Item label="备注" hasFeedback {...formItemLayout}>
+            <Form.Item label="备注" {...formItemLayout}>
               {getFieldDecorator('remark', {
                 initialValue: '',
               })(<Input.TextArea rows={3} placeholder="请输入备注"/>)}
             </Form.Item>
-            <Form.Item label="附件" hasFeedback {...formItemLayout}>
+            <Form.Item label="附件" {...formItemLayout}>
               <Upload {...uploaderProps2}>
                 <Button disabled={fileList2.length >= fileLimit}>
                   <Icon type="upload"/> 上传附件

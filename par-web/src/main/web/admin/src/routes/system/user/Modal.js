@@ -53,7 +53,7 @@ const modal = ({
   return (
     <Modal {...modalOpts}>
       <Form layout="horizontal">
-        <Form.Item label="昵称" hasFeedback {...formItemLayout}>
+        <Form.Item label="昵称" {...formItemLayout}>
           {getFieldDecorator('name', {
             initialValue: item.name,
             rules: [{
@@ -62,7 +62,7 @@ const modal = ({
             }],
           })(<Input placeholder="请输入昵称"/>)}
         </Form.Item>
-        <Form.Item label="角色" hasFeedback {...formItemLayout}>
+        <Form.Item label="角色" {...formItemLayout}>
           {getFieldDecorator('role', {
             initialValue: roleId,
             rules: [{
@@ -71,7 +71,7 @@ const modal = ({
             }],
           })(<RoleSelect placeholder="请选择角色"/>)}
         </Form.Item>
-        <Form.Item label="简介" hasFeedback {...formItemLayout}>
+        <Form.Item label="简介" {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: item.description,
           })(<Input.TextArea rows={3} placeholder="请输入简介"/>)}
