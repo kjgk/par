@@ -409,9 +409,11 @@ public class InspectionService {
         Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
         Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
         if (currentSupervisor != null) {
-            systemList = systemRepository.findAll(QSystem.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId()), sort);
+            systemList = systemRepository.findAll(
+                    QSystem.system.enabled.eq(1).and(QSystem.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId())
+                    ), sort);
         } else {
-            systemList = systemRepository.findAll(sort);
+            systemList = systemRepository.findAll(QSystem.system.enabled.eq(1), sort);
         }
 
         Collections.reverse(systemList);
@@ -537,7 +539,7 @@ public class InspectionService {
         result.setTotal(total);
 
         Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
-        List<System> systemList = systemRepository.findAll(sort);
+        List<System> systemList = systemRepository.findAll(QSystem.system.enabled.eq(1), sort);
         for (System system : systemList) {
             long functionCount = systemService.functionCount(system.getObjectId());
             if (functionCount == 0) {

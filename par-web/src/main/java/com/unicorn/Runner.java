@@ -36,12 +36,12 @@ public class Runner {
         };
     }
 
-//        @Bean
+        @Bean
     CommandLineRunner initHoliday(
             HolidayService holidayService
     ) {
         return args -> {
-            holidayService.initHoliday(2020);
+//            holidayService.initHoliday(2021);
         };
     }
 }

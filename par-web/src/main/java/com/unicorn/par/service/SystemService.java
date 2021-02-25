@@ -48,6 +48,7 @@ public class SystemService {
     public List<SystemInfo> getSystemList(Integer self) {
 
         List<System> systemList;
+        BooleanExpression expression = QSystem.system.enabled.eq(1);
         Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
         if (self == null || self != 1) {
             systemList = systemRepository.findAll(sort);
@@ -55,12 +56,10 @@ public class SystemService {
             Accendant currentAccendant = accendantService.getCurrentAccendant();
             Supervisor currentSupervisor = supervisorService.getCurrentSupervisor();
             if (currentAccendant != null) {
-                QSystem system = QSystem.system;
-                BooleanExpression expression = system.company.objectId.eq(currentAccendant.getCompany().getObjectId());
+                expression = expression.and(QSystem.system.company.objectId.eq(currentAccendant.getCompany().getObjectId()));
                 systemList = systemRepository.findAll(expression, sort);
             } else if (currentSupervisor != null) {
-                QSystem system = QSystem.system;
-                BooleanExpression expression = system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId());
+                expression = expression.and(QSystem.system.supervisors.any().supervisor.objectId.eq(currentSupervisor.getObjectId()));
                 systemList = systemRepository.findAll(expression, sort);
             } else {
                 systemList = new ArrayList();
@@ -85,13 +84,17 @@ public class SystemService {
         System current;
         if (StringUtils.isEmpty(system.getObjectId())) {
             current = systemRepository.save(system);
-            current.setInspectionBeginDate(new Date());
+            if (current.getInspectionBeginDate() == null) {
+                current.setInspectionBeginDate(new Date());
+            }
         } else {
             current = systemRepository.getOne(system.getObjectId());
             current.setName(system.getName());
             current.setUrl(system.getUrl());
             current.setCompany(system.getCompany());
             current.setDescription(system.getDescription());
+            current.setEnabled(system.getEnabled());
+            current.setInspectionBeginDate(system.getInspectionBeginDate());
             systemSupervisorRepository.deleteBySystemId(current.getObjectId());
         }
 

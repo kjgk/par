@@ -102,8 +102,8 @@ public class LhsrkyInspectionScript implements InspectionScript {
 
                 Thread.sleep(2000);
 
-                // 验证功能点是否正常
-                driver.findElement(By.xpath("//*[@id=\"mainContainer\"]/main/div[2]/div[2]/div/div/div/div/div/div/table"));
+//                // 验证功能点是否正常
+//                driver.findElement(By.xpath("//*[@id=\"mainContainer\"]/main/div[2]/div/div[2]/div/div/div/div/div/div/table"));
 
                 // 截图
                 searchSegment.getScreenshots().add(((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64));

@@ -5,6 +5,7 @@ import com.unicorn.core.domain.vo.BasicInfo;
 import com.unicorn.core.domain.vo.FileUploadInfo;
 import com.unicorn.core.query.QueryInfo;
 import com.unicorn.par.domain.po.Document;
+import com.unicorn.par.domain.po.QSystem;
 import com.unicorn.par.domain.po.System;
 import com.unicorn.par.repository.DocumentRepository;
 import com.unicorn.par.repository.SystemRepository;
@@ -123,7 +124,7 @@ public class DocumentService {
         }
 
         Sort sort = new Sort(Sort.Direction.ASC, "company.name").and(new Sort(Sort.Direction.ASC, "objectId"));
-        List<System> systemList = systemRepository.findAll(sort);
+        List<System> systemList = systemRepository.findAll(QSystem.system.enabled.eq(1), sort);
         for (System system : systemList) {
             result.add(new HashMap() {{
                 put("systemId", system.getObjectId());

@@ -33,4 +33,6 @@ public class System extends DefaultNomenclator {
 
     @Column(columnDefinition = "date")
     private Date inspectionBeginDate;
+
+    private Integer enabled;
 }

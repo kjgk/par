@@ -30,7 +30,7 @@ public class HolidayService {
     public void initHoliday(Integer year) {
 
         // 2020年放假安排
-        HashMap dateConfigs = new HashMap() {{
+        HashMap dateConfigs2020 = new HashMap() {{
             // 元旦
             put("2020-01-01", 1);
             // 春节
@@ -73,6 +73,54 @@ public class HolidayService {
             put("2020-10-10", 2);
         }};
 
+        // 2021年放假安排
+        HashMap dateConfigs2021 = new HashMap() {{
+            // 元旦
+            put("2021-01-01", 1);
+            // 春节
+            put("2021-02-07", 2);
+            put("2021-02-11", 1);
+            put("2021-02-12", 1);
+            put("2021-02-13", 1);
+            put("2021-02-14", 1);
+            put("2021-02-15", 1);
+            put("2021-02-16", 1);
+            put("2021-02-17", 1);
+            put("2021-02-20", 2);
+            // 清明节
+            put("2021-04-03", 1);
+            put("2021-04-04", 1);
+            put("2021-04-05", 1);
+            // 劳动节
+            put("2021-04-25", 2);
+            put("2021-05-01", 1);
+            put("2021-05-02", 1);
+            put("2021-05-03", 1);
+            put("2021-05-04", 1);
+            put("2021-05-05", 1);
+            put("2021-05-08", 2);
+            // 端午节
+            put("2021-06-12", 1);
+            put("2021-06-13", 1);
+            put("2021-06-14", 1);
+//            put("2021-06-28", 2);
+            // 中秋节/
+            put("2021-09-18", 2);
+            put("2021-09-19", 1);
+            put("2021-09-20", 1);
+            put("2021-09-21", 1);
+            // 国庆节
+            put("2021-09-26", 2);
+            put("2021-10-01", 1);
+            put("2021-10-02", 1);
+            put("2021-10-03", 1);
+            put("2021-10-04", 1);
+            put("2021-10-05", 1);
+            put("2021-10-06", 1);
+            put("2021-10-07", 1);
+            put("2021-10-09", 2);
+        }};
+
         SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
 
         DateTime dateTime = new DateTime().withYear(year).withDayOfYear(1).withTimeAtStartOfDay();
@@ -87,7 +135,7 @@ public class HolidayService {
             if (dayOfWeek == 6 || dayOfWeek == 7) {
                 value = 3;
             }
-            value = (int) dateConfigs.getOrDefault(date, value);
+            value = (int) dateConfigs2021.getOrDefault(date, value);
             System.out.println("insert into sed_holiday values (" + idWorker.nextId() + ", '" + date + "', " + value + ");");
 
             dateTime = dateTime.plusDays(1);

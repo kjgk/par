@@ -25,5 +25,6 @@ public class Holiday extends DefaultIdentifiable {
 
     private Date date;
 
+    // 0=工作日,1=节假日,2=工作日（调休）,3=周末
     private Integer value;
 }

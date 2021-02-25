@@ -1,6 +1,7 @@
 import React from 'react'
+import moment from 'moment'
 import PropTypes from 'prop-types'
-import {Form, Input, Modal} from 'antd'
+import {DatePicker, Form, Input, Modal, Radio} from 'antd'
 import CompanySelect from "../../../sections/company/CompanySelect"
 import SupervisorSelect from "../../../sections/supervisor/SupervisorSelect"
 
@@ -82,6 +83,19 @@ const modal = ({
           {getFieldDecorator('supervisors', {
             initialValue: supervisors,
           })(<SupervisorSelect placeholder="请选择项目负责人" mode="tags"/>)}
+        </Form.Item>
+        <Form.Item label="巡检开始日期" {...formItemLayout}>
+          {getFieldDecorator('inspectionBeginDate', {
+            initialValue: item.inspectionBeginDate && moment(item.inspectionBeginDate),
+          })(<DatePicker />)}
+        </Form.Item>
+        <Form.Item label="是否启用" {...formItemLayout}>
+          {getFieldDecorator('enabled', {
+            initialValue: item.enabled,
+          })(<Radio.Group>
+            <Radio value={1}>是</Radio>
+            <Radio value={0}>否</Radio>
+          </Radio.Group>)}
         </Form.Item>
       </Form>
     </Modal>
